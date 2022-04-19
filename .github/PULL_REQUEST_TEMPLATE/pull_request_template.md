@@ -10,7 +10,7 @@ Summarise the changes which this pull request implements.
 ## Issues
 
 Specify at least one issue which this pull request fixes, references or closes.
-*Keywords are optional but useful, if you are unsure which to use, just reference the issue plainly.*
+<!--Keywords are optional but useful, if you are unsure which to use, just reference the issue plainly.-->
 
 e.g.
 - Fixes #(issue)
@@ -32,4 +32,4 @@ e.g.
 - [ ] I have followed the code style present in the project.
 - [ ] I have updated or added tests as necessary to cover the changes implemented.
 
-*Fill in the checklist brackets with x like "[x]" to denote something which has been completed*
+<!--Fill in the checklist brackets with x like "[x]" to denote something which has been completed-->
