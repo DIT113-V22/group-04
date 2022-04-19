@@ -1,8 +1,3 @@
----
-name: Pull request template
-about: Template for creation of pull requests.
----
-
 # Description
 
 Summarise the changes which this pull request implements.
