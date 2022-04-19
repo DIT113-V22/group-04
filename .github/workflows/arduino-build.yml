@@ -1,25 +1,31 @@
 name: Arduino CI
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build-sketch:
     runs-on: ubuntu-20.04
+    
     steps:
       - name: Clone Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1.1.1
+        
       - name: Get Python3
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
+          
       - name: Fetch sketch dependencies
         run: |
           pip3 install pyserial
           arduino-cli core update-index --additional-urls "https://dl.espressif.com/dl/package_esp32_index.json"
           arduino-cli core install esp32:esp32 --additional-urls "https://dl.espressif.com/dl/package_esp32_index.json"
           arduino-cli lib install "Smartcar shield"
+          arduino-cli lib install "MQTT"
+          
       - name: Build sketch
         run: |
           arduino-cli compile -b esp32:esp32:esp32doit-devkit-v1 arduino/smartcar/smartcar.ino
