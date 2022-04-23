@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Button subBtn;
     String content      = "50";
     int qos             = 2;
-    String broker       = "tcp://broker.hivemq.com:1883";
+    String broker       = "tcp://localhost:1883";
     String clientId     = "MQTT-publisher";
     MemoryPersistence persistence = new MemoryPersistence();
 

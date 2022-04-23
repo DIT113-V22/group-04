@@ -104,32 +104,32 @@ public class ManualControl extends AppCompatActivity {
         int traversX = (int)event.getRawX()-90;
         int traversY = (int)event.getRawY()-90;
 
+        double angle;
+        int startX = centerScrX ;
+        int startY = centerScrY ;
+        angle = (Math.toDegrees(Math.atan2((event.getRawY()-startY),(event.getRawX()-startX))*-1));
+
         Pair screenDimension = getScreenDimensions();
 
         centerScrX = (int) ((int)screenDimension.first/2);
         centerScrY = (int) ((int)screenDimension.second/1.25);
 
-        int centerX = (int) (centerScrX -90);
-        int centerY = (int) (centerScrY -90);
+        float centerX = (int) (centerScrX -90);
+        float centerY = (int) (centerScrY -90);
 
+        double joystickToPressedDistance = Math.sqrt(
+                Math.pow(centerScrX - event.getRawX(), 2) +
+                Math.pow(centerScrY - event.getRawY(), 2)
+        );
 
-
-        if(traversX > (centerX + outerRadius)){
-            innerCircle.setX(centerX + outerRadius);
-        }else if(traversX < (centerX - outerRadius)){
-            innerCircle.setX(centerX - outerRadius);
+        //thumbstick clipping
+        if(joystickToPressedDistance > outerRadius) {
+            innerCircle.setX(centerX + (float) Math.cos(Math.toRadians(angle)) * outerRadius);
+            innerCircle.setY(centerY + (float) Math.sin(Math.toRadians(angle)) * outerRadius * -1);
         }else{
             innerCircle.setX(traversX);
-        }
-
-        if(traversY > (centerY + outerRadius)){
-            innerCircle.setY(centerY + outerRadius);
-        }else if(traversY < (centerY - outerRadius)){
-            innerCircle.setY(centerY - outerRadius);
-        }else{
             innerCircle.setY(traversY);
         }
-
 
         outerCircle.setX(centerX-outerRadius);
         outerCircle.setY(centerY-outerRadius);
