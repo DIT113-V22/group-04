@@ -1,6 +1,8 @@
 package com.example.drawer;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     String broker       = "tcp://broker.hivemq.com:1883";
     String clientId     = "MQTT-publisher";
     MemoryPersistence persistence = new MemoryPersistence();
+
+    private Button readMeScreen;
+    private Button manualControlScreen;
+    private Button drawControlScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,5 +136,46 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        readMeScreen = findViewById(R.id.ReadMeScreen);
+        manualControlScreen = findViewById(R.id.ManualScreen);
+        drawControlScreen = findViewById(R.id.DrawScreen);
+
+        readMeScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openReadMEScreen();
+            }
+        });
+
+        manualControlScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openManualScreen();
+            }
+        });
+
+        drawControlScreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDrawScreen();
+            }
+        });
     }
+
+    public void openReadMEScreen(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void openManualScreen(){
+        Intent intent = new Intent(this, ManualControl.class);
+        startActivity(intent);
+    }
+
+    public void openDrawScreen(){
+        Intent intent = new Intent(this, DrawControl.class);
+        startActivity(intent);
+    }
+
 }
