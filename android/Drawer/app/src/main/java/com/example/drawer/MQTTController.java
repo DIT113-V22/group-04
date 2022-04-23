@@ -29,6 +29,7 @@ public class MQTTController {
             System.out.println("Connected");
         } catch (MqttException e) {
             //Standard error printing
+            System.out.println("Could not connectd");
             System.out.println("reason " + e.getReasonCode());
             System.out.println("msg " + e.getMessage());
             System.out.println("loc " + e.getLocalizedMessage());
@@ -44,6 +45,7 @@ public class MQTTController {
             System.out.println("Subscribed to: " + topic);
         } catch (MqttException e) {
             //Standard error printing
+            System.out.println("Subscription could not be performed");
             System.out.println("reason " + e.getReasonCode());
             System.out.println("msg " + e.getMessage());
             System.out.println("loc " + e.getLocalizedMessage());
@@ -51,12 +53,11 @@ public class MQTTController {
             System.out.println("excep " + e);
             e.printStackTrace();
         }
-        System.out.println("Subscription could not be performed");
     }
 
     public void publish(String topic, String content) {
         try {
-            System.out.println("Publishing message: " + content);
+            System.out.println("Publishing message: " + content + "\nto: " + topic);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
             mqttClient.publish(topic, message);
@@ -64,6 +65,7 @@ public class MQTTController {
             System.out.println("Message published");
         } catch (MqttException e) {
             //Standard error printing
+            System.out.println("Message not published");
             System.out.println("reason " + e.getReasonCode());
             System.out.println("msg " + e.getMessage());
             System.out.println("loc " + e.getLocalizedMessage());
@@ -71,16 +73,15 @@ public class MQTTController {
             System.out.println("excep " + e);
             e.printStackTrace();
         }
-        System.out.println("Message not published");
     }
 
     public void disconnect() {
-        //Disconnect client
         try {
             mqttClient.disconnect();
             System.out.println("Disconnected");
         } catch (MqttException e) {
             //Standard error printing
+            System.out.println("Could not disconnect");
             System.out.println("reason " + e.getReasonCode());
             System.out.println("msg " + e.getMessage());
             System.out.println("loc " + e.getLocalizedMessage());
@@ -88,6 +89,5 @@ public class MQTTController {
             System.out.println("excep " + e);
             e.printStackTrace();
         }
-        System.out.println("Could not disconnect");
     }
 }

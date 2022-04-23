@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.res.ResourcesCompat;
 
 public class ManualControl extends AppCompatActivity {
@@ -29,12 +27,10 @@ public class ManualControl extends AppCompatActivity {
     private TextView speedStat;
     private TextView angleStat;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
-
 
         readMeScreen = findViewById(R.id.ReadMEScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
@@ -44,78 +40,53 @@ public class ManualControl extends AppCompatActivity {
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
 
+        readMeScreen.setOnClickListener(view -> openReadMEScreen());
 
+        manualControlScreen.setOnClickListener(view -> openManualScreen());
 
-        readMeScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openReadMEScreen();
-            }
-        });
-
-        manualControlScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openManualScreen();
-            }
-        });
-
-        drawControlScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDrawScreen();
-            }
-        });
+        drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
         innerCircle.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 circleOnTouch(motionEvent);
-
                 return false;
             }
         });
-
 
         outerCircle.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 circleOnTouch(motionEvent);
-
                 return false;
             }
-
         });
-
     }
 
     public void circleOnTouch(MotionEvent event){
-
         Drawable OC, IC;
         Resources res = getResources();
         OC = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
         IC = ResourcesCompat.getDrawable(res, R.drawable.inner_circle, null);
 
-        outerRadius = OC.getMinimumWidth()/2;
-        innerRadius = IC.getMinimumWidth()/2;
+        outerRadius = OC.getMinimumWidth() / 2;
+        innerRadius = IC.getMinimumWidth() / 2;
 
-        int traversX = (int)event.getRawX()-90;
-        int traversY = (int)event.getRawY()-90;
+        int traversX = (int)event.getRawX() - 90;
+        int traversY = (int)event.getRawY() - 90;
 
         double angle;
-        int startX = centerScrX ;
-        int startY = centerScrY ;
-        angle = (Math.toDegrees(Math.atan2((event.getRawY()-startY),(event.getRawX()-startX))*-1));
+        int startX = centerScrX;
+        int startY = centerScrY;
+        angle = (Math.toDegrees(Math.atan2((event.getRawY() - startY),(event.getRawX() - startX)) * -1));
 
         Pair screenDimension = getScreenDimensions();
 
-        centerScrX = (int) ((int)screenDimension.first/2);
-        centerScrY = (int) ((int)screenDimension.second/1.25);
+        centerScrX = (int) ((int)screenDimension.first / 2);
+        centerScrY = (int) ((int)screenDimension.second / 1.25);
 
-        float centerX = (int) (centerScrX -90);
-        float centerY = (int) (centerScrY -90);
+        float centerX = (int) (centerScrX - 90);
+        float centerY = (int) (centerScrY - 90);
 
         double joystickToPressedDistance = Math.sqrt(
                 Math.pow(centerScrX - event.getRawX(), 2) +
@@ -123,10 +94,10 @@ public class ManualControl extends AppCompatActivity {
         );
 
         //thumbstick clipping
-        if(joystickToPressedDistance > outerRadius) {
+        if (joystickToPressedDistance > outerRadius) {
             innerCircle.setX(centerX + (float) Math.cos(Math.toRadians(angle)) * outerRadius);
             innerCircle.setY(centerY + (float) Math.sin(Math.toRadians(angle)) * outerRadius * -1);
-        }else{
+        } else {
             innerCircle.setX(traversX);
             innerCircle.setY(traversY);
         }
@@ -135,29 +106,26 @@ public class ManualControl extends AppCompatActivity {
         outerCircle.setY(centerY-outerRadius);
 
 
-        if(event.getAction() == MotionEvent.ACTION_UP){
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             innerCircle.setX(centerX);
             innerCircle.setY(centerY);
         }
 
         carSpeed(event);
         carAngle(event);
-
     }
 
-    public void carSpeed(MotionEvent event){
-
+    public void carSpeed(MotionEvent event) {
         int speedTempX;
         int speedTempY;
 
+        speedTempX = (int) event.getRawX() - centerScrX;
+        speedTempY = (int) event.getRawY() - centerScrY;
 
-        speedTempX = (int) event.getRawX()-centerScrX;
-        speedTempY = (int) event.getRawY()-centerScrY;
-
-        if(speedTempX < 0 ){
-            speedTempX *= -1 ;
+        if (speedTempX < 0 ) {
+            speedTempX *= -1;
         }
-        if (speedTempY < 0){
+        if (speedTempY < 0) {
             speedTempY *= -1;
         }
 
@@ -169,51 +137,46 @@ public class ManualControl extends AppCompatActivity {
 
         if (speedTemp > outerRadius) speedTemp = outerRadius;
 
-        int speedProc = (speedTemp * 100)/outerRadius;
+        int speedProc = (speedTemp * 100) / outerRadius;
 
-
-        if(event.getAction() == MotionEvent.ACTION_UP){
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             speedProc = 0;
         }
-        speedStat.setText("The speed percentage: " + speedProc );
+        speedStat.setText("The speed percentage: " + speedProc);
     }
 
-
-    public void carAngle(MotionEvent event){
+    public void carAngle(MotionEvent event) {
         double angle;
-        int startX = centerScrX ;
-        int startY = centerScrY ;
-        angle = (Math.toDegrees(Math.atan2((event.getRawY()-startY),(event.getRawX()-startX))*-1));
+        int startX = centerScrX;
+        int startY = centerScrY;
+        angle = (Math.toDegrees(Math.atan2((event.getRawY() - startY),(event.getRawX() - startX)) * -1));
         if(event.getAction() == MotionEvent.ACTION_UP) angle = 0;
 
-        angleStat.setText("The angle is: "+ angle);
+        angleStat.setText("The angle is: " + angle);
     }
 
-
-    public Pair getScreenDimensions(){
+    public Pair<Integer, Integer> getScreenDimensions() {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
 
-        return new Pair(width, height);
+        return new Pair<>(width, height);
     }
 
-
-    public void openReadMEScreen(){
+    public void openReadMEScreen() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    public void openManualScreen(){
+    public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
         startActivity(intent);
     }
 
-    public void openDrawScreen(){
+    public void openDrawScreen() {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
-
 }
