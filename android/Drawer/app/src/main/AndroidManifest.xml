@@ -16,7 +16,7 @@
 
         <activity
             android:name=".DrawControl"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".ManualControl"
             android:exported="false" />
