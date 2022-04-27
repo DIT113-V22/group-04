@@ -1,11 +1,29 @@
+#include <MQTT.h>
+#include <WiFi.h>
 #include <Smartcar.h>
 
 //Variable declaration
+WiFiClient net;
+MQTTClient mqtt;
+
+const char ssid[] = "";
+const char pass[] = "";
+
 const unsigned long PULSES_PER_METER = 40;
-const unsigned short TRIGGER_PIN = 6;
-const unsigned short ECHO_PIN = 7;
-const unsigned int MAX_DISTANCE = 500;
-const unsigned int offset = 0;
+const unsigned int OFFSET = 0;
+
+const auto oneSecond = 1000UL;
+#ifdef __SMCE__
+const auto triggerPin = 6;
+const auto echoPin = 7;
+const auto mqttBrokerUrl = "127.0.0.1";
+#else
+const auto triggerPin = 33;
+const auto echoPin = 32;
+const auto mqttBrokerUrl = "127.0.0.1";
+#endif
+const auto maxDistance = 400;
+
 
 //Car creation
 ArduinoRuntime arduinoRuntime;
@@ -13,33 +31,66 @@ BrushedMotor leftMotor{arduinoRuntime, smartcarlib::pins::v2::leftMotorPins};
 BrushedMotor rightMotor{arduinoRuntime, smartcarlib::pins::v2::rightMotorPins};
 DifferentialControl control{leftMotor, rightMotor};
 DirectionalOdometer odometer(arduinoRuntime, smartcarlib::pins::v2::leftOdometerPins, []() {odometer.update();}, PULSES_PER_METER);
-GY50 gyroscope(arduinoRuntime, offset);
-SR04 ultrasonic(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+GY50 gyroscope(arduinoRuntime, OFFSET);
+SR04 ultrasonic(arduinoRuntime, triggerPin, echoPin, maxDistance);
 SmartCar car(arduinoRuntime, control, gyroscope, odometer);
 
 
 void setup(){
-    Serial.begin(9600);
-    Serial.println("Starting car at 60% speed");
-    car.setSpeed(60);
+  Serial.begin(9600);
+    
+  WiFi.begin(ssid, pass);
+  mqtt.begin(mqttBrokerUrl, 1883, net);
+
+  //Attempt WiFi connection
+  Serial.println("Connecting to WiFi...");
+  auto wifiStatus = WiFi.status();
+  while (wifiStatus != WL_CONNECTED && wifiStatus != WL_NO_SHIELD) {
+    Serial.println(wifiStatus);
+    Serial.print(".");
+    delay(1000);
+    wifiStatus = WiFi.status();
+  }
+  Serial.println("WiFi connected");
+
+  //Attempt MQTT connection
+  Serial.println("Connecting to MQTT broker");
+  while (!mqtt.connect("arduino", "public", "public")) {
+    Serial.print(".");
+    delay(1000);
+  }
+  Serial.println("Connected to MQTT broker.");
+
+  //MQTT subscription
+  mqtt.subscribe("/smartcar/control/#", 1);
+  mqtt.onMessage([](String topic, String message) {
+    if (topic == "/smartcar/control/throttle") {
+      car.setSpeed(message.toInt());
+    } else if (topic == "/smartcar/control/steering") {
+      car.setAngle(message.toInt());
+    } else {
+      Serial.println(topic + " " + message);
+    }
+  });
 }
 
 void loop() {
-    unsigned int distance = ultrasonic.getDistance();
+  unsigned int distance = ultrasonic.getDistance();
 
-    Serial.println(distance);
-
-    if (distance <= 100 && distance > 0) {
-        car.setSpeed(-50);
-        delay(200);
-        car.overrideMotorSpeed(100, -100);
-        delay(100);
-    } else {
-        car.setSpeed(40);
+  //Main MQTT loop
+  if (mqtt.connected()) {
+    mqtt.loop();
+    const auto currentTime = millis();
+    static auto previousTransmission = 0UL;
+    if (currentTime - previousTransmission >= oneSecond) {
+      previousTransmission = currentTime;
+      const auto current_distance = String(distance);
+      mqtt.publish("/smartcar/ultrasound/front", current_distance);
     }
+  }
 
-#ifdef __SMCE__
+  #ifdef __SMCE__
     // Avoid over-using the CPU if we are running in the emulator
     delay(1);
-#endif
+  #endif
 }
