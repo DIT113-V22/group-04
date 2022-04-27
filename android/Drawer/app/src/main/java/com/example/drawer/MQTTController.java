@@ -8,17 +8,17 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class MQTTController {
 
-    private final int qos = 2;
-    private final String broker = "tcp://10.0.2.2:1883";
-    private final String clientId = "MQTT-publisher";
-    MemoryPersistence persistence;
-    MqttClient mqttClient;
+    private static final int qos = 2;
+    private static final String broker = "tcp://10.0.2.2:1883";
+    private static final String clientId = "MQTT-publisher";
+    private static MemoryPersistence persistence;
+    private static MqttClient mqttClient;
 
-    public MQTTController() {
+    private MQTTController() {
         persistence = new MemoryPersistence();
     }
 
-    public void connect() {
+    public static void connect() {
         try {
             mqttClient = new MqttClient(broker, clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
@@ -39,7 +39,15 @@ public class MQTTController {
         }
     }
 
-    public void subscribe(String topic) {
+    public static boolean isConnected() {
+        return mqttClient.isConnected();
+    }
+
+    public static void subscribe(String topic) {
+        if (!isConnected()) {
+            System.out.println("Not connected to MQTT broker.");
+            return;
+        }
         try {
             mqttClient.subscribe(topic, 0);
             System.out.println("Subscribed to: " + topic);
@@ -55,7 +63,11 @@ public class MQTTController {
         }
     }
 
-    public void publish(String topic, String content) {
+    public static void publish(String topic, String content) {
+        if (!isConnected()) {
+            System.out.println("Not connected to MQTT broker.");
+            return;
+        }
         try {
             System.out.println("Publishing message: " + content + "\nto: " + topic);
             MqttMessage message = new MqttMessage(content.getBytes());
@@ -75,7 +87,11 @@ public class MQTTController {
         }
     }
 
-    public void disconnect() {
+    public static void disconnect() {
+        if (!isConnected()) {
+            System.out.println("Not connected to MQTT broker.");
+            return;
+        }
         try {
             mqttClient.disconnect();
             System.out.println("Disconnected");

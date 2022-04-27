@@ -2,7 +2,6 @@ package com.example.drawer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -37,42 +36,28 @@ public class DrawControl extends AppCompatActivity {
         speed = findViewById(R.id.speed);
 
 
-        seekBar.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-            }
+        seekBar.setOnSeekBarChangeListener(
+            new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
+                }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
+                }
+            });
 
-        readMeScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openReadMEScreen();
-            }
-        });
+        readMeScreen.setOnClickListener(view -> openReadMEScreen());
 
-        manualControlScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openManualScreen();
-            }
-        });
+        manualControlScreen.setOnClickListener(view -> openManualScreen());
 
-        drawControlScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDrawScreen();
-            }
-        });
+        drawControlScreen.setOnClickListener(view -> openDrawScreen());
     }
 
     public void openReadMEScreen(){

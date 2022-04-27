@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-//import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
@@ -27,16 +26,13 @@ public class ManualControl extends AppCompatActivity {
     private int centerScrY = 0;
     private TextView speedStat;
     private TextView angleStat;
-    private MQTTController mqttController;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
-        mqttController = new MQTTController();
-        mqttController.connect();
+        MQTTController.connect();
         innerCircle = findViewById(R.id.innerCircle);
 
 
@@ -89,7 +85,7 @@ public class ManualControl extends AppCompatActivity {
         int startY = centerScrY;
         angle = (Math.toDegrees(Math.atan2((event.getRawY() - startY),(event.getRawX() - startX)) * -1));
 
-        Pair screenDimension = getScreenDimensions();
+        Pair<Integer, Integer> screenDimension = getScreenDimensions();
 
         centerScrX = (int) ((int)screenDimension.first / 2);
         centerScrY = (int) ((int)screenDimension.second / 1.25);
@@ -98,7 +94,7 @@ public class ManualControl extends AppCompatActivity {
         float centerY = (int) (centerScrY - 90);
 
         double joystickToPressedDistance = Math.sqrt(
-                        Math.pow(centerScrX - event.getRawX(), 2) +
+                Math.pow(centerScrX - event.getRawX(), 2) +
                 Math.pow(centerScrY - event.getRawY(), 2)
         );
 
@@ -114,20 +110,17 @@ public class ManualControl extends AppCompatActivity {
         outerCircle.setX(centerX-outerRadius);
         outerCircle.setY(centerY-outerRadius);
 
-
         if (event.getAction() == MotionEvent.ACTION_UP) {
             innerCircle.setX(centerX);
             innerCircle.setY(centerY);
         }
 
 
-
         int carSpeed = carSpeed(event);
         double carAngle = carAngle(event);
 
-
-        mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
-        mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
+        MQTTController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
+        MQTTController.publish("/smartcar/control/steering", String.valueOf(carAngle));
 
     }
 
@@ -176,7 +169,7 @@ public class ManualControl extends AppCompatActivity {
         }else if(angle <= -90){
             angle = -180 - angle;
         }
-        if(event.getAction() == MotionEvent.ACTION_UP) angle = 0;
+        if (event.getAction() == MotionEvent.ACTION_UP) angle = 0;
         angleStat.setText("The angle is: " + angle);
 
         return angle;
