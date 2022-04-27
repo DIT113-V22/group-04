@@ -15,12 +15,13 @@ public class MainActivity extends AppCompatActivity {
     private Button readMeScreen;
     private Button manualControlScreen;
     private Button drawControlScreen;
+    private MQTTController mqttController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MQTTController mqttController = new MQTTController();
+        mqttController = new MQTTController();
 
         conBtn = findViewById(R.id.conBtn);
         conBtn.setOnClickListener(view -> mqttController.connect());
