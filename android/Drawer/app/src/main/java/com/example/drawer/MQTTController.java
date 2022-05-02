@@ -1,5 +1,13 @@
 package com.example.drawer;
 
+import android.content.Context;
+import android.nfc.Tag;
+import android.util.Log;
+import android.widget.Toast;
+
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -13,6 +21,7 @@ public class MQTTController {
     private static final String clientId = "MQTT-publisher";
     private static MemoryPersistence persistence;
     private static MqttClient mqttClient;
+    private static final String TAG = "MainActivity";
 
     private MQTTController() {
         persistence = new MemoryPersistence();
@@ -34,7 +43,7 @@ public class MQTTController {
             System.out.println("msg " + e.getMessage());
             System.out.println("loc " + e.getLocalizedMessage());
             System.out.println("cause " + e.getCause());
-            System.out.println("excep " + e);
+            System.out.println("except " + e);
             e.printStackTrace();
         }
     }
@@ -51,6 +60,23 @@ public class MQTTController {
         try {
             mqttClient.subscribe(topic, 0);
             System.out.println("Subscribed to: " + topic);
+            mqttClient.setCallback(new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable throwable) {
+                    //log
+                }
+
+                @Override
+                public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+                    Log.d(TAG, "topic: " + topic);
+                    Log.d(TAG, "message: " + new String(mqttMessage.getPayload()));
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                    //log
+                }
+            });
         } catch (MqttException e) {
             //Standard error printing
             System.out.println("Subscription could not be performed");
@@ -58,10 +84,18 @@ public class MQTTController {
             System.out.println("msg " + e.getMessage());
             System.out.println("loc " + e.getLocalizedMessage());
             System.out.println("cause " + e.getCause());
-            System.out.println("excep " + e);
+            System.out.println("except " + e);
             e.printStackTrace();
         }
     }
+
+//    public void unsubscribe(String topic, IMqttActionListener unsubscriptionCallback) {
+//        try {
+//            mqttClient.unsubscribe(topic, null, unsubscriptionCallback);
+//        } catch (MqttException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public static void publish(String topic, String content) {
         if (!isConnected()) {
@@ -82,7 +116,7 @@ public class MQTTController {
             System.out.println("msg " + e.getMessage());
             System.out.println("loc " + e.getLocalizedMessage());
             System.out.println("cause " + e.getCause());
-            System.out.println("excep " + e);
+            System.out.println("except " + e);
             e.printStackTrace();
         }
     }
@@ -102,7 +136,7 @@ public class MQTTController {
             System.out.println("msg " + e.getMessage());
             System.out.println("loc " + e.getLocalizedMessage());
             System.out.println("cause " + e.getCause());
-            System.out.println("excep " + e);
+            System.out.println("except " + e);
             e.printStackTrace();
         }
     }
