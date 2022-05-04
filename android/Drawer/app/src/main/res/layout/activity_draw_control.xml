@@ -4,8 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEEEEE">
+    android:background="#EEEEEE"><![CDATA[
     tools:context=".DrawControl">
+
+    ]]>
+
     <Button
         android:id="@+id/uploadButton"
         android:layout_width="94dp"
@@ -36,7 +39,7 @@
         android:hint="Enter text..."
         android:outlineAmbientShadowColor="#000000"
         android:outlineSpotShadowColor="#070000"
-        android:textColor="#130404"
+        android:textColor="#000000"
         android:textColorLink="#020000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,17 +50,18 @@
         android:id="@+id/speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="304dp"
-        android:text="TextView"
+        android:layout_marginTop="324dp"
+        android:text="Current speed:"
+        android:textColor="#77000000"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.767"
+        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="68dp"
-        android:layout_height="352dp"
+        android:layout_width="64dp"
+        android:layout_height="316dp"
         android:layout_marginEnd="4dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -87,7 +91,7 @@
             android:layout_marginTop="15dp"
             android:text="Speed"
             android:textAlignment="center"
-            android:textColor="#12000000" />
+            android:textColor="#78000000" />
     </FrameLayout>
 
 

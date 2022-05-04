@@ -90,6 +90,8 @@ public class DrawControl extends AppCompatActivity {
             new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    String speedText = Integer.toString(i);
+                    speedView.setText("Current speed:" + speedText);
                 }
 
                 @Override
