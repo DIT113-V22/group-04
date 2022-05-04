@@ -18,7 +18,7 @@ public class MQTTController {
     private static final int qos = 2;
     private static final String broker = "tcp://10.0.2.2:1883";
     private static final String clientId = "MQTT-publisher";
-    private static MemoryPersistence persistence;
+    private static final MemoryPersistence persistence = new MemoryPersistence();;
     private static MqttClient mqttClient;
     private static final String TAG = "MainActivity";
     private static final String STARTTAG = "Startup";
@@ -28,7 +28,7 @@ public class MQTTController {
     private static final HashMap<TextView, String> subscriptionMap = new HashMap<>();
 
     private MQTTController() {
-        persistence = new MemoryPersistence();
+
     }
 
     public static void connect() {
@@ -58,29 +58,22 @@ public class MQTTController {
                 @Override
                 public void messageArrived(String s, MqttMessage mqttMessage) {
                     String message = new String(mqttMessage.getPayload());
-                    Log.d(SUBTAG, "Topic:   " + s);
-                    Log.d(SUBTAG, "Message: " + message);
+
                     // TODO optimize, not crucial due to small size of hashmap, but needed eventually. -MH
                     // potentially make it topic keyed, then have lists of objects, could be good
                     subscriptionMap.forEach((text, topic) -> {
-                        Log.d(SUBTAG, ("text: " + text));
                         if (s.equals(topic)) text.setText(message);
                     });
                 }
 
                 @Override
                 public void deliveryComplete(IMqttDeliveryToken token) {
-                    Log.d(PUBTAG, "Delivery complete.");
+                    //needed for MQTT callback, useful for debugging.
                 }
             });
         } catch (MqttException e) {
             //Standard error printing
             Log.d(ETAG, "Could not connect");
-            Log.d(ETAG, "reason " + e.getReasonCode());
-            Log.d(ETAG, "msg " + e.getMessage());
-            Log.d(ETAG, "loc " + e.getLocalizedMessage());
-            Log.d(ETAG, "cause " + e.getCause());
-            Log.d(ETAG, "except " + e);
             e.printStackTrace();
         }
     }
@@ -105,11 +98,6 @@ public class MQTTController {
         } catch (MqttException e) {
             //Standard error printing
             Log.d(ETAG, "Subscription could not be performed");
-            Log.d(ETAG, "reason " + e.getReasonCode());
-            Log.d(ETAG, "msg " + e.getMessage());
-            Log.d(ETAG, "loc " + e.getLocalizedMessage());
-            Log.d(ETAG, "cause " + e.getCause());
-            Log.d(ETAG, "except " + e);
             e.printStackTrace();
         }
     }
@@ -125,16 +113,9 @@ public class MQTTController {
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
             mqttClient.publish(topic, message);
-
-            Log.d(PUBTAG, "Message published");
         } catch (MqttException e) {
             //Standard error printing
-            Log.d(ETAG, "Message not published");
-            Log.d(ETAG, "reason " + e.getReasonCode());
-            Log.d(ETAG, "msg " + e.getMessage());
-            Log.d(ETAG, "loc " + e.getLocalizedMessage());
-            Log.d(ETAG, "cause " + e.getCause());
-            Log.d(ETAG, "except " + e);
+            Log.d(ETAG, "Message could not be published");
             e.printStackTrace();
         }
     }
@@ -149,12 +130,7 @@ public class MQTTController {
             Log.d(TAG, "Disconnected");
         } catch (MqttException e) {
             //Standard error printing
-            Log.d(ETAG, "Could not disconnect");
-            Log.d(ETAG, "reason " + e.getReasonCode());
-            Log.d(ETAG, "msg " + e.getMessage());
-            Log.d(ETAG, "loc " + e.getLocalizedMessage());
-            Log.d(ETAG, "cause " + e.getCause());
-            Log.d(ETAG, "except " + e);
+            Log.d(ETAG, "Could not disconnect from broker");
             e.printStackTrace();
         }
     }
