@@ -35,7 +35,7 @@ public class DrawControl extends AppCompatActivity {
     Button uploadBttn;
     TextInputEditText text;
     SeekBar seekBar;
-    TextView speed;
+    TextView speedView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class DrawControl extends AppCompatActivity {
         uploadBttn = findViewById(R.id.uploadButton);
         text = findViewById(R.id.textBox);
         seekBar = findViewById(R.id.seekbar);
-        speed = findViewById(R.id.speed);
+        speedView = findViewById(R.id.speed);
         uploadedImage = findViewById(R.id.uploadedImage);
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
@@ -86,7 +86,6 @@ public class DrawControl extends AppCompatActivity {
             }
 
         });
-
         seekBar.setOnSeekBarChangeListener(
             new SeekBar.OnSeekBarChangeListener() {
                 @Override
