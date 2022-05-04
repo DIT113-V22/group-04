@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.widget.Button;
 import android.os.Bundle;
+import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -15,9 +16,11 @@ public class MainActivity extends AppCompatActivity {
     private Button readMeScreen;
     private Button manualControlScreen;
     private Button drawControlScreen;
+    public TextView text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MQTTController.init();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -31,7 +34,10 @@ public class MainActivity extends AppCompatActivity {
         disBtn.setOnClickListener(view -> MQTTController.disconnect());
 
         subBtn = findViewById(R.id.subBtn);
-        subBtn.setOnClickListener(view -> MQTTController.subscribe("/smartcar/ultrasound/front"));
+        subBtn.setOnClickListener(view -> MQTTController.subscribe("/smartcar/control/throttle"));
+        
+        text = findViewById(R.id.currentDistanceText);
+        MQTTController.update(text, "/smartcar/ultrasound/front");
 
         readMeScreen = findViewById(R.id.ReadMeScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);

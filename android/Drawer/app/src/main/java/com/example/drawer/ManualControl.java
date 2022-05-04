@@ -26,15 +26,17 @@ public class ManualControl extends AppCompatActivity {
     private int centerScrY = 0;
     private TextView speedStat;
     private TextView angleStat;
-
+    private TextView status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MQTTController.init();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
-        MQTTController.connect();
         innerCircle = findViewById(R.id.innerCircle);
 
+        status = findViewById(R.id.statusText);
+        MQTTController.update(status, "/smartcar/control/throttle");
 
         readMeScreen = findViewById(R.id.ReadMEScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
@@ -62,7 +64,6 @@ public class ManualControl extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 circleOnTouch(motionEvent);
-
                 return false;
             }
         });
