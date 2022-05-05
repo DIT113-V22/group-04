@@ -1,6 +1,11 @@
 name: Java Linter
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'android/**'
+      - 'tools/**'
+  pull_request:
 
 jobs:
   checkstyle_job:
@@ -14,6 +19,6 @@ jobs:
         uses: nikitasavinov/checkstyle-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: 'github-pr-check'
+          reporter: 'github-check'
           tool_name: 'reviewdog'
           checkstyle_config: '.github/chekstyle-config.txt'

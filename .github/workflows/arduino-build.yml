@@ -1,6 +1,10 @@
 name: Arduino CI
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'arduino/**'
+  pull_request:
 
 jobs:
   build-sketch:
