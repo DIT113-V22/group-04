@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EEEEEE"><![CDATA[
+    tools:context=".DrawControl">
+
+    ]]>
+
+    <Button
+        android:id="@+id/uploadButton"
+        android:layout_width="94dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="200dp"
+        android:text="Upload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.053"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/runButton"
+        android:layout_width="94dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="260dp"
+        android:text="RUN"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.053"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/textBox"
+        android:layout_width="109dp"
+        android:layout_height="180dp"
+        android:layout_marginStart="16dp"
+        android:hint="Enter text..."
+        android:outlineAmbientShadowColor="#000000"
+        android:outlineSpotShadowColor="#070000"
+        android:textColor="#000000"
+        android:textColorLink="#020000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.036" />
+
+    <TextView
+        android:id="@+id/speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="324dp"
+        android:text="Current speed:"
+        android:textColor="#77000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="64dp"
+        android:layout_height="316dp"
+        android:layout_marginEnd="4dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <SeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="267dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:max="50"
+            android:min="0"
+            android:progress="2"
+            android:progressDrawable="@android:drawable/screen_background_light"
+            android:progressTint="#8685EF"
+            android:rotation="270"
+            android:thumb="@android:drawable/edit_text"
+            android:thumbTint="#D3D0E3" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="56dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:text="Speed"
+            android:textAlignment="center"
+            android:textColor="#78000000" />
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Drawable Control"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.20" />
+
+    <Button
+        android:id="@+id/ManualScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manual Control"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ReadMEScreen"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/DrawScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Draw Control"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ReadMEScreen" />
+
+    <Button
+        android:id="@+id/ReadMEScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="INTRO"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.53"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/uploadedImage"
+        android:layout_width="344dp"
+        android:layout_height="280dp"
+        android:layout_marginTop="372dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/screen_background_light" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
