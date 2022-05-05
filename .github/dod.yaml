@@ -1,6 +1,9 @@
 dod:
   - 'Meaningful title and valuable description in pull request'
+  - 'Documentation updated to cover the changes implemented (including changes to the wiki)'
   - 'Code change tested manually if not covered by automated tests'
+  - 'Specified any additions, alterations or removals of dependencies'
+  - 'Followed the code style present in the project'
   - 'Pull request linked to one or more issues/stories'
   - 'Acceptance criteria of the linked stories satisfied'
   - 'Code change comprehended by those who approved it'
