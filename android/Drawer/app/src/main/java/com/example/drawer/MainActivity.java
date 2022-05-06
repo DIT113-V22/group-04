@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private Button readMeScreen;
     private Button manualControlScreen;
     private Button drawControlScreen;
+    private Button tempCanvasScreen;
     public TextView text;
 
     @Override
@@ -42,12 +43,17 @@ public class MainActivity extends AppCompatActivity {
         readMeScreen = findViewById(R.id.ReadMeScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
         drawControlScreen = findViewById(R.id.DrawScreen);
+        tempCanvasScreen = findViewById(R.id.tempcanvas);
+
+
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
 
         manualControlScreen.setOnClickListener(view -> openManualScreen());
 
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
+
+        tempCanvasScreen.setOnClickListener(view -> openCanvasScreen());
     }
 
     public void openReadMEScreen(){
@@ -62,6 +68,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void openDrawScreen(){
         Intent intent = new Intent(this, DrawControl.class);
+        startActivity(intent);
+    }
+
+    public void openCanvasScreen(){
+        Intent intent = new Intent(this, TempCanvas.class);
         startActivity(intent);
     }
 }

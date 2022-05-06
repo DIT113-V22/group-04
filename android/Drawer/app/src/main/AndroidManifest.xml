@@ -22,6 +22,9 @@
             android:name=".ManualControl"
             android:exported="false" />
         <activity
+            android:name=".TempCanvas"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
