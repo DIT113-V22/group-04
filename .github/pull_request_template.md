@@ -22,9 +22,4 @@ e.g.
 
 # Checklist
 
-- [ ] I have updated the relevant documentation to cover the changes implemented. (including changes to the wiki)
-- [ ] I have specified any additions, alterations or removals of dependencies.
-- [ ] I have followed the code style present in the project.
-- [ ] I have updated or added tests as necessary to cover the changes implemented.
-
-<!--Fill in the checklist brackets with x like "[x]" to denote something which has been completed-->
+<!-- Leave blank as dod checker provides checklist once pull request is created -->
