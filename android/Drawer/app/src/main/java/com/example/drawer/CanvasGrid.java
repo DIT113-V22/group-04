@@ -9,6 +9,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+/*
+    Class is based on the answer from "Mike M" to the question posed in this Stackoverflow
+    thread: https://stackoverflow.com/questions/24842550/2d-array-grid-on-drawing-canvas
+ */
+
 public class CanvasGrid extends View {
     private int numColumns;
     private int numRows;
