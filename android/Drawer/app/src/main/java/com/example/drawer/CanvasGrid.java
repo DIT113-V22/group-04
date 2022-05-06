@@ -27,6 +27,7 @@ public class CanvasGrid extends View {
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
     }
 
+    //getter
     public int getNumColumns() {
         return numColumns;
     }
@@ -35,6 +36,12 @@ public class CanvasGrid extends View {
         return numRows;
     }
 
+    public int getCellLength() {
+        return cellLength;
+    }
+
+
+    //setter
     public void setNumColumns(int numColumns) {
         this.numColumns = numColumns;
         calculateDimensions();
@@ -44,6 +51,11 @@ public class CanvasGrid extends View {
         this.numRows = numRows;
         calculateDimensions();
     }
+
+    public void setCellLength(int cellLength) {
+        this.cellLength = cellLength;
+    }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -71,7 +83,7 @@ public class CanvasGrid extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.WHITE);
+        //canvas.drawColor(Color.WHITE);
 
         if (numColumns == 0 || numRows == 0) {
             return;
@@ -80,16 +92,19 @@ public class CanvasGrid extends View {
         int width = getWidth();
         int height = getHeight();
 
+
         for (int i = 0; i < numColumns; i++) {
             for (int j = 0; j < numRows; j++) {
-                if (cellChecked[i][j]) {
 
-                    canvas.drawRect(i * cellLength, j * cellLength,
-                            (i + 1) * cellLength, (j + 1) * cellLength,
-                            blackPaint);
-                }
+                    if (cellChecked[i][j]) {
+
+                        canvas.drawRect(i * cellLength, j * cellLength,
+                                (i + 1) * cellLength, (j + 1) * cellLength,
+                                blackPaint);
+                    }
             }
         }
+
 
         for (int i = 1; i < numColumns; i++) {
             canvas.drawLine(i * cellLength, 0, i * cellLength, height, blackPaint);
@@ -127,7 +142,12 @@ public class CanvasGrid extends View {
             Log.d("infinte", String.valueOf(row));
             Log.d("infinte", String.valueOf(column));
 
-            cellChecked[column-1][row-1] = true;
+            try {
+                cellChecked[column][row] = true;
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
             invalidate();
 
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -143,7 +163,11 @@ public class CanvasGrid extends View {
 //                column = 15;
 //            }
 
-            cellChecked[column-1][row-1] = true;
+            try {
+                cellChecked[column][row] = true;
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             invalidate();
         }
 
