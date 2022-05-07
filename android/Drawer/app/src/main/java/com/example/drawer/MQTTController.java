@@ -1,6 +1,9 @@
 package com.example.drawer;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -11,7 +14,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class MQTTController {
 
@@ -25,7 +30,10 @@ public class MQTTController {
     private static final String SUBTAG = "Subscription";
     private static final String PUBTAG = "Publishing";
     private static final String ETAG = "Error";
-    private static final HashMap<TextView, String> subscriptionMap = new HashMap<>();
+    private static final HashMap<String, HashSet<TextView>> subscriptionMap = new HashMap<>();
+    private static final int IMAGE_WIDTH = 320;
+    private static final int IMAGE_HEIGHT = 240;
+    private static final ArrayList<ImageView> cameraViews = new ArrayList<>();
 
     private MQTTController() {
 
@@ -56,14 +64,27 @@ public class MQTTController {
                 }
 
                 @Override
-                public void messageArrived(String s, MqttMessage mqttMessage) {
+                public void messageArrived(String topic, MqttMessage mqttMessage) {
+                    if (topic.equals("/smartcar/camera")) {
+                        final Bitmap bm = Bitmap.createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, Bitmap.Config.ARGB_8888);
+
+                        final byte[] payload = mqttMessage.getPayload();
+                        final int[] colors = new int[IMAGE_WIDTH * IMAGE_HEIGHT];
+                        for (int ci = 0; ci < colors.length; ++ci) {
+                            final int r = payload[3 * ci] & 0xFF;
+                            final int g = payload[3 * ci + 1] & 0xFF;
+                            final int b = payload[3 * ci + 2] & 0xFF;
+                            colors[ci] = Color.rgb(r, g, b);
+                        }
+                        bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+                        cameraViews.get(0).setImageBitmap(bm);
+                    }
+
                     String message = new String(mqttMessage.getPayload());
 
-                    // TODO optimize, not crucial due to small size of hashmap, but needed eventually. -MH
-                    // potentially make it topic keyed, then have lists of objects, could be good
-                    subscriptionMap.forEach((text, topic) -> {
-                        if (s.equals(topic)) text.setText(message);
-                    });
+                    if (subscriptionMap.get(topic) != null) {
+                        subscriptionMap.get(topic).forEach(textView -> textView.setText(message));
+                    }
                 }
 
                 @Override
@@ -83,8 +104,19 @@ public class MQTTController {
         return !mqttClient.isConnected();
     }
 
-    public static void update(TextView text, String topic) {
-        subscriptionMap.put(text, topic);
+    public static void updateTextView(TextView textView, String topic) {
+        HashSet<TextView> textViewArrayList = subscriptionMap.get(topic);
+        if (textViewArrayList != null) {
+            textViewArrayList.add(textView);
+        } else {
+            textViewArrayList = new HashSet<>();
+            textViewArrayList.add(textView);
+        }
+        subscriptionMap.put(topic, textViewArrayList);
+    }
+
+    public static void updateCamera(ImageView imageView) {
+        cameraViews.add(imageView);
     }
 
     public static void subscribe(String topic) {

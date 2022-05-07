@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.widget.Button;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -34,10 +35,14 @@ public class MainActivity extends AppCompatActivity {
         disBtn.setOnClickListener(view -> MQTTController.disconnect());
 
         subBtn = findViewById(R.id.subBtn);
-        subBtn.setOnClickListener(view -> MQTTController.subscribe("/smartcar/control/throttle"));
+        subBtn.setOnClickListener(view -> {
+            MQTTController.subscribe("/smartcar/startup");
+            MQTTController.subscribe("/smartcar/camera");
+            MQTTController.subscribe("/smartcar/control/throttle");
+        });
         
         text = findViewById(R.id.currentDistanceText);
-        MQTTController.update(text, "/smartcar/ultrasound/front");
+        MQTTController.updateTextView(text, "/smartcar/control/throttle");
 
         readMeScreen = findViewById(R.id.ReadMeScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);

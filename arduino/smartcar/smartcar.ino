@@ -1,6 +1,9 @@
 #include <MQTT.h>
 #include <WiFi.h>
 #include <Smartcar.h>
+#ifdef __SMCE__
+#include <OV767X.h>
+#endif
 
 //Variable declaration
 WiFiClient net;
@@ -24,6 +27,8 @@ const auto mqttBrokerUrl = "127.0.0.1";
 #endif
 const auto maxDistance = 400;
 
+std::vector<char> frameBuffer;
+
 
 //Car creation
 ArduinoRuntime arduinoRuntime;
@@ -41,6 +46,11 @@ void setup(){
     
   WiFi.begin(ssid, pass);
   mqtt.begin(mqttBrokerUrl, 1883, net);
+
+  #ifdef __SMCE__
+    Camera.begin(QVGA, RGB888, 15);
+    frameBuffer.resize(Camera.width() * Camera.height() * Camera.bytesPerPixel());
+  #endif
 
   //Attempt WiFi connection
   Serial.println("Connecting to WiFi...");
@@ -87,6 +97,16 @@ void loop() {
       const auto current_distance = String(distance);
       mqtt.publish("/smartcar/ultrasound/front", current_distance);
     }
+
+    //camera
+    #ifdef __SMCE__
+      static auto previousCameraTransmission = 0UL;
+      if (currentTime - previousCameraTransmission >= 65) { //15fps
+        previousCameraTransmission = currentTime;
+        Camera.readFrame(frameBuffer.data());
+        mqtt.publish("/smartcar/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
+      }
+    #endif
   }
 
   #ifdef __SMCE__
