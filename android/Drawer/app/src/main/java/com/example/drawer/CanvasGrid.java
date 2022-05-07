@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 /*
     Class is based on the answer from "Mike M" to the question posed in this Stackoverflow
@@ -59,6 +61,7 @@ public class CanvasGrid extends View {
 
     public void setCellLength(int cellLength) {
         this.cellLength = cellLength;
+        calculateDimensions();
     }
 
 
@@ -82,6 +85,13 @@ public class CanvasGrid extends View {
         //cellLength = 32;
 
         cellChecked = new boolean[numColumns][numRows];
+
+        int width =  cellLength * numColumns;
+        int heigth = cellLength * numRows;
+
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        layoutParams.width = width;
+        layoutParams.height = heigth;
 
         invalidate();
     }

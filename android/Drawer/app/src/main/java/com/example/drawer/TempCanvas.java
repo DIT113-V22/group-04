@@ -22,8 +22,8 @@ public class TempCanvas extends Activity {
         //CanvasGrid pixelGrid = new CanvasGrid(this);
         CanvasGrid pixelGrid = findViewById(R.id.canvasGrid);
         //pixelGrid = new CanvasGrid(this);
-        pixelGrid.setNumColumns(60);
-        pixelGrid.setNumRows(60);
+        pixelGrid.setNumColumns(90);
+        pixelGrid.setNumRows(150);
         pixelGrid.setCellLength(10);
 
         //LayoutParams params = new LayoutParams(1000, 1400);
