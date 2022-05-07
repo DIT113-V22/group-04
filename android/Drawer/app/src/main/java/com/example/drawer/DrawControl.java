@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -32,10 +34,15 @@ public class DrawControl extends AppCompatActivity {
     private Button drawControlScreen;
     ImageView uploadedImage;
     Button runBttn;
-    Button uploadBttn;
+    ImageButton uploadBttn;
+    ImageButton downloadBttn;
+    ImageButton clearBttn;
+    EditText numberViewWidth;
+    EditText numberViewHeight;
     TextInputEditText text;
     SeekBar seekBar;
     TextView speedView;
+    CanvasGrid pixelGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +53,21 @@ public class DrawControl extends AppCompatActivity {
         manualControlScreen = findViewById(R.id.ManualScreen);
         drawControlScreen = findViewById(R.id.DrawScreen);
         runBttn = findViewById(R.id.runButton);
-        uploadBttn = findViewById(R.id.uploadButton);
-        text = findViewById(R.id.textBox);
+        uploadBttn = findViewById(R.id.uploadBttn);
+        downloadBttn = findViewById(R.id.downloadBttn);
+        clearBttn = findViewById(R.id.clearBttn);
+        numberViewWidth = findViewById(R.id.numberViewWidth);
+        numberViewHeight = findViewById(R.id.numberViewHeight);
+        pixelGrid = findViewById(R.id.pixelGridA);
+
+        pixelGrid.setCellLength(20);
+        pixelGrid.setNumColumns(100);
+        pixelGrid.setNumRows(150);
+
+        //text = findViewById(R.id.textBox);
         seekBar = findViewById(R.id.seekbar);
         speedView = findViewById(R.id.speed);
-        uploadedImage = findViewById(R.id.uploadedImage);
+        //uploadedImage = findViewById(R.id.uploadedImage);
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
