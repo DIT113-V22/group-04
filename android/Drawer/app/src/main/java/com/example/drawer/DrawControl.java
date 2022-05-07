@@ -1,13 +1,9 @@
 package com.example.drawer;
-
-import static android.R.color.black;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.location.GnssAntennaInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
