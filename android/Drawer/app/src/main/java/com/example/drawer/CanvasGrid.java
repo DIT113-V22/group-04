@@ -17,13 +17,22 @@ import android.widget.RelativeLayout;
  */
 
 public class CanvasGrid extends View {
-    private int numColumns;
-    private int numRows;
+    public enum ResizeMode{
+        AUTO_RESIZE,
+        FIT_CONTENT
+    }
+
+    //variables
+    private ResizeMode resizeMode = ResizeMode.FIT_CONTENT;
+    private int numColumns = 4;
+    private int numRows = 4;
     private int cellLength = 32;
 
     private Paint blackPaint = new Paint();
     private boolean[][] cellChecked = new boolean[50][100];
 
+
+    //constructors
     public CanvasGrid(Context context) {
         //this(context, null);
         super(context);
@@ -33,6 +42,8 @@ public class CanvasGrid extends View {
         super(context, attrs);
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
     }
+
+
 
     //getter
     public int getNumColumns() {
@@ -46,6 +57,11 @@ public class CanvasGrid extends View {
     public int getCellLength() {
         return cellLength;
     }
+
+    public ResizeMode getResizeMode() {
+        return resizeMode;
+    }
+
 
 
     //setter
@@ -61,6 +77,11 @@ public class CanvasGrid extends View {
 
     public void setCellLength(int cellLength) {
         this.cellLength = cellLength;
+        calculateDimensions();
+    }
+
+    public void setResizeMode(ResizeMode resizeMode) {
+        this.resizeMode = resizeMode;
         calculateDimensions();
     }
 
@@ -84,14 +105,26 @@ public class CanvasGrid extends View {
         //cellLength = h / numRows;
         //cellLength = 32;
 
-        cellChecked = new boolean[numColumns][numRows];
-
-        int width =  cellLength * numColumns;
-        int heigth = cellLength * numRows;
 
         ViewGroup.LayoutParams layoutParams = getLayoutParams();
-        layoutParams.width = width;
-        layoutParams.height = heigth;
+
+        if (resizeMode.equals(ResizeMode.AUTO_RESIZE)) {
+            int width = cellLength * numColumns;
+            int heigth = cellLength * numRows;
+
+            layoutParams.width = width;
+            layoutParams.height = heigth;
+
+        } else if (resizeMode.equals(ResizeMode.FIT_CONTENT)){
+            int width = layoutParams.width;
+            int heigth = layoutParams.height;
+
+            numColumns = (int) Math.floor( width / cellLength );
+            numRows = (int) Math.floor( (heigth / cellLength) );
+
+        }
+
+        cellChecked = new boolean[numColumns][numRows];
 
         invalidate();
     }
@@ -104,8 +137,9 @@ public class CanvasGrid extends View {
             return;
         }
 
-        int width = getWidth();
-        int height = getHeight();
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
+
 
 
         for (int i = 0; i < numColumns; i++) {
@@ -122,11 +156,11 @@ public class CanvasGrid extends View {
 
 
         for (int i = 1; i < numColumns; i++) {
-            canvas.drawLine(i * cellLength, 0, i * cellLength, height, blackPaint);
+            canvas.drawLine(i * cellLength, 0, i * cellLength, getNumRows() * cellLength, blackPaint);
         }
 
         for (int i = 1; i < numRows; i++) {
-            canvas.drawLine(0, i * cellLength, width, i * cellLength, blackPaint);
+            canvas.drawLine(0, i * cellLength, getNumColumns() * cellLength, i * cellLength, blackPaint);
         }
     }
 

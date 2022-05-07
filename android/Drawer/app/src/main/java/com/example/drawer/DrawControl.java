@@ -1,12 +1,18 @@
 package com.example.drawer;
 
+import static android.R.color.black;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.location.GnssAntennaInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,7 +43,7 @@ public class DrawControl extends AppCompatActivity {
     ImageButton uploadBttn;
     ImageButton downloadBttn;
     ImageButton clearBttn;
-    EditText numberViewWidth;
+    EditText numberViewCellSize;
     EditText numberViewHeight;
     TextInputEditText text;
     SeekBar seekBar;
@@ -56,13 +62,14 @@ public class DrawControl extends AppCompatActivity {
         uploadBttn = findViewById(R.id.uploadBttn);
         downloadBttn = findViewById(R.id.downloadBttn);
         clearBttn = findViewById(R.id.clearBttn);
-        numberViewWidth = findViewById(R.id.numberViewWidth);
-        numberViewHeight = findViewById(R.id.numberViewHeight);
+        numberViewCellSize = findViewById(R.id.numberViewCellSize);
+        //numberViewHeight = findViewById(R.id.numberViewHeight);
         pixelGrid = findViewById(R.id.pixelGridA);
 
         pixelGrid.setCellLength(20);
-        pixelGrid.setNumColumns(100);
-        pixelGrid.setNumRows(150);
+        pixelGrid.setResizeMode(CanvasGrid.ResizeMode.FIT_CONTENT);
+
+
 
         //text = findViewById(R.id.textBox);
         seekBar = findViewById(R.id.seekbar);
@@ -109,6 +116,7 @@ public class DrawControl extends AppCompatActivity {
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     String speedText = Integer.toString(i);
                     speedView.setText("Current speed:" + speedText);
+                    speedView.setTextColor(Color.BLACK);
                 }
 
                 @Override
@@ -121,6 +129,37 @@ public class DrawControl extends AppCompatActivity {
 
                 }
             });
+
+        numberViewCellSize.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    int value = 1;
+                    value = Integer.parseInt(numberViewCellSize.getText().toString());
+                    if(value > 4) {
+                       pixelGrid.setCellLength(value);
+                       speedView.setText("Current speed:" + seekBar.getProgress());
+                       speedView.setTextColor(Color.BLACK);
+                    } else {
+                       throw new Exception();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    speedView.setText("Number must be\n       over > 4");
+                    speedView.setTextColor(Color.RED);
+                }
+
+            }
+        });
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
 

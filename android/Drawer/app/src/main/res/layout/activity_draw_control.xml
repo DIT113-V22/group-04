@@ -76,11 +76,11 @@
         android:layout_width="33dp"
         android:layout_height="538dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/runButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.352">
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
 
         <SeekBar
             android:id="@+id/seekbar"
@@ -144,7 +144,7 @@
         android:layout_width="83dp"
         android:layout_height="18dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:text="Speed"
         android:textAlignment="center"
         android:textColor="#78000000"
@@ -155,43 +155,33 @@
 
     <TextView
         android:id="@+id/speed"
-        android:layout_width="55dp"
-        android:layout_height="27dp"
-        android:layout_marginTop="28dp"
-        android:text="CR"
+        android:layout_width="117dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="636dp"
+        android:text="Curent Speed: 0"
         android:textColor="#77000000"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.955"
+        app:layout_constraintHorizontal_bias="0.523"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/numberViewWidth"
-        android:layout_width="112dp"
-        android:layout_height="44dp"
+        android:id="@+id/numberViewCellSize"
+        android:layout_width="106dp"
+        android:layout_height="48dp"
         android:layout_marginTop="624dp"
+        android:layout_marginBottom="10dp"
         android:ems="10"
-        android:hint="Width"
+        android:textColor="@color/black"
+        android:hint="Cell Size"
         android:inputType="number"
         android:textColorHint="#d1d1d1"
+        app:layout_constraintBottom_toTopOf="@+id/ReadMEScreen"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.083"
+        app:layout_constraintHorizontal_bias="0.091"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/numberViewHeight"
-        android:layout_width="112dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="624dp"
-        android:ems="10"
-        android:hint="Height"
-        android:inputType="number"
-        android:textColorHint="#d1d1d1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.458"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.example.drawer.CanvasGrid
         android:id="@+id/pixelGridA"
@@ -200,6 +190,8 @@
         android:layout_marginTop="68dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toStartOf="@+id/frameLayout"
+        app:layout_constraintHorizontal_bias="0.892"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
