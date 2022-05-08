@@ -1,4 +1,5 @@
 package com.example.drawer;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,8 +24,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.textfield.TextInputEditText;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -35,13 +34,11 @@ public class DrawControl extends AppCompatActivity {
     private Button manualControlScreen;
     private Button drawControlScreen;
     ImageView uploadedImage;
-    Button runBttn;
-    ImageButton uploadBttn;
-    ImageButton downloadBttn;
-    ImageButton clearBttn;
+    Button runBtn;
+    ImageButton uploadBtn;
+    ImageButton downloadBtn;
+    ImageButton clearBtn;
     EditText numberViewCellSize;
-    EditText numberViewHeight;
-    TextInputEditText text;
     SeekBar seekBar;
     TextView speedView;
     CanvasGrid pixelGrid;
@@ -54,23 +51,20 @@ public class DrawControl extends AppCompatActivity {
         readMeScreen = findViewById(R.id.ReadMEScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
         drawControlScreen = findViewById(R.id.DrawScreen);
-        runBttn = findViewById(R.id.runButton);
-        uploadBttn = findViewById(R.id.uploadBttn);
-        downloadBttn = findViewById(R.id.downloadBttn);
-        clearBttn = findViewById(R.id.clearBttn);
-        numberViewCellSize = findViewById(R.id.numberViewCellSize);
-        //numberViewHeight = findViewById(R.id.numberViewHeight);
-        pixelGrid = findViewById(R.id.pixelGridA);
 
+        runBtn = findViewById(R.id.runButton);
+        uploadBtn = findViewById(R.id.uploadBttn);
+        downloadBtn = findViewById(R.id.downloadBttn);
+        clearBtn = findViewById(R.id.clearBttn);
+
+        numberViewCellSize = findViewById(R.id.numberViewCellSize);
+
+        pixelGrid = findViewById(R.id.pixelGridA);
         pixelGrid.setCellLength(20);
         pixelGrid.setResizeMode(CanvasGrid.ResizeMode.FIT_CONTENT);
 
-
-
-        //text = findViewById(R.id.textBox);
         seekBar = findViewById(R.id.seekbar);
         speedView = findViewById(R.id.speed);
-        //uploadedImage = findViewById(R.id.uploadedImage);
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -94,7 +88,7 @@ public class DrawControl extends AppCompatActivity {
                         }
                     }
                 });
-        uploadBttn.setOnClickListener(new View.OnClickListener() {
+        uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
@@ -127,6 +121,7 @@ public class DrawControl extends AppCompatActivity {
             });
 
         numberViewCellSize.addTextChangedListener(new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -134,13 +129,15 @@ public class DrawControl extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                }
+
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
                 try {
-                    int value = 1;
+                    int value;
                     value = Integer.parseInt(numberViewCellSize.getText().toString());
+
                     if(value > 4) {
                        pixelGrid.setCellLength(value);
                        speedView.setText("Current speed:" + seekBar.getProgress());
@@ -148,19 +145,18 @@ public class DrawControl extends AppCompatActivity {
                     } else {
                        throw new Exception();
                     }
+
                 }catch (Exception e){
                     e.printStackTrace();
                     speedView.setText("Number must be\n       over > 4");
                     speedView.setTextColor(Color.RED);
                 }
-
             }
+
         });
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
-
         manualControlScreen.setOnClickListener(view -> openManualScreen());
-
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
     }
 

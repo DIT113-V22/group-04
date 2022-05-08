@@ -6,22 +6,6 @@
     android:layout_height="match_parent"
     android:background="#EEEEEE"><![CDATA[
     tools:context=".DrawControl">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     ]]>
 
     <ImageButton
@@ -193,6 +177,5 @@
         app:layout_constraintHorizontal_bias="0.892"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,14 +2,12 @@ package com.example.drawer;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 /*
     Class is based on the answer from "Mike M" to the question posed in this Stackoverflow
@@ -17,24 +15,22 @@ import android.widget.RelativeLayout;
  */
 
 public class CanvasGrid extends View {
+
     public enum ResizeMode{
         AUTO_RESIZE,
         FIT_CONTENT
     }
 
-    //variables
+    // Attributes
     private ResizeMode resizeMode = ResizeMode.FIT_CONTENT;
     private int numColumns = 4;
     private int numRows = 4;
     private int cellLength = 32;
-
     private Paint blackPaint = new Paint();
     private boolean[][] cellChecked = new boolean[50][100];
 
-
-    //constructors
+    // Constructors
     public CanvasGrid(Context context) {
-        //this(context, null);
         super(context);
     }
 
@@ -43,9 +39,7 @@ public class CanvasGrid extends View {
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
     }
 
-
-
-    //getter
+    // Getters
     public int getNumColumns() {
         return numColumns;
     }
@@ -54,27 +48,11 @@ public class CanvasGrid extends View {
         return numRows;
     }
 
-    public int getCellLength() {
-        return cellLength;
-    }
-
     public ResizeMode getResizeMode() {
         return resizeMode;
     }
 
-
-
-    //setter
-    public void setNumColumns(int numColumns) {
-        this.numColumns = numColumns;
-        calculateDimensions();
-    }
-
-    public void setNumRows(int numRows) {
-        this.numRows = numRows;
-        calculateDimensions();
-    }
-
+    // Setters
     public void setCellLength(int cellLength) {
         this.cellLength = cellLength;
         calculateDimensions();
@@ -84,7 +62,6 @@ public class CanvasGrid extends View {
         this.resizeMode = resizeMode;
         calculateDimensions();
     }
-
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -98,62 +75,42 @@ public class CanvasGrid extends View {
             return;
         }
 
-        //cellLength = getWidth() / numColumns;
-        //int h = getHeight();
-        //int h = 510;
-
-        //cellLength = h / numRows;
-        //cellLength = 32;
-
-
         ViewGroup.LayoutParams layoutParams = getLayoutParams();
 
         if (resizeMode.equals(ResizeMode.AUTO_RESIZE)) {
             int width = cellLength * numColumns;
-            int heigth = cellLength * numRows;
+            int height = cellLength * numRows;
 
             layoutParams.width = width;
-            layoutParams.height = heigth;
+            layoutParams.height = height;
 
         } else if (resizeMode.equals(ResizeMode.FIT_CONTENT)){
             int width = layoutParams.width;
-            int heigth = layoutParams.height;
+            int height = layoutParams.height;
 
             numColumns = (int) Math.floor( width / cellLength );
-            numRows = (int) Math.floor( (heigth / cellLength) );
-
+            numRows = (int) Math.floor( (height / cellLength) );
         }
 
         cellChecked = new boolean[numColumns][numRows];
-
         invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        //canvas.drawColor(Color.WHITE);
-
         if (numColumns == 0 || numRows == 0) {
             return;
         }
 
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-
-
-
         for (int i = 0; i < numColumns; i++) {
             for (int j = 0; j < numRows; j++) {
-
-                    if (cellChecked[i][j]) {
-
-                        canvas.drawRect(i * cellLength, j * cellLength,
-                                (i + 1) * cellLength, (j + 1) * cellLength,
-                                blackPaint);
-                    }
+                if (cellChecked[i][j]) {
+                    canvas.drawRect(i * cellLength, j * cellLength,
+                            (i + 1) * cellLength, (j + 1) * cellLength,
+                            blackPaint);
+                }
             }
         }
-
 
         for (int i = 1; i < numColumns; i++) {
             canvas.drawLine(i * cellLength, 0, i * cellLength, getNumRows() * cellLength, blackPaint);
@@ -166,34 +123,14 @@ public class CanvasGrid extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        Log.d("logfalse", String.valueOf(cellChecked[0][0]));
-
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-            float x = event.getX();
-            float y = event.getY();
-
-            Log.d("infinte", String.valueOf(x));
-            Log.d("celll", String.valueOf(cellLength));
 
             int column = (int)(event.getX() / cellLength);
             int row = (int)(event.getY() / cellLength);
 
-//            if (row >= 30 || row < 0) {
-//                row = 29;
-//            }
-//
-//            if (column >= 16 || column < 0) {
-//                column = 15;
-//            }
-
-            Log.d("infinte", String.valueOf(row));
-            Log.d("infinte", String.valueOf(column));
-
             try {
                 cellChecked[column][row] = true;
-            }catch(Exception e){
+            } catch(Exception e) {
                 e.printStackTrace();
             }
 
@@ -204,22 +141,16 @@ public class CanvasGrid extends View {
             int column = (int)(event.getX() / cellLength);
             int row = (int)(event.getY() / cellLength);
 
-//            if (row >= 30 || row < 0) {
-//                row = 29;
-//            }
-//
-//            if (column >= 16 || column < 0) {
-//                column = 15;
-//            }
-
             try {
                 cellChecked[column][row] = true;
-            }catch(Exception e){
+            } catch(Exception e) {
                 e.printStackTrace();
             }
+
             invalidate();
         }
 
         return true;
     }
+
 }

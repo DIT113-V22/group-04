@@ -6,17 +6,15 @@ import android.widget.Button;
 import android.os.Bundle;
 import android.widget.TextView;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private Button pubBtn;
     private Button disBtn;
     private Button conBtn;
     private Button subBtn;
-    private Button readMeScreen;
-    private Button manualControlScreen;
-    private Button drawControlScreen;
-    private Button tempCanvasScreen;
+    private Button introScreenBtn;
+    private Button manualControlScreenBtn;
+    private Button drawControlScreenBtn;
     public TextView text;
 
     @Override
@@ -40,20 +38,13 @@ public class MainActivity extends AppCompatActivity {
         text = findViewById(R.id.currentDistanceText);
         MQTTController.update(text, "/smartcar/ultrasound/front");
 
-        readMeScreen = findViewById(R.id.ReadMeScreen);
-        manualControlScreen = findViewById(R.id.ManualScreen);
-        drawControlScreen = findViewById(R.id.DrawScreen);
-        tempCanvasScreen = findViewById(R.id.tempcanvas);
+        introScreenBtn = findViewById(R.id.ReadMeScreen);
+        manualControlScreenBtn = findViewById(R.id.ManualScreen);
+        drawControlScreenBtn = findViewById(R.id.DrawScreen);
 
-
-
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
-
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
-
-        tempCanvasScreen.setOnClickListener(view -> openCanvasScreen());
+        introScreenBtn.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreenBtn.setOnClickListener(view -> openManualScreen());
+        drawControlScreenBtn.setOnClickListener(view -> openDrawScreen());
     }
 
     public void openReadMEScreen(){
@@ -71,8 +62,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void openCanvasScreen(){
-        Intent intent = new Intent(this, TempCanvas.class);
-        startActivity(intent);
-    }
 }
