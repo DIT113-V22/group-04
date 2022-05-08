@@ -7,16 +7,15 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private Button pubBtn;
     private Button disBtn;
     private Button conBtn;
     private Button subBtn;
-    private Button readMeScreen;
-    private Button manualControlScreen;
-    private Button drawControlScreen;
+    private Button introScreenBtn;
+    private Button manualControlScreenBtn;
+    private Button drawControlScreenBtn;
     public TextView text;
 
     @Override
@@ -44,15 +43,13 @@ public class MainActivity extends AppCompatActivity {
         text = findViewById(R.id.currentDistanceText);
         MQTTController.updateTextView(text, "/smartcar/control/throttle");
 
-        readMeScreen = findViewById(R.id.ReadMeScreen);
-        manualControlScreen = findViewById(R.id.ManualScreen);
-        drawControlScreen = findViewById(R.id.DrawScreen);
+        introScreenBtn = findViewById(R.id.ReadMeScreen);
+        manualControlScreenBtn = findViewById(R.id.ManualScreen);
+        drawControlScreenBtn = findViewById(R.id.DrawScreen);
 
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
-
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
+        introScreenBtn.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreenBtn.setOnClickListener(view -> openManualScreen());
+        drawControlScreenBtn.setOnClickListener(view -> openDrawScreen());
     }
 
     public void openReadMEScreen(){
@@ -69,4 +66,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
+
 }
