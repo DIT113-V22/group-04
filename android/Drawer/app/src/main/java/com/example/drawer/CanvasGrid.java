@@ -3,6 +3,7 @@ package com.example.drawer;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -28,6 +29,8 @@ public class CanvasGrid extends View {
     private int cellLength = 32;
     private Paint blackPaint = new Paint();
     private boolean[][] cellChecked = new boolean[50][100];
+    int lastx;
+    int lasty;
 
     // Constructors
     public CanvasGrid(Context context) {
@@ -61,6 +64,12 @@ public class CanvasGrid extends View {
     public void setResizeMode(ResizeMode resizeMode) {
         this.resizeMode = resizeMode;
         calculateDimensions();
+    }
+
+    public void clear(){
+        cellChecked = new boolean[numColumns][numRows];
+
+        invalidate();
     }
 
     @Override
@@ -130,6 +139,8 @@ public class CanvasGrid extends View {
 
             try {
                 cellChecked[column][row] = true;
+                lastx = column;
+                lasty = row;
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -143,6 +154,11 @@ public class CanvasGrid extends View {
 
             try {
                 cellChecked[column][row] = true;
+                // if the difference between current x, y and new x, y is bigger than 1 draw a line in between
+                if(Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1 ) gridDrawLine(lastx, lasty, column, row);
+
+                lastx = column;
+                lasty = row;
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -153,4 +169,40 @@ public class CanvasGrid extends View {
         return true;
     }
 
+
+    //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+        // TODO: 2022-05-10 might need to rewrite the while true
+
+    private void gridDrawLine(int x0, int y0, int x1, int y1){
+        //Delta X, Y
+        int dx = Math.abs(x1 - x0);
+        int dy = -Math.abs(y1 - y0);
+
+        //incrementations variable using ternary operator
+        int sx = (x0 < x1)? 1: -1;
+        int sy = (y0 < y1)? 1: -1;
+
+        int error = dx + dy;
+
+        while (true){
+            cellChecked[x0][y0] = true;
+
+            if(x0 == x1 && y0 == y1) break;
+            int error2 = error + error; // 2* error
+
+            if (error2 >= dy){
+                if(x0 == x1) break;
+                error += dy;
+                x0 += sx;
+            }
+            if (error2 <= dx){
+                if(y0 == y1) break;
+                error += dx;
+                y0 += sy;
+            }
+        }
+    }
+
+
 }
+

@@ -100,6 +100,19 @@ public class DrawControl extends AppCompatActivity {
             }
 
         });
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pixelGrid.clear();
+            }
+        });
+        runBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String speed = Integer.toString( seekBar.getProgress());
+                MQTTController.publish("/smartcar/control/throttle", speed);
+            }
+        });
         seekBar.setOnSeekBarChangeListener(
             new SeekBar.OnSeekBarChangeListener() {
                 @Override
