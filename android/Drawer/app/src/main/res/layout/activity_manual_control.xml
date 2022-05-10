@@ -48,6 +48,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <Switch
+        android:id="@+id/recordToggle"
         android:layout_width="63dp"
         android:layout_height="45dp"
         app:layout_constraintBottom_toBottomOf="@+id/ReadMEScreen"
@@ -134,7 +135,7 @@
         app:layout_constraintVertical_bias="0.146" />
 
     <Button
-        android:id="@+id/playButton"
+        android:id="@+id/viewPathsScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="My Recordings"
