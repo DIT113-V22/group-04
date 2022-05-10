@@ -2,17 +2,25 @@ package com.example.drawer;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ManualControl extends AppCompatActivity {
     private Button readMeScreen;
@@ -27,6 +35,13 @@ public class ManualControl extends AppCompatActivity {
     private TextView speedStat;
     private TextView angleStat;
     private TextView status;
+    private Button viewPaths;
+    private Button playPath;
+    private Button stopPlay;
+    private Switch recordToggle;
+    private AlertDialog.Builder builder;
+    private AlertDialog alertDialog;
+    private ListView pathList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +60,22 @@ public class ManualControl extends AppCompatActivity {
         angleStat = findViewById(R.id.angleSTat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
+        viewPaths = findViewById(R.id.viewPathsScreen);
+        recordToggle = findViewById(R.id.recordToggle);
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
 
         manualControlScreen.setOnClickListener(view -> openManualScreen());
 
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
+
+        viewPaths.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //open the pop up window
+                createViewContactDialogue();
+            }
+        });
 
         innerCircle.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -68,6 +93,46 @@ public class ManualControl extends AppCompatActivity {
             }
         });
     }
+
+    public void createViewContactDialogue() {
+        builder = new AlertDialog.Builder(this);
+        final View popUpView = getLayoutInflater().inflate(R.layout.activity_view_saved_paths, null);
+        playPath = (Button) popUpView.findViewById(R.id.playPath);
+        stopPlay = (Button) popUpView.findViewById(R.id.stopPlay);
+        builder.setView(popUpView);
+        alertDialog = builder.create();
+        alertDialog.show();
+
+        stopPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        pathList = (ListView) popUpView.findViewById(R.id.pathList);
+        List savedPathList = new ArrayList();
+        savedPathList.add("Path 1");
+        savedPathList.add("Path 2");
+        savedPathList.add("Path 3");
+        savedPathList.add("Path 4");
+        savedPathList.add("Path 5");
+        savedPathList.add("Path 6");
+        savedPathList.add("Path 7");
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
+        pathList.setAdapter(arrayAdapter);
+        onListItemClick(pathList, popUpView, 1, 1000027);
+    }
+
+        public void onListItemClick(ListView pathList, View v, int position, long id){
+
+            //Set background of all items to white
+            for (int i=0;i<pathList.getChildCount();i++){
+                pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
+            }
+
+            v.setBackgroundColor(Color.WHITE);
+        }
 
     public void circleOnTouch(MotionEvent event){
         Drawable OC, IC;
