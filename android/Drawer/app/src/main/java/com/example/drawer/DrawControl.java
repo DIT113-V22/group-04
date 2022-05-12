@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,7 +35,6 @@ public class DrawControl extends AppCompatActivity {
     private Button readMeScreen;
     private Button manualControlScreen;
     private Button drawControlScreen;
-    ImageView uploadedImage;
     Button runBtn;
     ImageButton uploadBtn;
     ImageButton downloadBtn;
@@ -79,8 +80,8 @@ public class DrawControl extends AppCompatActivity {
                             try {
                                 inputStream = getContentResolver().openInputStream(imageUri);
                                 Bitmap image = BitmapFactory.decodeStream(inputStream);
-                                uploadedImage.setImageBitmap(image);
-                                uploadedImage.setAlpha(75);
+                                Drawable mDrawable = new BitmapDrawable(getResources(), image);
+                                pixelGrid.setBackground(mDrawable);
 
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
