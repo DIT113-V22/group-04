@@ -17,31 +17,32 @@ public class MainActivity extends AppCompatActivity {
     private Button drawControlScreenBtn;
     public TextView text;
 
+    MQTTController mqttController = MQTTController.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MQTTController.init();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         conBtn = findViewById(R.id.conBtn);
-        conBtn.setOnClickListener(view -> MQTTController.connect());
+        conBtn.setOnClickListener(view -> mqttController.connect());
 
         pubBtn = findViewById(R.id.pubBtn);
         pubBtn.setOnClickListener(view ->
                 MQTTController.publish("/smartcar/control/throttle", "50"));
 
         disBtn = findViewById(R.id.disBtn);
-        disBtn.setOnClickListener(view -> MQTTController.disconnect());
+        disBtn.setOnClickListener(view -> mqttController.disconnect());
 
         subBtn = findViewById(R.id.subBtn);
         subBtn.setOnClickListener(view -> {
-            MQTTController.subscribe("/smartcar/startup");
-            MQTTController.subscribe("/smartcar/camera");
-            MQTTController.subscribe("/smartcar/control/throttle");
+            mqttController.subscribe("/smartcar/startup");
+            mqttController.subscribe("/smartcar/camera");
+            mqttController.subscribe("/smartcar/control/throttle");
         });
         
         text = findViewById(R.id.currentDistanceText);
-        MQTTController.updateTextView(text, "/smartcar/control/throttle");
+        mqttController.updateTextView(text, "/smartcar/report/control/throttle");
 
         introScreenBtn = findViewById(R.id.ReadMeScreen);
         manualControlScreenBtn = findViewById(R.id.ManualScreen);
