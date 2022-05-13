@@ -28,15 +28,16 @@ public class ManualControl extends AppCompatActivity {
     private TextView angleStat;
     private TextView status;
 
+    MQTTController mqttController = MQTTController.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MQTTController.init();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
         innerCircle = findViewById(R.id.innerCircle);
 
         status = findViewById(R.id.statusText);
-        MQTTController.updateTextView(status, "/smartcar/control/throttle");
+        mqttController.updateTextView(status, "/smartcar/control/throttle");
 
         readMeScreen = findViewById(R.id.ReadMEScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
@@ -120,8 +121,8 @@ public class ManualControl extends AppCompatActivity {
         int carSpeed = carSpeed(event);
         double carAngle = carAngle(event);
 
-        MQTTController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
-        MQTTController.publish("/smartcar/control/steering", String.valueOf(carAngle));
+        mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
+        mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
 
     }
 
