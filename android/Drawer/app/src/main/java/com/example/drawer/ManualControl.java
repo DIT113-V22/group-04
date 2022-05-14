@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -70,7 +69,8 @@ public class ManualControl extends AppCompatActivity {
     }
 
     public void circleOnTouch(MotionEvent event) {
-        Drawable outerCircle, innerCircle;
+        Drawable outerCircle;
+        Drawable innerCircle;
         Resources res = getResources();
         outerCircle = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
         innerCircle = ResourcesCompat.getDrawable(res, R.drawable.inner_circle, null);
@@ -132,7 +132,7 @@ public class ManualControl extends AppCompatActivity {
         speedTempX = (int) event.getRawX() - centerScrX;
         speedTempY = (int) event.getRawY() - centerScrY;
 
-        if (speedTempX < 0 ) {
+        if (speedTempX < 0) {
             speedTempX *= -1;
         }
         if (speedTempY < 0) {
@@ -176,7 +176,7 @@ public class ManualControl extends AppCompatActivity {
         } else if (angle <= -90) {
             angle = -180 - angle;
         }
-        if (event.getAction() == MotionEvent.ACTION_UP){
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             angle = 0;
         }
         angleStat.setText("The angle is: " + angle);
