@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 
 public class CanvasGrid extends View {
 
-    public enum ResizeMode{
+    public enum ResizeMode {
         AUTO_RESIZE,
         FIT_CONTENT
     }
@@ -84,12 +84,12 @@ public class CanvasGrid extends View {
             layoutParams.width = width;
             layoutParams.height = height;
 
-        } else if (resizeMode.equals(ResizeMode.FIT_CONTENT)){
+        } else if (resizeMode.equals(ResizeMode.FIT_CONTENT)) {
             int width = layoutParams.width;
             int height = layoutParams.height;
 
-            numColumns = (int) Math.floor( width / cellLength );
-            numRows = (int) Math.floor( (height / cellLength) );
+            numColumns = (int) Math.floor((width / cellLength));
+            numRows = (int) Math.floor((height / cellLength));
         }
 
         cellChecked = new boolean[numColumns][numRows];
@@ -113,11 +113,13 @@ public class CanvasGrid extends View {
         }
 
         for (int i = 1; i < numColumns; i++) {
-            canvas.drawLine(i * cellLength, 0, i * cellLength, getNumRows() * cellLength, blackPaint);
+            canvas.drawLine(i * cellLength, 0,
+                    i * cellLength, getNumRows() * cellLength, blackPaint);
         }
 
         for (int i = 1; i < numRows; i++) {
-            canvas.drawLine(0, i * cellLength, getNumColumns() * cellLength, i * cellLength, blackPaint);
+            canvas.drawLine(0, i * cellLength,
+                    getNumColumns() * cellLength, i * cellLength, blackPaint);
         }
     }
 
@@ -130,7 +132,7 @@ public class CanvasGrid extends View {
 
             try {
                 cellChecked[column][row] = true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -143,7 +145,7 @@ public class CanvasGrid extends View {
 
             try {
                 cellChecked[column][row] = true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
