@@ -69,14 +69,14 @@ public class ManualControl extends AppCompatActivity {
         });
     }
 
-    public void circleOnTouch(MotionEvent event){
-        Drawable OC, IC;
+    public void circleOnTouch(MotionEvent event) {
+        Drawable outerCircle, innerCircle;
         Resources res = getResources();
-        OC = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
-        IC = ResourcesCompat.getDrawable(res, R.drawable.inner_circle, null);
+        outerCircle = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
+        innerCircle = ResourcesCompat.getDrawable(res, R.drawable.inner_circle, null);
 
-        outerRadius = OC.getMinimumWidth() / 2;
-        innerRadius = IC.getMinimumWidth() / 2;
+        outerRadius = outerCircle.getMinimumWidth() / 2;
+        innerRadius = innerCircle.getMinimumWidth() / 2;
 
         int traversX = (int)event.getRawX() - 90;
         int traversY = (int)event.getRawY() - 90;
@@ -95,25 +95,25 @@ public class ManualControl extends AppCompatActivity {
         float centerY = (int) (centerScrY - 90);
 
         double joystickToPressedDistance = Math.sqrt(
-                Math.pow(centerScrX - event.getRawX(), 2) +
-                Math.pow(centerScrY - event.getRawY(), 2)
+                Math.pow(centerScrX - event.getRawX(), 2)
+                        + Math.pow(centerScrY - event.getRawY(), 2)
         );
 
         //thumbstick clipping
         if (joystickToPressedDistance > outerRadius) {
-            innerCircle.setX(centerX + (float) Math.cos(Math.toRadians(angle)) * outerRadius);
-            innerCircle.setY(centerY + (float) Math.sin(Math.toRadians(angle)) * outerRadius * -1);
+            this.innerCircle.setX(centerX + (float) Math.cos(Math.toRadians(angle)) * outerRadius);
+            this.innerCircle.setY(centerY + (float) Math.sin(Math.toRadians(angle)) * outerRadius * -1);
         } else {
-            innerCircle.setX(traversX);
-            innerCircle.setY(traversY);
+            this.innerCircle.setX(traversX);
+            this.innerCircle.setY(traversY);
         }
 
-        outerCircle.setX(centerX-outerRadius);
-        outerCircle.setY(centerY-outerRadius);
+        this.outerCircle.setX(centerX - outerRadius);
+        this.outerCircle.setY(centerY - outerRadius);
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            innerCircle.setX(centerX);
-            innerCircle.setY(centerY);
+            this.innerCircle.setX(centerX);
+            this.innerCircle.setY(centerY);
         }
 
 
@@ -139,17 +139,23 @@ public class ManualControl extends AppCompatActivity {
             speedTempY *= -1;
         }
 
-        int speedTemp = (int) Math.sqrt((speedTempX*speedTempX)+(speedTempY*speedTempY));
+        int speedTemp = (int) Math.sqrt((speedTempX * speedTempX) + (speedTempY * speedTempY));
 
-        int startTemp = (int) Math.sqrt((centerScrX*centerScrX)+(centerScrY*centerScrY));
+        int startTemp = (int) Math.sqrt((centerScrX * centerScrX) + (centerScrY * centerScrY));
 
-        if (speedTemp > startTemp) speedTemp = startTemp;
+        if (speedTemp > startTemp) {
+            speedTemp = startTemp;
+        }
 
-        if (speedTemp > outerRadius) speedTemp = outerRadius;
+        if (speedTemp > outerRadius) {
+            speedTemp = outerRadius;
+        }
 
         int speedProc = (speedTemp * 100) / outerRadius;
 
-        if (event.getRawY() > centerScrY) speedProc = speedProc * -1;
+        if (event.getRawY() > centerScrY) {
+            speedProc = speedProc * -1;
+        }
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             speedProc = 0;
@@ -163,14 +169,16 @@ public class ManualControl extends AppCompatActivity {
         double angle;
         int startX = centerScrX;
         int startY = centerScrY;
-        angle = (Math.toDegrees(Math.atan2((event.getRawX() - startX),(event.getRawY() - startY)*-1) ));
+        angle = (Math.toDegrees(Math.atan2((event.getRawX() - startX), (event.getRawY() - startY) * -1)));
         //angle = 180-angle;
-        if (angle >= 90){
+        if (angle >= 90) {
             angle = 180 - angle;
-        }else if(angle <= -90){
+        } else if (angle <= -90) {
             angle = -180 - angle;
         }
-        if (event.getAction() == MotionEvent.ACTION_UP) angle = 0;
+        if (event.getAction() == MotionEvent.ACTION_UP){
+            angle = 0;
+        }
         angleStat.setText("The angle is: " + angle);
 
         return angle;

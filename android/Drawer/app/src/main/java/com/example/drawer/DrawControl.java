@@ -141,7 +141,7 @@ public class DrawControl extends AppCompatActivity {
                         speedView.setText("Current speed:" + seekBar.getProgress());
                         speedView.setTextColor(Color.BLACK);
                     } else {
-                       throw new Exception();
+                        throw new Exception();
                     }
 
                 } catch (Exception e) {

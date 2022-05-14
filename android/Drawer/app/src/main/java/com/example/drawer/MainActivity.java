@@ -1,11 +1,10 @@
 package com.example.drawer;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
-import android.widget.Button;
 import android.os.Bundle;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
         conBtn.setOnClickListener(view -> MQTTController.connect());
 
         pubBtn = findViewById(R.id.pubBtn);
-        pubBtn.setOnClickListener(view -> MQTTController.publish("/smartcar/control/throttle", "50"));
+        pubBtn.setOnClickListener(view ->
+                MQTTController.publish("/smartcar/control/throttle", "50"));
 
         disBtn = findViewById(R.id.disBtn);
         disBtn.setOnClickListener(view -> MQTTController.disconnect());
@@ -52,19 +52,18 @@ public class MainActivity extends AppCompatActivity {
         drawControlScreenBtn.setOnClickListener(view -> openDrawScreen());
     }
 
-    public void openReadMEScreen(){
+    public void openReadMEScreen() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    public void openManualScreen(){
+    public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
         startActivity(intent);
     }
 
-    public void openDrawScreen(){
+    public void openDrawScreen() {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
-
 }
