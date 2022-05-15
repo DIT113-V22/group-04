@@ -1,15 +1,18 @@
 package com.example.drawer;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -29,20 +32,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class DrawControl extends AppCompatActivity {
 
-    private Button readMeScreen;
-    private Button manualControlScreen;
-    private Button drawControlScreen;
-    Button runBtn;
-    ImageButton uploadBtn;
-    ImageButton downloadBtn;
-    ImageButton clearBtn;
-    EditText numberViewCellSize;
-    SeekBar seekBar;
-    TextView speedView;
-    CanvasGrid pixelGrid;
+    private Button readMeScreen, manualControlScreen, drawControlScreen, runBtn;
+    private ImageButton uploadBtn, downloadBtn,clearBtn;
+    private EditText numberViewCellSize;
+    private SeekBar seekBar;
+    private TextView speedView;
+    private CanvasGrid pixelGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +65,29 @@ public class DrawControl extends AppCompatActivity {
 
         seekBar = findViewById(R.id.seekbar);
         speedView = findViewById(R.id.speed);
+
+        downloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bitmap bitmap = viewToBitmap(pixelGrid);
+                OutputStream imageOutStream = null;
+
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, "drawing.png");
+                contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
+
+                Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                try {
+                    imageOutStream = getContentResolver().openOutputStream(uri);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOutStream);
+                    imageOutStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -174,6 +196,12 @@ public class DrawControl extends AppCompatActivity {
     public void openDrawScreen(){
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
+    }
+    public Bitmap viewToBitmap(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
 
 }
