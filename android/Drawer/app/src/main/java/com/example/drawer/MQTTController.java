@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -16,42 +15,62 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+/**
+ * Controller for managing MQTT connections, subscriptions, and publishing of messages.
+ *
+ * @author Soarnir
+ */
 public class MQTTController {
 
     private static final int qos = 2;
     private static final String broker = "tcp://10.0.2.2:1883";
     private static final String clientId = "MQTT-publisher";
-    private static final MemoryPersistence persistence = new MemoryPersistence();
-    private static MqttClient mqttClient;
     private static final String TAG = "MainActivity";
     private static final String STARTTAG = "Startup";
     private static final String SUBTAG = "Subscription";
     private static final String PUBTAG = "Publishing";
     private static final String ETAG = "Error";
-    private static final HashMap<String, HashSet<TextView>> subscriptionMap = new HashMap<>();
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
-    private static final ArrayList<ImageView> cameraViews = new ArrayList<>();
+    private final HashMap<String, HashMap<Integer, TextView>> subscriptionMap;
+    private final ArrayList<ImageView> cameraViews;
+    private final MemoryPersistence persistence;
+    private MqttClient mqttClient;
+    private static MQTTController mqttController_instance = null;
+    private String previousMessage;
 
+    /**
+     * Constructs the MQTT controller, limited to one instance by Singleton pattern.
+     */
     private MQTTController() {
-
+        previousMessage = "";
+        cameraViews = new ArrayList<>();
+        persistence = new MemoryPersistence();
+        subscriptionMap = new HashMap<>();
     }
 
-    public static void connect() {
+    /**
+     * Singleton pattern implementation, getting or creating a new singular instance.
+     *
+     * @return MQTTController instance
+     */
+    public static MQTTController getInstance() {
+        if (mqttController_instance == null) {
+            mqttController_instance = new MQTTController();
+        }
+        return mqttController_instance;
+    }
+
+    /**
+     * Attempt connection to the MQTT broker specified.
+     * Creates the client first, sets the callback method, and then attempts connection.
+     */
+    public void connect() {
         try {
             //Create client
             mqttClient = new MqttClient(broker, clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
-
-            //Attempt connection
-            Log.d(STARTTAG, "Connecting to broker: " + broker);
-            mqttClient.connect(connOpts);
-            if (!notConnected()) {
-                Log.d(STARTTAG, "Connected");
-            } else {
-                Log.d(ETAG, "Could not connect");
-            }
 
             //Enable callback
             mqttClient.setCallback(new MqttCallback() {
@@ -63,6 +82,8 @@ public class MQTTController {
 
                 @Override
                 public void messageArrived(String topic, MqttMessage mqttMessage) {
+                    String message = new String(mqttMessage.getPayload());
+
                     if (topic.equals("/smartcar/camera")) {
                         final Bitmap bm = Bitmap
                                 .createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, Bitmap.Config.ARGB_8888);
@@ -76,13 +97,13 @@ public class MQTTController {
                             colors[ci] = Color.rgb(r, g, b);
                         }
                         bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
-                        cameraViews.get(0).setImageBitmap(bm);
+                        if (cameraViews.size() > 0) {
+                            cameraViews.forEach(camera -> camera.setImageBitmap(bm));
+                        }
                     }
 
-                    String message = new String(mqttMessage.getPayload());
-
                     if (subscriptionMap.get(topic) != null) {
-                        subscriptionMap.get(topic).forEach(textView -> textView.setText(message));
+                        subscriptionMap.get(topic).forEach((id, textView) -> textView.setText(message));
                     }
                 }
 
@@ -91,6 +112,16 @@ public class MQTTController {
                     //needed for MQTT callback, useful for debugging.
                 }
             });
+
+            //Attempt connection
+            Log.d(STARTTAG, "Connecting to broker: " + broker);
+            mqttClient.connect(connOpts);
+            if (!notConnected()) {
+                Log.d(STARTTAG, "Connected");
+            } else {
+                Log.d(ETAG, "Could not connect");
+            }
+
         } catch (MqttException e) {
             //Standard error printing
             Log.d(ETAG, "Could not connect");
@@ -98,29 +129,49 @@ public class MQTTController {
         }
     }
 
-    public static boolean notConnected() {
+    /**
+     * Simple connection test.
+     *
+     * @return connection status
+     */
+    public boolean notConnected() {
         if (mqttClient == null) {
             return true;
         }
         return !mqttClient.isConnected();
     }
 
-    public static void updateTextView(TextView textView, String topic) {
-        HashSet<TextView> textViewArrayList = subscriptionMap.get(topic);
-        if (textViewArrayList != null) {
-            textViewArrayList.add(textView);
-        } else {
-            textViewArrayList = new HashSet<>();
-            textViewArrayList.add(textView);
+    /**
+     * Adds any textview in the program to the map of current subscriptions.
+     * This allows the controller to manage and update multiple textviews across all scenes.
+     *
+     * @param textView Android textview
+     * @param topic MQTT topic
+     */
+    public void updateTextView(TextView textView, String topic) {
+        HashMap<Integer, TextView> textViewHashMap = subscriptionMap.get(topic);
+        if (textViewHashMap == null) {
+            textViewHashMap = new HashMap<>();
         }
-        subscriptionMap.put(topic, textViewArrayList);
+        textViewHashMap.put(textView.getId(), textView);
+        subscriptionMap.put(topic, textViewHashMap);
     }
 
-    public static void updateCamera(ImageView imageView) {
+    /**
+     * Add an imageview object to be updated with camera information.
+     *
+     * @param imageView Android imageview
+     */
+    public void updateCamera(ImageView imageView) {
         cameraViews.add(imageView);
     }
 
-    public static void subscribe(String topic) {
+    /**
+     * General subscription to any topic on the MQTT broker.
+     *
+     * @param topic subscribed topic
+     */
+    public void subscribe(String topic) {
         if (notConnected()) {
             Log.d(ETAG, "Not connected to MQTT broker.");
             return;
@@ -135,17 +186,27 @@ public class MQTTController {
         }
     }
 
-    public static void publish(String topic, String content) {
+    /**
+     * Publish a message to the mqtt broker.
+     *
+     * @param topic published topic
+     * @param content published message
+     */
+    public void publish(String topic, String content) {
         if (notConnected()) {
             Log.d(ETAG, "Not connected to MQTT broker.");
             return;
         }
         try {
+            if (previousMessage.equals(content)) {
+                return;
+            }
             Log.d(PUBTAG, "Publishing message: " + content);
             Log.d(PUBTAG, "                to: " + topic);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
             mqttClient.publish(topic, message);
+            previousMessage = content;
         } catch (MqttException e) {
             //Standard error printing
             Log.d(ETAG, "Message could not be published");
@@ -153,7 +214,10 @@ public class MQTTController {
         }
     }
 
-    public static void disconnect() {
+    /**
+     * Attempt to disconnect from mqtt broker.
+     */
+    public void disconnect() {
         if (notConnected()) {
             Log.d(ETAG, "Not connected to MQTT broker.");
             return;
@@ -166,9 +230,5 @@ public class MQTTController {
             Log.d(ETAG, "Could not disconnect from broker");
             e.printStackTrace();
         }
-    }
-
-    public static void init() {
-        subscriptionMap.clear();
     }
 }
