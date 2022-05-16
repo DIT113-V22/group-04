@@ -15,6 +15,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+/**
+ * Controller for managing MQTT connections, subscriptions, and publishing of messages.
+ *
+ * @author Soarnir
+ */
 public class MQTTController {
 
     private static final int qos = 2;
@@ -34,6 +39,9 @@ public class MQTTController {
     private static MQTTController mqttController_instance = null;
     private String previousMessage;
 
+    /**
+     * Constructs the MQTT controller, limited to one instance by Singleton pattern.
+     */
     private MQTTController() {
         previousMessage = "";
         cameraViews = new ArrayList<>();
@@ -41,6 +49,11 @@ public class MQTTController {
         subscriptionMap = new HashMap<>();
     }
 
+    /**
+     * Singleton pattern implementation, getting or creating a new singular instance.
+     *
+     * @return MQTTController instance
+     */
     public static MQTTController getInstance() {
         if (mqttController_instance == null) {
             mqttController_instance = new MQTTController();
@@ -48,6 +61,10 @@ public class MQTTController {
         return mqttController_instance;
     }
 
+    /**
+     * Attempt connection to the MQTT broker specified.
+     * Creates the client first, sets the callback method, and then attempts connection.
+     */
     public void connect() {
         try {
             //Create client
@@ -112,6 +129,11 @@ public class MQTTController {
         }
     }
 
+    /**
+     * Simple connection test.
+     *
+     * @return connection status
+     */
     public boolean notConnected() {
         if (mqttClient == null) {
             return true;
@@ -119,21 +141,36 @@ public class MQTTController {
         return !mqttClient.isConnected();
     }
 
+    /**
+     * Adds any textview in the program to the map of current subscriptions.
+     * This allows the controller to manage and update multiple textviews across all scenes.
+     *
+     * @param textView Android textview
+     * @param topic MQTT topic
+     */
     public void updateTextView(TextView textView, String topic) {
         HashMap<Integer, TextView> textViewHashMap = subscriptionMap.get(topic);
-        if (textViewHashMap != null) {
-            textViewHashMap.put(textView.getId(), textView);
-        } else {
+        if (textViewHashMap == null) {
             textViewHashMap = new HashMap<>();
-            textViewHashMap.put(textView.getId(), textView);
         }
+        textViewHashMap.put(textView.getId(), textView);
         subscriptionMap.put(topic, textViewHashMap);
     }
 
+    /**
+     * Add an imageview object to be updated with camera information.
+     *
+     * @param imageView Android imageview
+     */
     public void updateCamera(ImageView imageView) {
         cameraViews.add(imageView);
     }
 
+    /**
+     * General subscription to any topic on the MQTT broker.
+     *
+     * @param topic subscribed topic
+     */
     public void subscribe(String topic) {
         if (notConnected()) {
             Log.d(ETAG, "Not connected to MQTT broker.");
@@ -149,13 +186,21 @@ public class MQTTController {
         }
     }
 
+    /**
+     * Publish a message to the mqtt broker.
+     *
+     * @param topic published topic
+     * @param content published message
+     */
     public void publish(String topic, String content) {
         if (notConnected()) {
             Log.d(ETAG, "Not connected to MQTT broker.");
             return;
         }
         try {
-            if (previousMessage.equals(content)) return;
+            if (previousMessage.equals(content)) {
+                return;
+            }
             Log.d(PUBTAG, "Publishing message: " + content);
             Log.d(PUBTAG, "                to: " + topic);
             MqttMessage message = new MqttMessage(content.getBytes());
@@ -169,6 +214,9 @@ public class MQTTController {
         }
     }
 
+    /**
+     * Attempt to disconnect from mqtt broker.
+     */
     public void disconnect() {
         if (notConnected()) {
             Log.d(ETAG, "Not connected to MQTT broker.");
