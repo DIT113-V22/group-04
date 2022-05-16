@@ -17,13 +17,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -92,13 +90,13 @@ public class DrawControl extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
-                File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                File imageDirectory = Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
                 String imageDirectoryPath = imageDirectory.getPath();
                 Uri data = Uri.parse(imageDirectoryPath);
-                imagePickerIntent.setDataAndType(data, "image/*" );
+                imagePickerIntent.setDataAndType(data, "image/*");
                 someActivityResultLauncher.launch(imagePickerIntent);
             }
-
         });
         seekBar.setOnSeekBarChangeListener(
             new SeekBar.OnSeekBarChangeListener() {
@@ -138,21 +136,20 @@ public class DrawControl extends AppCompatActivity {
                     int value;
                     value = Integer.parseInt(numberViewCellSize.getText().toString());
 
-                    if(value > 4) {
-                       pixelGrid.setCellLength(value);
-                       speedView.setText("Current speed:" + seekBar.getProgress());
-                       speedView.setTextColor(Color.BLACK);
+                    if (value > 4) {
+                        pixelGrid.setCellLength(value);
+                        speedView.setText("Current speed:" + seekBar.getProgress());
+                        speedView.setTextColor(Color.BLACK);
                     } else {
-                       throw new Exception();
+                        throw new Exception();
                     }
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     speedView.setText("Number must be\n       over > 4");
                     speedView.setTextColor(Color.RED);
                 }
             }
-
         });
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
@@ -160,17 +157,17 @@ public class DrawControl extends AppCompatActivity {
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
     }
 
-    public void openReadMEScreen(){
+    public void openReadMEScreen() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    public void openManualScreen(){
+    public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
         startActivity(intent);
     }
 
-    public void openDrawScreen(){
+    public void openDrawScreen() {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }

@@ -5,7 +5,9 @@ import android.graphics.Color;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -14,16 +16,12 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 public class MQTTController {
 
     private static final int qos = 2;
     private static final String broker = "tcp://10.0.2.2:1883";
     private static final String clientId = "MQTT-publisher";
-    private static final MemoryPersistence persistence = new MemoryPersistence();;
+    private static final MemoryPersistence persistence = new MemoryPersistence();
     private static MqttClient mqttClient;
     private static final String TAG = "MainActivity";
     private static final String STARTTAG = "Startup";
@@ -66,7 +64,8 @@ public class MQTTController {
                 @Override
                 public void messageArrived(String topic, MqttMessage mqttMessage) {
                     if (topic.equals("/smartcar/camera")) {
-                        final Bitmap bm = Bitmap.createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, Bitmap.Config.ARGB_8888);
+                        final Bitmap bm = Bitmap
+                                .createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, Bitmap.Config.ARGB_8888);
 
                         final byte[] payload = mqttMessage.getPayload();
                         final int[] colors = new int[IMAGE_WIDTH * IMAGE_HEIGHT];
@@ -100,7 +99,9 @@ public class MQTTController {
     }
 
     public static boolean notConnected() {
-        if (mqttClient == null) return true;
+        if (mqttClient == null) {
+            return true;
+        }
         return !mqttClient.isConnected();
     }
 
