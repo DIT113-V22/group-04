@@ -109,7 +109,8 @@ public class DrawControl extends AppCompatActivity {
         runBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String speed = Integer.toString( seekBar.getProgress());
+                String speed = Integer.toString(seekBar.getProgress());
+                pixelGrid.executePath();
                 MQTTController.publish("/smartcar/control/throttle", speed);
             }
         });
