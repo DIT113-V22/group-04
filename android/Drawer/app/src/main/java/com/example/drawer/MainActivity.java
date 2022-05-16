@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         pubBtn = findViewById(R.id.pubBtn);
         pubBtn.setOnClickListener(view ->
-                MQTTController.publish("/smartcar/control/throttle", "50"));
+                mqttController.publish("/smartcar/control/throttle", "50"));
 
         disBtn = findViewById(R.id.disBtn);
         disBtn.setOnClickListener(view -> mqttController.disconnect());

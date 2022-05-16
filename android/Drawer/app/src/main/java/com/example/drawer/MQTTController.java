@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -15,9 +14,6 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MQTTController {
 
@@ -84,7 +80,9 @@ public class MQTTController {
                             colors[ci] = Color.rgb(r, g, b);
                         }
                         bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
-                        if (cameraViews.size() > 0) cameraViews.get(0).setImageBitmap(bm);
+                        if (cameraViews.size() > 0) {
+                            cameraViews.forEach(camera -> camera.setImageBitmap(bm));
+                        }
                     }
 
                     if (subscriptionMap.get(topic) != null) {
@@ -184,9 +182,5 @@ public class MQTTController {
             Log.d(ETAG, "Could not disconnect from broker");
             e.printStackTrace();
         }
-    }
-
-    public void init() {
-        subscriptionMap.clear();
     }
 }
