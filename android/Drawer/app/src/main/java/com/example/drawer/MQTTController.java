@@ -24,8 +24,6 @@ public class MQTTController {
     private static final int qos = 2;
     private static final String broker = "tcp://10.0.2.2:1883";
     private static final String clientId = "MQTT-publisher";
-    private static final MemoryPersistence persistence = new MemoryPersistence();
-    private static MqttClient mqttClient;
     private static final String TAG = "MainActivity";
     private static final String STARTTAG = "Startup";
     private static final String SUBTAG = "Subscription";
