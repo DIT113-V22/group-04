@@ -246,7 +246,10 @@ public class CanvasGrid extends View {
                     cellChecked[column][row] = true;
                     // if the difference between current x, y and new x, y is bigger than 1 draw a line in between
                     //if(Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1 ) gridDrawLine(lastx, lasty, column, row);
-
+                    
+                    if(column != lastx && row != lasty){
+                        vectorMap.add(column, row);
+                    }
                     lastx = column;
                     lasty = row;
                 }
@@ -257,6 +260,8 @@ public class CanvasGrid extends View {
 
             invalidate();
         }
+        System.out.println("-----------Total------------: "+ vectorMap.calculateSize());
+        //System.out.println(vectorMap.toString());
 
         return true;
     }
