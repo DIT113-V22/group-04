@@ -69,6 +69,26 @@ public class VectorMap {
         }
         return stringBuilder.toString();
     }
+
+
+    public void multiply(Vector vector){
+        for (Vector iVector : vectorList) {
+            iVector.multiply(vector);
+        }
+    }
+
+    public void multiply(int factor){
+        for (Vector iVector: vectorList) {
+            iVector.multiply(factor);
+        }
+    }
+
+    public void multiply(float factor){
+        for (Vector iVector: vectorList) {
+            iVector.multiply(factor);
+        }
+    }
+
 }
 
 
@@ -88,6 +108,22 @@ class Vector{
         this.yAbsolute = yAbsolute;
         this.x = x;
         this.y = y;
+    }
+
+    public Vector multiply(Vector vector){
+        this.x *= vector.x;
+        this.y *= vector.y;
+        return this;
+    }
+
+    public Vector multiply(int factor){
+        return multiply(new Vector(factor, factor, 0, 0) );
+    }
+
+    public Vector multiply(float factor){
+        this.x = (int) (this.x * factor);
+        this.y = (int) (this.y * factor);
+        return this;
     }
 
 
