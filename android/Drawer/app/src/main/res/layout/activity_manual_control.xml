@@ -58,6 +58,32 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.602" />
 
+
+
+    <Chronometer
+        android:id="@+id/stopWatch"
+        android:layout_width="62dp"
+        android:layout_height="33dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.876"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recordToggle"
+        app:layout_constraintVertical_bias="0.0"
+        />
+
+    <Chronometer
+        android:id="@+id/executeWatch"
+        android:layout_width="62dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="256dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewPathsScreen" />
+
     <ImageView
         android:id="@+id/outerCircle"
 
@@ -159,5 +185,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.558" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
