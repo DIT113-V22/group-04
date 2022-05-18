@@ -23,6 +23,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
+import org.w3c.dom.Node;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,11 +53,11 @@ public class ManualControl extends AppCompatActivity {
     private AlertDialog.Builder builder;
     private AlertDialog alertDialog;
     private ListView pathView;
-    private Queue carSpeedQueue = new LinkedList();
+    private LinkedList carSpeedQueue = new LinkedList();
     private List savedPathList = new ArrayList();
     private int carSpeed =0;
     private double carAngle = 0.0;
-    private Queue carAngleQueue = new LinkedList();
+    private LinkedList carAngleQueue = new LinkedList();
     private Pair<Integer, Double> carStatus;
 
     MQTTController mqttController = MQTTController.getInstance();
@@ -113,6 +115,23 @@ public class ManualControl extends AppCompatActivity {
 
     }
 
+    public List recordMovements(MotionEvent event){
+        if (recordToggle.isChecked()) {
+            //Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
+            do {
+                //TODO make this recurring so the every publish message is added
+                carSpeedQueue.add(carSpeed(event));
+                carAngleQueue.add(carAngle(event));
+            } while (recordToggle.equals(true));
+        }
+        // Toast.makeText(getApplicationContext(), "Recording saved", Toast.LENGTH_SHORT).show();
+        carStatus = new Pair(carSpeedQueue, carAngleQueue);
+        savedPathList.add(carStatus);
+
+        return savedPathList;
+    }
+
+
     public void createViewContactDialogue() {
         builder = new AlertDialog.Builder(this);
         final View popUpView = getLayoutInflater().inflate(R.layout.activity_view_saved_paths, null);
@@ -138,13 +157,10 @@ public class ManualControl extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //TODO fix the toast so it shows the current playing recording
-                Toast.makeText(getApplicationContext(), "Playing recording" + pathView.getChildAt(0), Toast.LENGTH_SHORT).show();
-                do {
-                }while(!(carSpeedQueue.isEmpty()));
-//                for(int j = 0; j > savedPathList.size(); j++){
-//                    mqttController.publish("/smartcar/control/throttle", String.valueOf(savedPathList.get(j)));
-//                    mqttController.publish("/smartcar/control/steering", String.valueOf(savedPathList.get(j)));
-//                }
+                    for(int m = 0; m < carSpeedQueue.size(); m++) {
+                        mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeedQueue.get(m)));
+                        mqttController.publish("/smartcar/control/steering", String.valueOf(carAngleQueue.get(m)));
+                    }
             }
         });
 
@@ -289,25 +305,4 @@ public class ManualControl extends AppCompatActivity {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
-
-    public boolean recordMovements(MotionEvent event){
-        if (recordToggle.isChecked()) {
-             Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
-            do{
-                carStatus = new Pair(carSpeed(event), carAngle(event));
-                //TODO make this recurring so the every publish message is added
-                carSpeedQueue.add(carStatus);
-
-                System.out.println(carSpeedQueue.poll());
-            }while(recordToggle.equals(true));
-
-        }
-        else{
-            Toast.makeText(getApplicationContext(), "Recording saved", Toast.LENGTH_SHORT).show();
-            savedPathList.add(carSpeedQueue);
-        }
-
-        return false;
-    }
-
 }
