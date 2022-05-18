@@ -9,18 +9,26 @@ import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 
 public class ManualControl extends AppCompatActivity {
     private Button readMeScreen;
@@ -41,7 +49,107 @@ public class ManualControl extends AppCompatActivity {
     private Switch recordToggle;
     private AlertDialog.Builder builder;
     private AlertDialog alertDialog;
-    private ListView pathList;
+    private ListView pathView;
+    private Queue newRecording = new Queue() {
+        @Override
+        public boolean add(Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean offer(Object o) {
+            return false;
+        }
+
+        @Override
+        public Object remove() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Object poll() {
+            return null;
+        }
+
+        @Override
+        public Object element() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Object peek() {
+            return null;
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public boolean contains(@Nullable Object o) {
+            return false;
+        }
+
+        @NonNull
+        @Override
+        public Iterator iterator() {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public Object[] toArray() {
+            return new Object[0];
+        }
+
+        @NonNull
+        @Override
+        public Object[] toArray(@NonNull Object[] objects) {
+            return new Object[0];
+        }
+
+        @Override
+        public boolean remove(@Nullable Object o) {
+            return false;
+        }
+
+        @Override
+        public boolean containsAll(@NonNull Collection collection) {
+            return false;
+        }
+
+        @Override
+        public boolean addAll(@NonNull Collection collection) {
+            return false;
+        }
+
+        @Override
+        public boolean removeAll(@NonNull Collection collection) {
+            return false;
+        }
+
+        @Override
+        public boolean retainAll(@NonNull Collection collection) {
+            return false;
+        }
+
+        @Override
+        public void clear() {
+
+        }
+    };
+    private List savedPathList = new ArrayList();
+    private int carSpeed =0;
+    private double carAngle = 0.0;
+    Pair<Integer, Double> carStatus;
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -93,6 +201,16 @@ public class ManualControl extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        recordToggle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                recordMovements(motionEvent);
+                return false;
+            }
+        });
+
     }
 
     public void createViewContactDialogue() {
@@ -111,18 +229,26 @@ public class ManualControl extends AppCompatActivity {
             }
         });
 
-        pathList = (ListView) popUpView.findViewById(R.id.pathList);
-        List savedPathList = new ArrayList();
-        savedPathList.add("Path 1");
-        savedPathList.add("Path 2");
-        savedPathList.add("Path 3");
-        savedPathList.add("Path 4");
-        savedPathList.add("Path 5");
-        savedPathList.add("Path 6");
-        savedPathList.add("Path 7");
+        pathView = (ListView) popUpView.findViewById(R.id.pathList);
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
-        pathList.setAdapter(arrayAdapter);
-        onListItemClick(pathList, popUpView, 1, 1000027);
+        pathView.setAdapter(arrayAdapter);
+        onListItemClick(pathView, popUpView, 1, 1000027);
+
+        pathView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //TODO fix the toast so it shows the current playing recording
+                Toast.makeText(getApplicationContext(), "Playing recording" + pathView.getChildAt(0), Toast.LENGTH_SHORT).show();
+                do {
+                    System.out.println(newRecording.poll());
+                }while(!(newRecording.isEmpty()));
+//                for(int j = 0; j > savedPathList.size(); j++){
+//                    mqttController.publish("/smartcar/control/throttle", String.valueOf(savedPathList.get(j)));
+//                    mqttController.publish("/smartcar/control/steering", String.valueOf(savedPathList.get(j)));
+//                }
+            }
+        });
+
     }
 
         public void onListItemClick(ListView pathList, View v, int position, long id){
@@ -184,12 +310,13 @@ public class ManualControl extends AppCompatActivity {
         }
 
 
-        int carSpeed = carSpeed(event);
-        double carAngle = carAngle(event);
+        carSpeed = carSpeed(event);
+        carAngle = carAngle(event);
 
         mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
         mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
 
+        recordMovements(event);
     }
 
     public int carSpeed(MotionEvent event) {
@@ -275,4 +402,24 @@ public class ManualControl extends AppCompatActivity {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
+
+    public boolean recordMovements(MotionEvent event){
+        if (recordToggle.isChecked()) {
+            // Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
+            do{
+                carStatus = new Pair(carSpeed(event), carAngle(event));
+                //TODO make this recurring so the every publish message is added
+                newRecording.add(carStatus);
+                System.out.println(newRecording.poll());
+            }while(recordToggle.equals(true));
+
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Recording saved", Toast.LENGTH_SHORT).show();
+            savedPathList.add(newRecording);
+        }
+
+        return false;
+    }
+
 }
