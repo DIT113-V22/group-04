@@ -33,12 +33,17 @@ public class CanvasGrid extends View {
     private int numColumns = 4;
     private int numRows = 4;
     private int cellLength = 50;
+    private float pathScale = 1;
     private Paint blackPaint = new Paint();
     private boolean[][] cellChecked = new boolean[50][100];
     private boolean[][] pureCellChecked = new boolean[50][100];
     private VectorMap vectorMap = new VectorMap();
     int lastx;
     int lasty;
+
+
+    private VectorMap vectorMap = new VectorMap();
+    private boolean firstTouch = true;
 
     Queue<Point> pointQueue = new LinkedList<>();
 
@@ -57,6 +62,10 @@ public class CanvasGrid extends View {
         return numColumns;
     }
 
+    public VectorMap getVectorMap() {
+        return vectorMap;
+    }
+
     public int getNumRows() {
         return numRows;
     }
@@ -64,6 +73,12 @@ public class CanvasGrid extends View {
     public ResizeMode getResizeMode() {
         return resizeMode;
     }
+
+    public float getPathScale() {
+        return pathScale;
+    }
+
+
 
     // Setters
     public void setCellLength(int cellLength) {
@@ -76,13 +91,26 @@ public class CanvasGrid extends View {
         calculateDimensions();
     }
 
+    public void setPathScale(float pathScale) {
+        this.pathScale = pathScale;
+    }
+
+    //public functions
+
     public void clear(){
         cellChecked = new boolean[numColumns][numRows];
         pureCellChecked = new boolean[numColumns][numRows];
+        firstTouch = true;
+        vectorMap = new VectorMap();
         pointQueue.clear();
         invalidate();
     }
 
+
+
+
+
+    //limited access functions
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -166,9 +194,22 @@ public class CanvasGrid extends View {
                 if (cellChecked[column][row] != true) {
                     cellChecked[column][row] = true;
                     pureCellChecked[column][row] = true;
+
+                    if( firstTouch == false && (Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1 ) ) {
+                        gridDrawLine(lastx, lasty, column, row);
+                    }else{
+                        firstTouch = false;
+                    }
+
+                    if(vectorMap.getVectorList().isEmpty()) {
+                        vectorMap = new VectorMap(column, row);
+                    }else{
+                        vectorMap.add(column, row);
+                    }
+
+                    
                     lastx = column;
                     lasty = row;
-
                 }
 
             } catch(Exception e) {
@@ -278,6 +319,7 @@ public class CanvasGrid extends View {
         // TODO: 2022-05-10 might need to rewrite the while true
 
     private void gridDrawLine(int x0, int y0, int x1, int y1){
+        System.out.println("GRIDLINE !!!!!!!!!!!!!!");
         //Delta X, Y
         int dx = Math.abs(x1 - x0);
         int dy = -Math.abs(y1 - y0);
@@ -287,13 +329,15 @@ public class CanvasGrid extends View {
         int sy = (y0 < y1)? 1: -1;
 
         int error = dx + dy;
+        int i = 0;
 
-        while (true){
+        while (i < 100){
             cellChecked[x0][y0] = true;
 
+            System.out.println("LOOP " + x0 + "  " + y0);
             if(x0 == x1 && y0 == y1) break;
-            int error2 = error + error; // 2* error
 
+            int error2 = error + error; // 2* error
             if (error2 >= dy){
                 if(x0 == x1) break;
                 error += dy;
@@ -305,6 +349,7 @@ public class CanvasGrid extends View {
                 y0 += sy;
             }
         }
+
     }
 
 

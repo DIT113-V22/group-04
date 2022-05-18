@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,8 +38,10 @@ public class DrawControl extends AppCompatActivity {
     ImageButton downloadBtn;
     ImageButton clearBtn;
     EditText numberViewCellSize;
+    EditText numberViewCellLength;
     SeekBar seekBar;
     TextView speedView;
+    TextView pathLengthView;
     CanvasGrid pixelGrid;
 
     @Override
@@ -56,13 +59,15 @@ public class DrawControl extends AppCompatActivity {
         clearBtn = findViewById(R.id.clearBttn);
 
         numberViewCellSize = findViewById(R.id.numberViewCellSize);
+        numberViewCellLength = findViewById(R.id.numberViewCellLength);
 
         pixelGrid = findViewById(R.id.pixelGridA);
-        pixelGrid.setCellLength(20);
+        pixelGrid.setCellLength(30);
         pixelGrid.setResizeMode(CanvasGrid.ResizeMode.FIT_CONTENT);
 
         seekBar = findViewById(R.id.seekbar);
-        speedView = findViewById(R.id.speed);
+        speedView = findViewById(R.id.textViewSpeed);
+        pathLengthView = findViewById(R.id.textViewPathLength);
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -102,6 +107,8 @@ public class DrawControl extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pixelGrid.clear();
+
+
             }
         });
         runBtn.setOnClickListener(new View.OnClickListener() {
@@ -150,10 +157,10 @@ public class DrawControl extends AppCompatActivity {
                     int value;
                     value = Integer.parseInt(numberViewCellSize.getText().toString());
 
-                    if (value > 4) {
-                        pixelGrid.setCellLength(value);
-                        speedView.setText("Current speed:" + seekBar.getProgress());
-                        speedView.setTextColor(Color.BLACK);
+                    if(value > 4) {
+                       pixelGrid.setCellLength(value);
+                       speedView.setText("Speed:" + seekBar.getProgress());
+                       speedView.setTextColor(Color.BLACK);
                     } else {
                         throw new Exception();
                     }
@@ -165,7 +172,42 @@ public class DrawControl extends AppCompatActivity {
                 }
             }
         });
+        numberViewCellLength.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    float value = Float.parseFloat(numberViewCellLength.getText().toString());
+
+                    pixelGrid.setPathScale(value);
+                    double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
+                    pathLength = Math.floor(pathLength * 100) / 100;
+                    pathLengthView.setText("Path length: " +  pathLength );
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                };
+            }
+        });
+
+        pixelGrid.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
+                pathLength = Math.floor(pathLength * 100) / 100;
+                pathLengthView.setText("Path length: " +  pathLength );
+                return false;
+            }
+        });
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         manualControlScreen.setOnClickListener(view -> openManualScreen());
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
