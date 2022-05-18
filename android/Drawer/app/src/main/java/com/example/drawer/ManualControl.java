@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
@@ -50,106 +51,12 @@ public class ManualControl extends AppCompatActivity {
     private AlertDialog.Builder builder;
     private AlertDialog alertDialog;
     private ListView pathView;
-    private Queue newRecording = new Queue() {
-        @Override
-        public boolean add(Object o) {
-            return false;
-        }
-
-        @Override
-        public boolean offer(Object o) {
-            return false;
-        }
-
-        @Override
-        public Object remove() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public Object poll() {
-            return null;
-        }
-
-        @Override
-        public Object element() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public Object peek() {
-            return null;
-        }
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
-        public boolean contains(@Nullable Object o) {
-            return false;
-        }
-
-        @NonNull
-        @Override
-        public Iterator iterator() {
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public Object[] toArray() {
-            return new Object[0];
-        }
-
-        @NonNull
-        @Override
-        public Object[] toArray(@NonNull Object[] objects) {
-            return new Object[0];
-        }
-
-        @Override
-        public boolean remove(@Nullable Object o) {
-            return false;
-        }
-
-        @Override
-        public boolean containsAll(@NonNull Collection collection) {
-            return false;
-        }
-
-        @Override
-        public boolean addAll(@NonNull Collection collection) {
-            return false;
-        }
-
-        @Override
-        public boolean removeAll(@NonNull Collection collection) {
-            return false;
-        }
-
-        @Override
-        public boolean retainAll(@NonNull Collection collection) {
-            return false;
-        }
-
-        @Override
-        public void clear() {
-
-        }
-    };
+    private Queue carSpeedQueue = new LinkedList();
     private List savedPathList = new ArrayList();
     private int carSpeed =0;
     private double carAngle = 0.0;
-    Pair<Integer, Double> carStatus;
+    private Queue carAngleQueue = new LinkedList();
+    private Pair<Integer, Double> carStatus;
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -203,13 +110,13 @@ public class ManualControl extends AppCompatActivity {
         });
 
 
-        recordToggle.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                recordMovements(motionEvent);
-                return false;
-            }
-        });
+//        recordToggle.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                recordMovements(motionEvent);
+//                return false;
+//            }
+//        });
 
     }
 
@@ -240,8 +147,7 @@ public class ManualControl extends AppCompatActivity {
                 //TODO fix the toast so it shows the current playing recording
                 Toast.makeText(getApplicationContext(), "Playing recording" + pathView.getChildAt(0), Toast.LENGTH_SHORT).show();
                 do {
-                    System.out.println(newRecording.poll());
-                }while(!(newRecording.isEmpty()));
+                }while(!(carSpeedQueue.isEmpty()));
 //                for(int j = 0; j > savedPathList.size(); j++){
 //                    mqttController.publish("/smartcar/control/throttle", String.valueOf(savedPathList.get(j)));
 //                    mqttController.publish("/smartcar/control/steering", String.valueOf(savedPathList.get(j)));
@@ -315,7 +221,6 @@ public class ManualControl extends AppCompatActivity {
 
         mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
         mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
-
         recordMovements(event);
     }
 
@@ -405,18 +310,19 @@ public class ManualControl extends AppCompatActivity {
 
     public boolean recordMovements(MotionEvent event){
         if (recordToggle.isChecked()) {
-            // Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
+             Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
             do{
                 carStatus = new Pair(carSpeed(event), carAngle(event));
                 //TODO make this recurring so the every publish message is added
-                newRecording.add(carStatus);
-                System.out.println(newRecording.poll());
+                carSpeedQueue.add(carStatus);
+
+                System.out.println(carSpeedQueue.poll());
             }while(recordToggle.equals(true));
 
         }
         else{
             Toast.makeText(getApplicationContext(), "Recording saved", Toast.LENGTH_SHORT).show();
-            savedPathList.add(newRecording);
+            savedPathList.add(carSpeedQueue);
         }
 
         return false;
