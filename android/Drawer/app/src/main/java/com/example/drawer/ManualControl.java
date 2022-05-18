@@ -35,12 +35,12 @@ public class ManualControl extends AppCompatActivity {
     private Button readMeScreen;
     private Button manualControlScreen;
     private Button drawControlScreen;
-    private View innerCircle;
+    private TextView innerCircle;
     private View outerCircle;
     private int outerRadius = 0;
-    private int innerRadius = 0;
-    private int centerScrX = 0;
-    private int centerScrY = 0;
+    private boolean saved = false;
+    private int centerX = 0;
+    private int centerY = 0;
     private TextView speedStat;
     private TextView angleStat;
     private TextView status;
@@ -64,7 +64,6 @@ public class ManualControl extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
-        innerCircle = findViewById(R.id.innerCircle);
 
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
@@ -78,6 +77,7 @@ public class ManualControl extends AppCompatActivity {
         outerCircle = findViewById(R.id.outerCircle);
         viewPaths = findViewById(R.id.viewPathsScreen);
         recordToggle = findViewById(R.id.recordToggle);
+        innerCircle.setEnabled(true);
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
 
@@ -93,13 +93,6 @@ public class ManualControl extends AppCompatActivity {
             }
         });
 
-        innerCircle.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                circleOnTouch(motionEvent);
-                return false;
-            }
-        });
 
         outerCircle.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -168,56 +161,58 @@ public class ManualControl extends AppCompatActivity {
         }
 
     public void circleOnTouch(MotionEvent event) {
-        Drawable outerCircle;
-        Drawable innerCircle;
+        Drawable OC;
+        Drawable IC;
         Resources res = getResources();
-        outerCircle = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
-        innerCircle = ResourcesCompat.getDrawable(res, R.drawable.inner_circle, null);
+        OC = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
+        IC = ResourcesCompat.getDrawable(res, R.drawable.inner_circle, null);
+        if(!saved){
+            centerX = (int)innerCircle.getX();
+            centerY = (int)innerCircle.getY();
+            saved = true;
+        }
 
-        outerRadius = outerCircle.getMinimumWidth() / 2;
-        innerRadius = innerCircle.getMinimumWidth() / 2;
+        outerRadius = OC.getMinimumWidth() / 2;
 
-        int traversX = (int)event.getRawX() - 90;
-        int traversY = (int)event.getRawY() - 90;
+        int traversX = (int)(event.getX() + centerX - 90);
+        int traversY = (int)(event.getY() + centerY - 90);
+
+        traversX = traversX - outerRadius;
+        traversY = traversY - outerRadius;
+
 
         double angle;
-        int startX = centerScrX;
-        int startY = centerScrY;
-        angle = (Math.toDegrees(Math.atan2((event.getRawY() - startY),(event.getRawX() - startX)) * -1));
 
-        Pair<Integer, Integer> screenDimension = getScreenDimensions();
-
-        centerScrX = (int) ((int)screenDimension.first / 2);
-        centerScrY = (int) ((int)screenDimension.second / 1.25);
-
-        float centerX = (int) (centerScrX - 90);
-        float centerY = (int) (centerScrY - 90);
+        angle = (Math.toDegrees(Math.atan2(((event.getY()-90) - outerRadius),((event.getX()-90) - outerRadius)) * -1));
 
         double joystickToPressedDistance = Math.sqrt(
-                Math.pow(centerScrX - event.getRawX(), 2)
-                        + Math.pow(centerScrY - event.getRawY(), 2)
+                Math.pow(centerX - traversX, 2) +
+                Math.pow(centerY - traversY, 2)
         );
 
         //thumbstick clipping
         if (joystickToPressedDistance > outerRadius) {
-            this.innerCircle.setX(centerX + (float) Math.cos(Math.toRadians(angle)) * outerRadius);
-            this.innerCircle.setY(centerY + (float) Math.sin(Math.toRadians(angle)) * outerRadius * -1);
+            innerCircle.setX(centerX + (float) Math.cos(Math.toRadians(angle)) * outerRadius);
+            innerCircle.setY(centerY + (float) Math.sin(Math.toRadians(angle)) * outerRadius * -1);
         } else {
-            this.innerCircle.setX(traversX);
-            this.innerCircle.setY(traversY);
+            innerCircle.setX(traversX);
+            innerCircle.setY(traversY);
         }
 
-        this.outerCircle.setX(centerX - outerRadius);
-        this.outerCircle.setY(centerY - outerRadius);
+        outerCircle.setX(centerX -outerRadius);
+        outerCircle.setY(centerY -outerRadius);
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            this.innerCircle.setX(centerX);
-            this.innerCircle.setY(centerY);
+
+            innerCircle.setX(centerX);
+            innerCircle.setY(centerY);
         }
 
 
-        carSpeed = carSpeed(event);
-        carAngle = carAngle(event);
+        int carSpeed = carSpeed(event);
+        double carAngle = carAngle(event);
+
+
 
         mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
         mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
@@ -227,9 +222,15 @@ public class ManualControl extends AppCompatActivity {
     public int carSpeed(MotionEvent event) {
         int speedTempX;
         int speedTempY;
+        int traversX = (int)(event.getX() + centerX - 90);
+        int traversY = (int)(event.getY() + centerY - 90);
 
-        speedTempX = (int) event.getRawX() - centerScrX;
-        speedTempY = (int) event.getRawY() - centerScrY;
+        traversX = traversX - outerRadius;
+        traversY = traversY - outerRadius;
+
+
+        speedTempX = (int) traversX - centerX;
+        speedTempY = (int) traversY - centerY;
 
         if (speedTempX < 0) {
             speedTempX *= -1;
@@ -238,23 +239,17 @@ public class ManualControl extends AppCompatActivity {
             speedTempY *= -1;
         }
 
-        int speedTemp = (int) Math.sqrt((speedTempX * speedTempX) + (speedTempY * speedTempY));
+        int speedTemp = (int) Math.sqrt((speedTempX*speedTempX)+(speedTempY*speedTempY));
 
-        int startTemp = (int) Math.sqrt((centerScrX * centerScrX) + (centerScrY * centerScrY));
+        int startTemp = (int) Math.sqrt((centerX * centerX)+(centerY * centerY));
 
-        if (speedTemp > startTemp) {
-            speedTemp = startTemp;
-        }
+        if (speedTemp > startTemp) speedTemp = startTemp;
 
-        if (speedTemp > outerRadius) {
-            speedTemp = outerRadius;
-        }
+        if (speedTemp > outerRadius) speedTemp = outerRadius;
 
         int speedProc = (speedTemp * 100) / outerRadius;
 
-        if (event.getRawY() > centerScrY) {
-            speedProc = speedProc * -1;
-        }
+        if (traversY > centerY) speedProc = speedProc * -1;
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             speedProc = 0;
@@ -266,32 +261,19 @@ public class ManualControl extends AppCompatActivity {
 
     public double carAngle(MotionEvent event) {
         double angle;
-        int startX = centerScrX;
-        int startY = centerScrY;
-        angle = (Math.toDegrees(Math.atan2((event.getRawX() - startX), (event.getRawY() - startY) * -1)));
+        angle = (Math.toDegrees(Math.atan2((event.getX()-90 - outerRadius), (event.getY()-90 - outerRadius) * -1)));
         //angle = 180-angle;
-        if (angle >= 90) {
+        if (angle >= 90){
             angle = 180 - angle;
-        } else if (angle <= -90) {
+        }else if(angle <= -90){
             angle = -180 - angle;
         }
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            angle = 0;
-        }
+        if (event.getAction() == MotionEvent.ACTION_UP) angle = 0;
         angleStat.setText("The angle is: " + angle);
 
         return angle;
     }
 
-    public Pair<Integer, Integer> getScreenDimensions() {
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int height = displayMetrics.heightPixels;
-        int width = displayMetrics.widthPixels;
-
-        return new Pair<>(width, height);
-    }
 
     public void openReadMEScreen() {
         Intent intent = new Intent(this, MainActivity.class);

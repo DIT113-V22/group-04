@@ -8,17 +8,6 @@
     tools:context=".ManualControl">
 
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="296dp"
-        android:layout_height="292dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.521"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.154" />
-
     <Button
         android:id="@+id/ManualScreen"
         android:layout_width="wrap_content"
@@ -69,7 +58,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.602" />
 
-    <View
+    <ImageView
         android:id="@+id/outerCircle"
 
         android:layout_width="200dp"
@@ -86,22 +75,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.89" />
 
-    <View
+
+    <TextView
         android:id="@+id/innerCircle"
 
         android:layout_width="50dp"
         android:layout_height="50dp"
-
-
         android:background="@drawable/inner_circle"
-        android:longClickable="true"
-        android:orientation="vertical"
-        android:rotationX="0"
-        app:layout_constraintBottom_toBottomOf="@+id/outerCircle"
-        app:layout_constraintEnd_toEndOf="@+id/outerCircle"
-        app:layout_constraintStart_toStartOf="@+id/outerCircle"
-        app:layout_constraintTop_toTopOf="@+id/outerCircle"
-        app:layout_constraintVertical_bias="0.506" />
+        android:text="                                               car"
+        android:textColor="@android:color/transparent"
+        android:textSize="5sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.807" />
 
     <TextView
         android:id="@+id/speedStat"
