@@ -43,6 +43,7 @@ public class DrawControl extends AppCompatActivity {
     TextView speedView;
     TextView pathLengthView;
     CanvasGrid pixelGrid;
+    MQTTController mqttController = MQTTController.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,10 @@ public class DrawControl extends AppCompatActivity {
         seekBar = findViewById(R.id.seekbar);
         speedView = findViewById(R.id.textViewSpeed);
         pathLengthView = findViewById(R.id.textViewPathLength);
+
+        readMeScreen.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreen.setOnClickListener(view -> openManualScreen());
+        drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -116,7 +121,7 @@ public class DrawControl extends AppCompatActivity {
             public void onClick(View view) {
                 String speed = Integer.toString(seekBar.getProgress());
                 pixelGrid.executePath();
-                MQTTController.publish("/smartcar/control/throttle", speed);
+                mqttController.publish("/smartcar/control/throttle", speed);
             }
         });
         seekBar.setOnSeekBarChangeListener(
@@ -202,18 +207,27 @@ public class DrawControl extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-        pixelGrid.setOnTouchListener(new View.OnTouchListener() {
+                pixelGrid.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
+                        pathLength = Math.floor(pathLength * 100) / 100;
+                        pathLengthView.setText("Path length: " + pathLength);
+                        return false;
+                    }
+                });
+            }
+
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
-                pathLength = Math.floor(pathLength * 100) / 100;
-                pathLengthView.setText("Path length: " +  pathLength );
-                return false;
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
     }
 
     public void openReadMEScreen() {
