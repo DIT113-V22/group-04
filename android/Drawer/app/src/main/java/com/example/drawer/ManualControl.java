@@ -7,10 +7,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,25 +18,14 @@ import android.widget.Chronometer;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
-import org.w3c.dom.Node;
-
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Timer;
 
 public class ManualControl extends AppCompatActivity {
     private LinkedList carTimerQueue= new LinkedList();
@@ -58,9 +44,6 @@ public class ManualControl extends AppCompatActivity {
     private Button viewPaths;
     private boolean timerStart = false;
     private Chronometer executeTimer;
-    private int executeTimerInt;
-    private boolean executeTimerBool;
-    private boolean obstacle = false;
 
     private Button playPath;
     private Button stopPlay;
@@ -71,8 +54,6 @@ public class ManualControl extends AppCompatActivity {
     private ListView pathView;
     private LinkedList carSpeedQueue = new LinkedList();
     private List savedPathList = new ArrayList();
-    //private int carSpeed =0;
-    //private double carAngle = 0.0;
     private LinkedList carAngleQueue = new LinkedList();
     private Pair<Integer, Double> carStatus;
 
@@ -126,12 +107,6 @@ public class ManualControl extends AppCompatActivity {
     public List recordMovements(short speed, short angle){
         if (recordToggle.isChecked()) {
             //Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
-            if(!timerStart){
-                time.setBase(SystemClock.elapsedRealtime());
-                time.start();
-                timerStart = true;
-            }
-
 
             //TODO make this recurring so the every publish message is added
             carSpeedQueue.add(speed);
@@ -139,10 +114,6 @@ public class ManualControl extends AppCompatActivity {
 
             carTimerQueue.add((int) (SystemClock.elapsedRealtime() - time.getBase()));
 
-        }else{
-            time.stop();
-            time.setBase(SystemClock.elapsedRealtime());
-            timerStart = false;
         }
 
         // Toast.makeText(getApplicationContext(), "Recording saved", Toast.LENGTH_SHORT).show();
@@ -176,25 +147,10 @@ public class ManualControl extends AppCompatActivity {
         pathView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ///TODO fix the toast so it shows the current playing recording
-                if(!executeTimerBool){
-                    executeTimer.setBase(SystemClock.elapsedRealtime());
-                    executeTimer.start();
-                    executeTimerBool = true;
-                }
-                    for(int m = 0; m < carSpeedQueue.size(); m++) {
-                        boolean timerChecked = true;
 
-                        while(timerChecked && !obstacle){
-                            executeTimerInt = (int) (SystemClock.elapsedRealtime() - executeTimer.getBase());
-                            if ((int) executeTimerInt / 10 >= (int) ((int) carTimerQueue.get(m) / 10))
-                            {mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeedQueue.get(m)));
-                                mqttController.publish("/smartcar/control/steering", String.valueOf(carAngleQueue.get(m)));
-                                timerChecked = false;
-                            }
-                        }
-                    }
-                    executeTimer.stop();
+                ManualRecordingRun executeRecording = new ManualRecordingRun(carTimerQueue, carSpeedQueue, carAngleQueue, mqttController, executeTimer);
+                new Thread(executeRecording).start();
+              ///TODO fix the toast so it shows the current playing recording
             }
         });
 
@@ -262,7 +218,17 @@ public class ManualControl extends AppCompatActivity {
         short carAngle = (short)carAngle(event);
 
 
-                // Do something after 5s = 5000ms
+        if (recordToggle.isChecked()) {
+            if(!timerStart){
+                time.setBase(SystemClock.elapsedRealtime());
+                time.start();
+                timerStart = true;
+            }
+        }else{
+            time.stop();
+            time.setBase(SystemClock.elapsedRealtime());
+            timerStart = false;
+        }
         mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
         mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
         recordMovements(carSpeed, carAngle);
