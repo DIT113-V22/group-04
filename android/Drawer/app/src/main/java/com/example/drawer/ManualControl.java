@@ -8,6 +8,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -44,18 +49,27 @@ public class ManualControl extends AppCompatActivity {
     private Button viewPaths;
     private boolean timerStart = false;
     private Chronometer executeTimer;
+    private boolean wasChecked = false;
 
     private Button playPath;
     private Button stopPlay;
     private Switch recordToggle;
     private Chronometer time;
-    private AlertDialog.Builder builder;
-    private AlertDialog alertDialog;
+    private AlertDialog.Builder builderReplays;
+    private AlertDialog alertDialogReplays;
     private ListView pathView;
     private LinkedList carSpeedQueue = new LinkedList();
+    private List savedPathListName = new ArrayList();
     private List savedPathList = new ArrayList();
     private LinkedList carAngleQueue = new LinkedList();
     private Pair<Integer, Double> carStatus;
+
+    //POP-UP for saving replay and name.
+    private AlertDialog.Builder builderSaved;
+    private AlertDialog alertDialogSaved;
+    private EditText saveName;
+    private Button saveReplay;
+    private Button discardReplay;
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -90,7 +104,7 @@ public class ManualControl extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //open the pop up window
-                createViewContactDialogue();
+                createViewContactDialogueReplays();
             }
         });
 
@@ -102,9 +116,29 @@ public class ManualControl extends AppCompatActivity {
             }
         });
 
+        recordToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (!b){
+                    if (recordToggle.isChecked()) {
+
+                        wasChecked = true;
+                    }else if(wasChecked){
+                        carStatus = new Pair(carSpeedQueue, carAngleQueue);
+                        savedPathList.add(carStatus);
+                        publicViewContactDialogueSaved();
+                        wasChecked = false;
+                        time.stop();
+                        time.setBase(SystemClock.elapsedRealtime());
+                        timerStart = false;
+                    }
+                }
+            }
+        });
+
     }
 
-    public List recordMovements(short speed, short angle){
+    public void recordMovements(int speed, int angle){
         if (recordToggle.isChecked()) {
             //Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
 
@@ -113,34 +147,61 @@ public class ManualControl extends AppCompatActivity {
             carAngleQueue.add(angle);
 
             carTimerQueue.add((int) (SystemClock.elapsedRealtime() - time.getBase()));
+            wasChecked = true;
 
         }
 
         // Toast.makeText(getApplicationContext(), "Recording saved", Toast.LENGTH_SHORT).show();
-        carStatus = new Pair(carSpeedQueue, carAngleQueue);
-        savedPathList.add(carStatus);
-
-        return savedPathList;
     }
 
-    public void createViewContactDialogue() {
-        builder = new AlertDialog.Builder(this);
+    public void publicViewContactDialogueSaved() {
+        builderSaved = new AlertDialog.Builder(this);
+        final View popUpView = getLayoutInflater().inflate(R.layout.record_path_save, null);
+        saveName = popUpView.findViewById(R.id.savedName);
+        saveReplay = popUpView.findViewById(R.id.saveRecording);
+        discardReplay = popUpView.findViewById(R.id.discardRecording);
+        builderSaved.setView(popUpView);
+        alertDialogSaved = builderSaved.create();
+        alertDialogSaved.show();
+
+        saveReplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                savedPathListName.add(saveName.getText());
+                alertDialogSaved.dismiss();
+            }
+        });
+
+        discardReplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                savedPathList.remove(savedPathList.size()-1);
+                alertDialogSaved.dismiss();
+            }
+        });
+
+
+    }
+
+    public void createViewContactDialogueReplays() {
+        builderReplays = new AlertDialog.Builder(this);
         final View popUpView = getLayoutInflater().inflate(R.layout.activity_view_saved_paths, null);
         playPath = (Button) popUpView.findViewById(R.id.playPath);
         stopPlay = (Button) popUpView.findViewById(R.id.stopPlay);
-        builder.setView(popUpView);
-        alertDialog = builder.create();
-        alertDialog.show();
+        builderReplays.setView(popUpView);
+        alertDialogReplays = builderReplays.create();
+        alertDialogReplays.show();
 
         stopPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alertDialog.dismiss();
+                alertDialogReplays.dismiss();
             }
         });
 
         pathView = (ListView) popUpView.findViewById(R.id.pathList);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
+        pathView.setBackgroundColor(Color.parseColor("#c8c8c8"));
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathListName);
         pathView.setAdapter(arrayAdapter);
         onListItemClick(pathView, popUpView, 1, 1000027);
 
@@ -151,8 +212,10 @@ public class ManualControl extends AppCompatActivity {
                 ManualRecordingRun executeRecording = new ManualRecordingRun(carTimerQueue, carSpeedQueue, carAngleQueue, mqttController, executeTimer);
                 new Thread(executeRecording).start();
               ///TODO fix the toast so it shows the current playing recording
+                alertDialogReplays.dismiss();
             }
         });
+
 
     }
 
@@ -206,16 +269,10 @@ public class ManualControl extends AppCompatActivity {
         outerCircle.setX(centerX -outerRadius);
         outerCircle.setY(centerY -outerRadius);
 
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-
-            innerCircle.setX(centerX);
-            innerCircle.setY(centerY);
 
 
-        }
-
-        short carSpeed = (short) carSpeed(event);
-        short carAngle = (short)carAngle(event);
+        int carSpeed = carSpeed(event);
+        int carAngle = carAngle(event);
 
 
         if (recordToggle.isChecked()) {
@@ -224,16 +281,15 @@ public class ManualControl extends AppCompatActivity {
                 time.start();
                 timerStart = true;
             }
-        }else{
-            time.stop();
-            time.setBase(SystemClock.elapsedRealtime());
-            timerStart = false;
         }
         mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
         mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
         recordMovements(carSpeed, carAngle);
 
-
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            innerCircle.setX(centerX);
+            innerCircle.setY(centerY);
+        }
     }
 
     public int carSpeed(MotionEvent event) {
@@ -276,9 +332,9 @@ public class ManualControl extends AppCompatActivity {
         return speedProc;
     }
 
-    public double carAngle(MotionEvent event) {
-        double angle;
-        angle = (Math.toDegrees(Math.atan2((event.getX()-90 - outerRadius), (event.getY()-90 - outerRadius) * -1)));
+    public int carAngle(MotionEvent event) {
+        int angle;
+        angle = (int)(Math.toDegrees(Math.atan2((event.getX()-90 - outerRadius), (event.getY()-90 - outerRadius) * -1)));
         //angle = 180-angle;
         if (angle >= 90){
             angle = 180 - angle;
