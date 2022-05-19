@@ -198,6 +198,9 @@ public class DrawControl extends AppCompatActivity {
                 };
             }
         });
+        numberViewCellLength.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
         pixelGrid.setOnTouchListener(new View.OnTouchListener() {
             @Override

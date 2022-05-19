@@ -36,12 +36,10 @@ public class CanvasGrid extends View {
     private float pathScale = 1;
     private Paint blackPaint = new Paint();
     private boolean[][] cellChecked = new boolean[50][100];
+    private int lastx;
+    private int lasty;
+
     private boolean[][] pureCellChecked = new boolean[50][100];
-    private VectorMap vectorMap = new VectorMap();
-    int lastx;
-    int lasty;
-
-
     private VectorMap vectorMap = new VectorMap();
     private boolean firstTouch = true;
 
@@ -105,10 +103,6 @@ public class CanvasGrid extends View {
         pointQueue.clear();
         invalidate();
     }
-
-
-
-
 
     //limited access functions
     @Override
@@ -207,7 +201,6 @@ public class CanvasGrid extends View {
                         vectorMap.add(column, row);
                     }
 
-                    
                     lastx = column;
                     lasty = row;
                 }
