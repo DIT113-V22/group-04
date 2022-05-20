@@ -3,6 +3,7 @@ package com.example.drawer;
 import static java.lang.Thread.sleep;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -23,14 +24,29 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Node;
+
+import java.lang.reflect.Type;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Timer;
 
 public class ManualControl extends AppCompatActivity {
     private LinkedList carTimerQueue= new LinkedList();
@@ -51,16 +67,15 @@ public class ManualControl extends AppCompatActivity {
     private Chronometer executeTimer;
     private boolean wasChecked = false;
 
-    private Button playPath;
     private Button stopPlay;
-    private Switch recordToggle;
+    private Switch recordToggle; //switch to turn on and off the recordings
     private Chronometer time;
     private AlertDialog.Builder builderReplays;
     private AlertDialog alertDialogReplays;
     private ListView pathView;
     private LinkedList carSpeedQueue = new LinkedList();
-    private List savedPathListName = new ArrayList();
-    private List savedPathList = new ArrayList();
+    private List savedPathListName = new ArrayList(); //for setting a name to the path
+    private List savedPathList = new ArrayList(); //the actual saved path
     private LinkedList carAngleQueue = new LinkedList();
     private Pair<Integer, Double> carStatus;
 
@@ -77,9 +92,10 @@ public class ManualControl extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
-
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
+        PrefsConfig.loadData(this, savedPathList);
+        //PrefsConfig.loadData(this, savedPathListName);
 
         time = findViewById(R.id.stopWatch);
         executeTimer = findViewById(R.id.executeWatch);
@@ -93,6 +109,7 @@ public class ManualControl extends AppCompatActivity {
         viewPaths = findViewById(R.id.viewPathsScreen);
         recordToggle = findViewById(R.id.recordToggle);
         innerCircle.setEnabled(true);
+        saveReplay = findViewById(R.id.saveRecording);
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
 
@@ -135,23 +152,28 @@ public class ManualControl extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     public void recordMovements(int speed, int angle){
         if (recordToggle.isChecked()) {
             //Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
+            if(!timerStart){
+                time.setBase(SystemClock.elapsedRealtime());
+                time.start();
+                timerStart = true;
+            }
 
-            //TODO make this recurring so the every publish message is added
             carSpeedQueue.add(speed);
             carAngleQueue.add(angle);
 
             carTimerQueue.add((int) (SystemClock.elapsedRealtime() - time.getBase()));
             wasChecked = true;
 
+        }else{
+            time.stop();
+            time.setBase(SystemClock.elapsedRealtime());
+            timerStart = false;
         }
-
-        // Toast.makeText(getApplicationContext(), "Recording saved", Toast.LENGTH_SHORT).show();
     }
 
     public void publicViewContactDialogueSaved() {
@@ -169,25 +191,24 @@ public class ManualControl extends AppCompatActivity {
             public void onClick(View view) {
                 savedPathListName.add(saveName.getText());
                 alertDialogSaved.dismiss();
+                PrefsConfig.saveData(getApplicationContext(), savedPathList);
+                //PrefsConfig.saveData(getApplicationContext(), savedPathListName);
             }
         });
 
         discardReplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                savedPathList.remove(savedPathList.size()-1);
+                savedPathList.remove(savedPathList.size() - 1);
                 alertDialogSaved.dismiss();
             }
         });
-
-
     }
 
     public void createViewContactDialogueReplays() {
         builderReplays = new AlertDialog.Builder(this);
         final View popUpView = getLayoutInflater().inflate(R.layout.activity_view_saved_paths, null);
-        playPath = (Button) popUpView.findViewById(R.id.playPath);
-        stopPlay = (Button) popUpView.findViewById(R.id.stopPlay);
+        stopPlay = (Button) popUpView.findViewById(R.id.stopPlay); //stops the play and closes the window
         builderReplays.setView(popUpView);
         alertDialogReplays = builderReplays.create();
         alertDialogReplays.show();
@@ -211,7 +232,6 @@ public class ManualControl extends AppCompatActivity {
 
                 ManualRecordingRun executeRecording = new ManualRecordingRun(carTimerQueue, carSpeedQueue, carAngleQueue, mqttController, executeTimer);
                 new Thread(executeRecording).start();
-              ///TODO fix the toast so it shows the current playing recording
                 alertDialogReplays.dismiss();
             }
         });
