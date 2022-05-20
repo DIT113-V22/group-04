@@ -51,6 +51,39 @@ Technologies used:
 
 ### Installation
 
+The project requires few software installations as pre-requisits.
+
+## HiveMQ setup
+*Please note that this will run HiveMQ as a local service on the computer it starts on, and assumes you are aware of how port-forwarding works to enable other devices to connect to it should you want to control the car via a physical phone for example.*
+
+ Navigate to your HiveMQ install directory
+    1. You will probably need to edit the run.bat or run.sh to modify the port used, as it is commonly used by other programs and features.
+    2. Edit port (default 9010) on line 55 in run.sh if on a UNIX system, or line 68 in run.bat if on a windows system, and save.
+    3. Run the run.sh normally, or the run.bat as administrator if on a windows system. 
+
+## Start SMCE-gd
+    1. Select "Start Fresh"
+    2. Select the **+** on the top left of the screen
+    3. Select "Add New"
+    4. Navigate to the cloned repository, then /arduino and select the smartcar.ino sketch.
+    5. Select the sketch in SMCE
+    6. Select "Compile"
+    7. Select "Start"
+
+#### If using Java tool for testing
+
+- Open the project in your IDE of choice
+- If you need to make modifications to the messages and topics, you can do so, but note that the arduino sketch will need to be updated as well. In which case, you only need to save and recompile the sketch in SMCE.
+- Have fun!
+
+#### If using the Android app
+
+- Open the project in Android Studio or another android IDE to compile and run there.
+    1. To run this program on a physical arduino device, you can utilise android developer mode, and a USB cable to compile and install the application on the connected device.
+    2. Make sure you are connected to the same network as the computer being used to run SMCE, if you go this route.
+    * Using mobile hotspot is a viable alternative.
+- Connect to the MQTT broker
+- Have fun!
 
 
 ## Contributors
