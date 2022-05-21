@@ -25,8 +25,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
-//import com.google.gson.Gson;
-//import com.google.gson.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -42,8 +42,6 @@ public class ManualControl extends AppCompatActivity {
 
     private boolean timerStart = false;
     private boolean wasChecked = false;
-
-
 
     //UI objects/views
     private Switch recordToggle; //switch to turn on and off the recordings

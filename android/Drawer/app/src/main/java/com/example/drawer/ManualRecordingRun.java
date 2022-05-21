@@ -44,7 +44,7 @@ public class ManualRecordingRun extends java.util.TimerTask {
                 executeTimerInt = (int) (SystemClock.elapsedRealtime() - executeTimer.getBase());
                 ///TODO: TEST WITHOUT /10
                 //Publish only with correct timing
-                if ((int) executeTimerInt / 10 >= (int) ((int) carTimerQueue.get(m) / 10))
+                if ((int) executeTimerInt  == (int) ((int) carTimerQueue.get(m) ))
                 {mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeedQueue.get(m)));
                     mqttController.publish("/smartcar/control/steering", String.valueOf(carAngleQueue.get(m)));
                     timerChecked = false;
