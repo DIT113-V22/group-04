@@ -22,21 +22,28 @@ public class ManualRecordingRun extends java.util.TimerTask {
         this.carAngleQueue =carAngleQueue;
         this.carSpeedQueue = carSpeedQueue;
         this.executeTimer = executeTimer;
-
     }
+
+    /**
+     * Runs recorded commands/instructions. Sent out based on time.
+     */
 
     @Override
     public void run() {
+        //Start a new timer if none has been run before
         if(!executeTimerBool){
             executeTimer.setBase(SystemClock.elapsedRealtime());
             executeTimer.start();
             executeTimerBool = true;
         }
+        //Go through and publish all commands
         for(int m = 0; m < carSpeedQueue.size(); m++) {
             boolean timerChecked = true;
 
             while(timerChecked && !obstacle){
                 executeTimerInt = (int) (SystemClock.elapsedRealtime() - executeTimer.getBase());
+                ///TODO: TEST WITHOUT /10
+                //Publish only with correct timing
                 if ((int) executeTimerInt / 10 >= (int) ((int) carTimerQueue.get(m) / 10))
                 {mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeedQueue.get(m)));
                     mqttController.publish("/smartcar/control/steering", String.valueOf(carAngleQueue.get(m)));
