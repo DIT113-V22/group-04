@@ -143,9 +143,6 @@ public class CanvasGrid extends View {
                     canvas.drawRect(i * cellLength, j * cellLength,
                             (i + 1) * cellLength, (j + 1) * cellLength,
                             blackPaint);
-                    //if (!pointQueue.contains(new Point(i, j))) {
-                    //    pointQueue.add(new Point(i, j));
-                    //}
                 }
                 if (pureCellChecked[i][j]) {
                     if (!pointQueue.contains(new Point(i, j))) {
@@ -155,16 +152,14 @@ public class CanvasGrid extends View {
             }
         }
 
-        // TODO Are getters needed here? Perhaps attributes should be used -KC
-
         for (int i = 1; i < numColumns; i++) {
             canvas.drawLine(i * cellLength, 0,
-                    i * cellLength, getNumRows() * cellLength, blackPaint);
+                    i * cellLength, numRows * cellLength, blackPaint);
         }
 
         for (int i = 1; i < numRows; i++) {
             canvas.drawLine(0, i * cellLength,
-                    getNumColumns() * cellLength, i * cellLength, blackPaint);
+                    numColumns * cellLength, i * cellLength, blackPaint);
         }
     }
 
@@ -214,9 +209,10 @@ public class CanvasGrid extends View {
                     cellChecked[column][row] = true;
                     pureCellChecked[column][row] = true;
                     // if the difference between current x, y and new x, y is bigger than 1 draw a line in between
-                    if (Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1)
+                    if (Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1) {
                         gridDrawLine(lastx, lasty, column, row);
-                    
+                    }
+
                     if (column != lastx && row != lasty) {
                         vectorMap.add(column, row);
                     }
@@ -224,14 +220,13 @@ public class CanvasGrid extends View {
                     lasty = row;
                 }
 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
             invalidate();
         }
         System.out.println("-----------Total------------: " + vectorMap.calculateSize());
-        //System.out.println(vectorMap.toString());
 
         return true;
     }
@@ -319,19 +314,22 @@ public class CanvasGrid extends View {
             cellChecked[x0][y0] = true;
 
             System.out.println("LOOP " + x0 + "  " + y0);
-            if(x0 == x1 && y0 == y1)
+            if (x0 == x1 && y0 == y1) {
                 break;
+            }
 
             int error2 = error + error; // 2* error
             if (error2 >= dy) {
-                if (x0 == x1)
+                if (x0 == x1) {
                     break;
+                }
                 error += dy;
                 x0 += sx;
             }
             if (error2 <= dx) {
-                if (y0 == y1)
+                if (y0 == y1) {
                     break;
+                }
                 error += dx;
                 y0 += sy;
             }

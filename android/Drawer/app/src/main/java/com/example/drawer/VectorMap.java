@@ -2,6 +2,7 @@ package com.example.drawer;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.example.drawer.Vector;
 
 public class VectorMap {
 
@@ -27,11 +28,6 @@ public class VectorMap {
         int vy = y - lastVector.absoluteY;
 
         vectorList.add(new Vector(vx, vy, x, y));
-        /*
-        int vx = x - lastVector.xStart + lastVector.x;
-        int vy = y - lastVector.yStart + lastVector.y;
-
-        vectorList.add(vectorList.size() ,new Vector(vx, vy, x - vx, y - vy));*/
     }
 
     public void clear() {
@@ -45,7 +41,6 @@ public class VectorMap {
             total += Math.sqrt(Math.pow(vector.posX, 2) + Math.pow(vector.posY, 2));
         }
 
-        //System.out.println("----------Total----------" + Total);
         return total;
     }
 

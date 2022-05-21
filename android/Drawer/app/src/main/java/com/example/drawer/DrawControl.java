@@ -112,8 +112,6 @@ public class DrawControl extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pixelGrid.clear();
-
-
             }
         });
         runBtn.setOnClickListener(new View.OnClickListener() {
