@@ -162,10 +162,10 @@ public class DrawControl extends AppCompatActivity {
                     int value;
                     value = Integer.parseInt(numberViewCellSize.getText().toString());
 
-                    if(value > 4) {
-                       pixelGrid.setCellLength(value);
-                       speedView.setText("Speed:" + seekBar.getProgress());
-                       speedView.setTextColor(Color.BLACK);
+                    if (value > 4) {
+                        pixelGrid.setCellLength(value);
+                        speedView.setText("Speed:" + seekBar.getProgress());
+                        speedView.setTextColor(Color.BLACK);
                     } else {
                         throw new Exception();
                     }
@@ -196,11 +196,11 @@ public class DrawControl extends AppCompatActivity {
                     pixelGrid.setPathScale(value);
                     double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
                     pathLength = Math.floor(pathLength * 100) / 100;
-                    pathLengthView.setText("Path length: " +  pathLength );
+                    pathLengthView.setText("Path length: " +  pathLength);
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
-                };
+                }
             }
         });
         numberViewCellLength.addTextChangedListener(new TextWatcher() {
