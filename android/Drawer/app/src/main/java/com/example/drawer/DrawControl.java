@@ -15,10 +15,12 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,14 +39,18 @@ public class DrawControl extends AppCompatActivity {
     private Button readMeScreen;
     private Button manualControlScreen;
     private Button drawControlScreen;
-    private Button runBtn;
-    private ImageButton uploadBtn;
-    private ImageButton downloadBtn;
-    private ImageButton clearBtn;
-    private EditText numberViewCellSize;
-    private SeekBar seekBar;
-    private TextView speedView;
-    private CanvasGrid pixelGrid;
+    ImageView uploadedImage;
+    Button runBtn;
+    ImageButton uploadBtn;
+    ImageButton downloadBtn;
+    ImageButton clearBtn;
+    EditText numberViewCellSize;
+    EditText numberViewCellLength;
+    SeekBar seekBar;
+    TextView speedView;
+    TextView pathLengthView;
+    CanvasGrid pixelGrid;
+    MQTTController mqttController = MQTTController.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +67,19 @@ public class DrawControl extends AppCompatActivity {
         clearBtn = findViewById(R.id.clearBttn);
 
         numberViewCellSize = findViewById(R.id.numberViewCellSize);
+        numberViewCellLength = findViewById(R.id.numberViewCellLength);
 
         pixelGrid = findViewById(R.id.pixelGridA);
-        pixelGrid.setCellLength(20);
+        pixelGrid.setCellLength(30);
         pixelGrid.setResizeMode(CanvasGrid.ResizeMode.FIT_CONTENT);
 
         seekBar = findViewById(R.id.seekbar);
-        speedView = findViewById(R.id.speed);
+        speedView = findViewById(R.id.textViewSpeed);
+        pathLengthView = findViewById(R.id.textViewPathLength);
+
+        readMeScreen.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreen.setOnClickListener(view -> openManualScreen());
+        drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +139,20 @@ public class DrawControl extends AppCompatActivity {
                 someActivityResultLauncher.launch(imagePickerIntent);
             }
         });
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pixelGrid.clear();
+            }
+        });
+        runBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String speed = Integer.toString(seekBar.getProgress());
+                pixelGrid.executePath();
+                mqttController.publish("/smartcar/control/throttle", speed);
+            }
+        });
         seekBar.setOnSeekBarChangeListener(
             new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -167,7 +193,7 @@ public class DrawControl extends AppCompatActivity {
 
                     if (value > 4) {
                         pixelGrid.setCellLength(value);
-                        speedView.setText("Current speed:" + seekBar.getProgress());
+                        speedView.setText("Speed:" + seekBar.getProgress());
                         speedView.setTextColor(Color.BLACK);
                     } else {
                         throw new Exception();
@@ -180,10 +206,57 @@ public class DrawControl extends AppCompatActivity {
             }
 
         });
+        numberViewCellLength.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    float value = Float.parseFloat(numberViewCellLength.getText().toString());
+
+                    pixelGrid.setPathScale(value);
+                    double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
+                    pathLength = Math.floor(pathLength * 100) / 100;
+                    pathLengthView.setText("Path length: " +  pathLength);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        numberViewCellLength.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                pixelGrid.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
+                        pathLength = Math.floor(pathLength * 100) / 100;
+                        pathLengthView.setText("Path length: " + pathLength);
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     public void openReadMEScreen() {
