@@ -1,8 +1,8 @@
 package com.example.drawer;
 
+import com.example.drawer.Vector;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.drawer.Vector;
 
 public class VectorMap {
 
