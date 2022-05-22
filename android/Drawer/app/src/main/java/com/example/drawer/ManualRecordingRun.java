@@ -6,7 +6,7 @@ import android.widget.Chronometer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class ManualRecordingRun extends java.util.TimerTask {
+public class ManualRecordingRun implements Runnable {
     private Chronometer executeTimer ;
     private int executeTimerInt;
     private boolean executeTimerBool;
