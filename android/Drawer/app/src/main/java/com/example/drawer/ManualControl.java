@@ -3,6 +3,7 @@ package com.example.drawer;
 import static java.lang.Thread.sleep;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -24,10 +25,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,12 +61,15 @@ public class ManualControl extends AppCompatActivity {
     private TextView angleStat;
     private TextView status;
     private Button viewPaths;
+    private RecyclerView mRecyclerView;
+    private ExampleAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
 
     //Lists for saved recordings
     private LinkedList carSpeedQueue = new LinkedList();
     private List savedPathListName = new ArrayList(); //for setting a name to the path
-    private List savedPathList = new ArrayList(); //the actual saved path
+    private ArrayList savedPathList = new ArrayList(); //the actual saved path
     private LinkedList carAngleQueue = new LinkedList();
     private LinkedList carTimerQueue= new LinkedList();
     private Pair<Integer, Double> carStatus;
@@ -85,11 +92,13 @@ public class ManualControl extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
+        mRecyclerView = findViewById(R.id.recyclerview);
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        loadData();
+//        buildRecyclerView();
+
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
-        PrefsConfig.loadData(this, savedPathList);
-        //PrefsConfig.loadData(this, savedPathListName);
-
         time = findViewById(R.id.stopWatch);
         executeTimer = findViewById(R.id.executeWatch);
         readMeScreen = findViewById(R.id.ReadMEScreen);
@@ -211,8 +220,7 @@ public class ManualControl extends AppCompatActivity {
             public void onClick(View view) {
                 savedPathListName.add(saveName.getText());
                 alertDialogSaved.dismiss();
-                PrefsConfig.saveData(getApplicationContext(), savedPathList);
-                //PrefsConfig.saveData(getApplicationContext(), savedPathListName);
+                saveData();
             }
         });
 
@@ -329,6 +337,7 @@ public class ManualControl extends AppCompatActivity {
                 Math.pow(centerY - traversY, 2)
         );
 
+        //thumbstick clipping
         if (joystickToPressedDistance > outerRadius) {
             innerCircle.setX(centerX + (float) Math.cos(Math.toRadians(angle)) * outerRadius);
             innerCircle.setY(centerY + (float) Math.sin(Math.toRadians(angle)) * outerRadius * -1);
@@ -393,6 +402,9 @@ public class ManualControl extends AppCompatActivity {
         //Turn all negative numbers to positives
         if (speedTempX < 0) {
             speedTempX *= -1;
+        }
+        if (speedTempY < 0) {
+            speedTempY *= -1;
         }
 
         //MORE MATH
@@ -469,4 +481,36 @@ public class ManualControl extends AppCompatActivity {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
+
+    private void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(savedPathList);
+        editor.putString("task list", json);
+        editor.apply();
+    }
+
+    private void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("task list", null);
+        Type type = new TypeToken<ArrayList<SavedInformation>>() {}.getType();
+        savedPathList = gson.fromJson(json, type);
+
+        if (savedPathList == null) {
+            savedPathList = new ArrayList<>();
+        }
+    }
+
+    private void buildRecyclerView() {
+        mRecyclerView = findViewById(R.id.recyclerview);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new ExampleAdapter(savedPathList);
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
 }
