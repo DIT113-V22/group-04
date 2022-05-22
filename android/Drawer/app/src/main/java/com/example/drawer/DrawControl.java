@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -145,6 +146,8 @@ public class DrawControl extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pixelGrid.clear();
+
+
             }
         });
         runBtn.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +155,9 @@ public class DrawControl extends AppCompatActivity {
             public void onClick(View view) {
                 String speed = Integer.toString(seekBar.getProgress());
                 pixelGrid.executePath();
+                for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1) ) {
+                    System.out.println("[ " + instruction.getDistance() + " ] Meters then turn [ " + instruction.getTurn() + " ] degrees");
+                }
                 mqttController.publish("/smartcar/control/throttle", speed);
             }
         });
@@ -160,7 +166,8 @@ public class DrawControl extends AppCompatActivity {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     String speedText = Integer.toString(i);
-                    speedView.setText("Current speed:" + speedText);
+                    speedView.setText("Speed:" + speedText);
+                    System.out.println(pixelGrid.getVectorMap().getVectorAngle(new Vector(-1, 1), new Vector(0, 1) ));
                     speedView.setTextColor(Color.BLACK);
                 }
 
@@ -193,20 +200,20 @@ public class DrawControl extends AppCompatActivity {
                     int value;
                     value = Integer.parseInt(numberViewCellSize.getText().toString());
 
-                    if (value > 4) {
-                        pixelGrid.setCellLength(value);
-                        speedView.setText("Speed:" + seekBar.getProgress());
-                        speedView.setTextColor(Color.BLACK);
+                    if(value > 4) {
+                       pixelGrid.setCellLength(value);
+                       speedView.setText("Speed:" + seekBar.getProgress());
+                       speedView.setTextColor(Color.BLACK);
                     } else {
                         throw new Exception();
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     speedView.setText("Number must be\n       over > 4");
                     speedView.setTextColor(Color.RED);
                 }
             }
-
         });
         numberViewCellLength.addTextChangedListener(new TextWatcher() {
             @Override
@@ -225,28 +232,27 @@ public class DrawControl extends AppCompatActivity {
                     float value = Float.parseFloat(numberViewCellLength.getText().toString());
 
                     pixelGrid.setPathScale(value);
-                    double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
-                    pathLength = Math.floor(pathLength * 100) / 100;
-                    pathLengthView.setText("Path length: " +  pathLength);
+                    updatePathLength();
 
-                } catch (Exception e) {
+                }catch (Exception e){
                     e.printStackTrace();
-                }
+                };
             }
         });
+
+        pixelGrid.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                updatePathLength();
+                return false;
+            }
+        });
+
         numberViewCellLength.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                pixelGrid.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-                        double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
-                        pathLength = Math.floor(pathLength * 100) / 100;
-                        pathLengthView.setText("Path length: " + pathLength);
-                        return false;
-                    }
-                });
+
             }
 
             @Override
@@ -259,6 +265,12 @@ public class DrawControl extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void updatePathLength(){
+        double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
+        pathLength = Math.floor(pathLength * 100) / 100;
+        pathLengthView.setText("Path length: " + pathLength);
     }
 
     public void openReadMEScreen() {

@@ -14,6 +14,25 @@ public class Vector {
         this.posY = y;
     }
 
+    public Vector(int x, int y){
+        this.posX = x;
+        this.posY = y;
+    }
+
+    //copy constructor
+    public Vector(com.example.drawer.Vector vector){
+        this.posX = vector.posX;
+        this.posY = vector.posY;
+        this.absoluteX = vector.absoluteX;
+        this.absoluteY = vector.absoluteY;
+    }
+
+    public com.example.drawer.Vector add(com.example.drawer.Vector vector){
+        this.posX += vector.posX;
+        this.posY += vector.posY;
+        return this;
+    }
+
     public Vector multiply(Vector vector) {
         this.posX *= vector.posX;
         this.posY *= vector.posY;
@@ -29,4 +48,11 @@ public class Vector {
         this.posY = (int) (this.posY * factor);
         return this;
     }
+
+    public double getMagnitude(){
+        return Math.sqrt( Math.pow(posX, 2) + Math.pow(posY, 2) );
+    }
+
+
+
 }
