@@ -7,13 +7,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.mqttv5.client.IMqttToken;
+import org.eclipse.paho.mqttv5.client.MqttCallback;
+import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
+import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
+import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
+import org.eclipse.paho.mqttv5.common.MqttException;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 
 /**
  * Controller for managing MQTT connections, subscriptions, and publishing of messages.
@@ -69,15 +71,38 @@ public class MQTTController {
         try {
             //Create client
             mqttClient = new MqttClient(broker, clientId, persistence);
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setCleanSession(true);
+            MqttConnectionOptions connOpts = new MqttConnectionOptions();
+            connOpts.setCleanStart(true);
+            connOpts.setConnectionTimeout(15);
 
             //Enable callback
             mqttClient.setCallback(new MqttCallback() {
                 @Override
-                public void connectionLost(Throwable throwable) {
+                public void disconnected(MqttDisconnectResponse disconnectResponse) {
                     Log.d(ETAG, "Connection lost");
-                    throwable.printStackTrace();
+                    disconnectResponse.getException().printStackTrace();
+                    if (notConnected()) {
+                        for (int i = 1; i <= 3; i++) {
+                            try {
+                                Log.d(CONTAG, "Attempting reconnection to: " + broker);
+                                Log.d(CONTAG, "Attempt: " + i);
+                                mqttClient.connect(connOpts);
+                                if (!notConnected()) {
+                                    Log.d(CONTAG, "Reconnection successful");
+                                    return;
+                                } else {
+                                    Log.d(ETAG, "Attempt: " + i + " failed.");
+                                }
+                            } catch (MqttException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void mqttErrorOccurred(MqttException exception) {
+                    exception.printStackTrace();
                 }
 
                 @Override
@@ -108,7 +133,17 @@ public class MQTTController {
                 }
 
                 @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
+                public void deliveryComplete(IMqttToken token) {
+                    //needed for MQTT callback, useful for debugging.
+                }
+
+                @Override
+                public void connectComplete(boolean reconnect, String serverURI) {
+                    //needed for MQTT callback, useful for debugging.
+                }
+
+                @Override
+                public void authPacketArrived(int reasonCode, MqttProperties properties) {
                     //needed for MQTT callback, useful for debugging.
                 }
             });
