@@ -1,8 +1,12 @@
 # group-04
 
-## About the project
+![MegaLinter](https://github.com/DIT113-V22/group-04/actions/workflows/mega-linter.yml/badge.svg)
+![Android CI](https://github.com/DIT113-V22/group-04/actions/workflows/android-build.yml/badge.svg)
+![Arduino CI](https://github.com/DIT113-V22/group-04/actions/workflows/arduino-build.yml/badge.svg)
+![Java CI](https://github.com/DIT113-V22/group-04/actions/workflows/java-build.yml/badge.svg)
 
----
+
+## About the project
 
 ### What are we going to make?
 
@@ -46,23 +50,30 @@ Technologies used:
 
 ## Getting started
 
----
-### Prerequisites
+### Prerequisite software
 
+* [Arduino IDE](https://www.arduino.cc/en/software)
+* [HiveMQ](https://github.com/hivemq/hivemq-community-edition)
+* [SMCE-gd](https://github.com/ItJustWorksTM/smce-gd)
+
+*and their prerequisites*
 
 ### Installation
 
-The project requires few software installations as pre-requisits.
+1. Install all prerequisite software as advised on the respective pages.
+2. Clone this repository.
 
-## HiveMQ setup
+### HiveMQ setup
 *Please note that this will run HiveMQ as a local service on the computer it starts on, and assumes you are aware of how port-forwarding works to enable other devices to connect to it should you want to control the car via a physical phone for example.*
 
- Navigate to your HiveMQ install directory
+3. Navigate to your HiveMQ install directory
     1. You will probably need to edit the run.bat or run.sh to modify the port used, as it is commonly used by other programs and features.
     2. Edit port (default 9010) on line 55 in run.sh if on a UNIX system, or line 68 in run.bat if on a windows system, and save.
-    3. Run the run.sh normally, or the run.bat as administrator if on a windows system. 
+    3. Run the run.sh normally, or the run.bat as administrator if on a windows system.
 
-## Start SMCE-gd
+### SMCE-gd setup
+
+4. Start SMCE-gd
     1. Select "Start Fresh"
     2. Select the **+** on the top left of the screen
     3. Select "Add New"
@@ -73,23 +84,21 @@ The project requires few software installations as pre-requisits.
 
 #### If using Java tool for testing
 
-- Open the project in your IDE of choice
-- If you need to make modifications to the messages and topics, you can do so, but note that the arduino sketch will need to be updated as well. In which case, you only need to save and recompile the sketch in SMCE.
-- Have fun!
+5. Open the project in your IDE of choice
+6. If you need to make modifications to the messages and topics, you can do so, but note that the arduino sketch will need to be updated as well. In which case, you only need to save and recompile the sketch in SMCE.
+7. Have fun!
 
 #### If using the Android app
 
-- Open the project in Android Studio or another android IDE to compile and run there.
+5. Open the project in Android Studio or another android IDE to compile and run there.
     1. To run this program on a physical arduino device, you can utilise android developer mode, and a USB cable to compile and install the application on the connected device.
     2. Make sure you are connected to the same network as the computer being used to run SMCE, if you go this route.
     * Using mobile hotspot is a viable alternative.
-- Connect to the MQTT broker
-- Have fun!
+7. Connect to the MQTT broker
+8. Have fun!
 
 
 ## Contributors
-
----
 
 Aieh Eissa
 
