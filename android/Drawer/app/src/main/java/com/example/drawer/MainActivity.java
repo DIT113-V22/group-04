@@ -3,7 +3,6 @@ package com.example.drawer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,7 +14,6 @@ public class MainActivity extends AppCompatActivity {
     private Button introScreenBtn;
     private Button manualControlScreenBtn;
     private Button drawControlScreenBtn;
-    public TextView text;
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -40,9 +38,6 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/camera");
             mqttController.subscribe("/smartcar/control/throttle");
         });
-        
-        text = findViewById(R.id.currentDistanceText);
-        mqttController.updateTextView(text, "/smartcar/report/control/throttle");
 
         introScreenBtn = findViewById(R.id.ReadMeScreen);
         manualControlScreenBtn = findViewById(R.id.ManualScreen);
