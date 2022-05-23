@@ -56,6 +56,8 @@ public class DrawControl extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_control);
+        mqttController.publish("/smartcar/control/obstacle", "0");
+        mqttController.publish("/smartcar/control/auto", "1");
 
         readMeScreen = findViewById(R.id.ReadMEScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
