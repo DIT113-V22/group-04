@@ -61,10 +61,6 @@ public class ManualControl extends AppCompatActivity {
     private TextView angleStat;
     private TextView status;
     private Button viewPaths;
-    private RecyclerView mRecyclerView;
-    private ExampleAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-
 
     //Lists for saved recordings
     private LinkedList carSpeedQueue = new LinkedList();
@@ -92,10 +88,6 @@ public class ManualControl extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
-        mRecyclerView = findViewById(R.id.recyclerview);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        loadData();
-//        buildRecyclerView();
 
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
@@ -174,7 +166,6 @@ public class ManualControl extends AppCompatActivity {
      */
     public void recordMovements(int speed, int angle){
         if (recordToggle.isChecked()) {
-            //Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_SHORT).show();
             //IS THIS NEEDED?(START)
             if(!timerStart){
                 time.setBase(SystemClock.elapsedRealtime());
@@ -220,7 +211,6 @@ public class ManualControl extends AppCompatActivity {
             public void onClick(View view) {
                 savedPathListName.add(saveName.getText());
                 alertDialogSaved.dismiss();
-                saveData();
             }
         });
 
@@ -273,10 +263,7 @@ public class ManualControl extends AppCompatActivity {
                 alertDialogReplays.dismiss();
             }
         });
-
-
     }
-
 
     ///TODO: FILL IN DOCUMENTATION
     /**
@@ -481,36 +468,4 @@ public class ManualControl extends AppCompatActivity {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
-
-    private void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(savedPathList);
-        editor.putString("task list", json);
-        editor.apply();
-    }
-
-    private void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("task list", null);
-        Type type = new TypeToken<ArrayList<SavedInformation>>() {}.getType();
-        savedPathList = gson.fromJson(json, type);
-
-        if (savedPathList == null) {
-            savedPathList = new ArrayList<>();
-        }
-    }
-
-    private void buildRecyclerView() {
-        mRecyclerView = findViewById(R.id.recyclerview);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new ExampleAdapter(savedPathList);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
 }
