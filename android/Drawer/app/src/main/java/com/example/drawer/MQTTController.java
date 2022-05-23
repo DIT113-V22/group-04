@@ -29,16 +29,18 @@ public class MQTTController {
     private static final String clientId = "MQTT-publisher";
     private static final String TAG = "MainActivity";
     private static final String STARTTAG = "Startup";
+    private static final String CONTAG = "Connection";
     private static final String SUBTAG = "Subscription";
     private static final String PUBTAG = "Publishing";
     private static final String ETAG = "Error";
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
-    private final HashMap<String, HashMap<Integer, TextView>> subscriptionMap;
+    private final HashMap<String, HashMap<Integer, TextView>> textViewSubscriptionMap;
     private final ArrayList<ImageView> cameraViews;
     private final MemoryPersistence persistence;
     private MqttClient mqttClient;
     private static MQTTController mqttController_instance = null;
+    private String previousTopic;
     private String previousMessage;
     public int obstacleFlag = 0; // 0 == OFF | 1 == ON
 
@@ -47,9 +49,10 @@ public class MQTTController {
      */
     private MQTTController() {
         previousMessage = "";
+        previousTopic = "";
         cameraViews = new ArrayList<>();
         persistence = new MemoryPersistence();
-        subscriptionMap = new HashMap<>();
+        textViewSubscriptionMap = new HashMap<>();
     }
 
     /**
@@ -69,6 +72,10 @@ public class MQTTController {
      * Creates the client first, sets the callback method, and then attempts connection.
      */
     public void connect() {
+        if (mqttClient != null && !notConnected()) {
+            Log.d(CONTAG, "Connection already established");
+            return;
+        }
         try {
             //Create client
             mqttClient = new MqttClient(broker, clientId, persistence);
@@ -137,8 +144,8 @@ public class MQTTController {
                         }
                     }
 
-                    if (subscriptionMap.get(topic) != null) {
-                        subscriptionMap.get(topic).forEach((id, textView) -> textView.setText(message));
+                    if (textViewSubscriptionMap.get(topic) != null) {
+                        textViewSubscriptionMap.get(topic).forEach((id, textView) -> textView.setText(message));
                     }
                 }
 
@@ -159,7 +166,8 @@ public class MQTTController {
             });
 
             //Attempt connection
-            Log.d(STARTTAG, "Connecting to broker: " + broker);
+            Log.d(STARTTAG, "Attempting connection to: " + broker);
+            Log.d(STARTTAG, "Client ID: " + clientId);
             mqttClient.connect(connOpts);
             if (!notConnected()) {
                 Log.d(STARTTAG, "Connected");
@@ -177,7 +185,7 @@ public class MQTTController {
     /**
      * Simple connection test.
      *
-     * @return connection status
+     * @return inverted connection status
      */
     public boolean notConnected() {
         if (mqttClient == null) {
@@ -194,12 +202,12 @@ public class MQTTController {
      * @param topic MQTT topic
      */
     public void updateTextView(TextView textView, String topic) {
-        HashMap<Integer, TextView> textViewHashMap = subscriptionMap.get(topic);
+        HashMap<Integer, TextView> textViewHashMap = textViewSubscriptionMap.get(topic);
         if (textViewHashMap == null) {
             textViewHashMap = new HashMap<>();
         }
         textViewHashMap.put(textView.getId(), textView);
-        subscriptionMap.put(topic, textViewHashMap);
+        textViewSubscriptionMap.put(topic, textViewHashMap);
     }
 
     /**
@@ -243,15 +251,14 @@ public class MQTTController {
             return;
         }
         try {
-            if (previousMessage.equals(content)) {
+            if (previousMessage.equals(content) && previousTopic.equals(topic)) {
                 return;
             }
-            Log.d(PUBTAG, "Publishing message: " + content);
-            Log.d(PUBTAG, "                to: " + topic);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
             mqttClient.publish(topic, message);
             previousMessage = content;
+            previousTopic = topic;
         } catch (MqttException e) {
             //Standard error printing
             Log.d(ETAG, "Message could not be published");
