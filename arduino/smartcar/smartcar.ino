@@ -73,10 +73,11 @@ void setup(){
     Serial.print(".");
     delay(1000);
   }
-  Serial.println("Connected to MQTT broker.");
+  mqtt.publish("/smartcar/report/startup", "Connected to MQTT broker.");
 
   //MQTT subscription
   mqtt.subscribe("/smartcar/control/#", 1);
+  mqtt.publish("/smartcar/report/startup", "MQTT subscriptions setup complete.");
   mqtt.onMessage([](String topic, String message) {
     if (topic == "/smartcar/control/auto") {
       auto_drive = message.toInt();
