@@ -34,8 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
         subBtn = findViewById(R.id.subBtn);
         subBtn.setOnClickListener(view -> {
-            mqttController.subscribe("/smartcar/startup");
-            mqttController.subscribe("/smartcar/camera");
+            mqttController.subscribe("/smartcar/report/startup");
+            mqttController.subscribe("/smartcar/report/status");
+            mqttController.subscribe("/smartcar/report/camera");
+            mqttController.subscribe("/smartcar/report/obstacle");
+            mqttController.subscribe("/smartcar/report/ultrasound");
             mqttController.subscribe("/smartcar/control/throttle");
         });
 

@@ -40,6 +40,7 @@ public class MQTTController {
     private MqttClient mqttClient;
     private static MQTTController mqttController_instance = null;
     private String previousMessage;
+    public int obstacleFlag = 0; // 0 == OFF | 1 == ON
 
     /**
      * Constructs the MQTT controller, limited to one instance by Singleton pattern.
@@ -109,7 +110,16 @@ public class MQTTController {
                 public void messageArrived(String topic, MqttMessage mqttMessage) {
                     String message = new String(mqttMessage.getPayload());
 
-                    if (topic.equals("/smartcar/camera")) {
+                    if (topic.equals("/smartcar/report/startup") || topic.equals("/smartcar/report/status")) {
+                        Log.d(STARTTAG, message);
+                    }
+
+                    if (topic.equals("/smartcar/report/obstacle")) {
+                        obstacleFlag = Integer.parseInt(message);
+                        Log.d(SUBTAG, message);
+                    }
+
+                    if (topic.equals("/smartcar/report/camera")) {
                         final Bitmap bm = Bitmap
                                 .createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, Bitmap.Config.ARGB_8888);
 

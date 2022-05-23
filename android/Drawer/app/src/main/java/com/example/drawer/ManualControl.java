@@ -34,6 +34,8 @@ public class ManualControl extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
         innerCircle = findViewById(R.id.innerCircle);
+        mqttController.publish("/smartcar/control/obstacle", "0");
+        mqttController.publish("/smartcar/control/auto", "0");
 
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
