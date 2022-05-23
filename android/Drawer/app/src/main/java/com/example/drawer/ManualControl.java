@@ -2,6 +2,7 @@ package com.example.drawer;
 
 import static java.lang.Thread.sleep;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -9,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
+import android.util.MalformedJsonException;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,14 +24,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -62,6 +64,10 @@ public class ManualControl extends AppCompatActivity {
     private TextView status;
     private Button viewPaths;
 
+    private Gson gson = new Gson();
+    private DBManager dbManager;
+    private final String TAG = "myActivity";
+
     //Lists for saved recordings
     private LinkedList carSpeedQueue = new LinkedList();
     private List savedPathListName = new ArrayList(); //for setting a name to the path
@@ -88,6 +94,7 @@ public class ManualControl extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
+        dbManager = new DBManager(this);
 
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
@@ -173,6 +180,7 @@ public class ManualControl extends AppCompatActivity {
                 timerStart = true;
             }
             //IS THIS NEEDED?(END)
+
             carSpeedQueue.add(speed);
             carAngleQueue.add(angle);
 
@@ -206,11 +214,16 @@ public class ManualControl extends AppCompatActivity {
         alertDialogSaved.show();
 
         //Saves replay with the name.
+        // stores the name of the reply and the respective array list to the database.
         saveReplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 savedPathListName.add(saveName.getText());
                 alertDialogSaved.dismiss();
+                String saveNameString = saveName.getText().toString();
+                String json = gson.toJson(savedPathList);
+                System.out.println(json + saveNameString);
+                dbManager.addNewPath(saveNameString, json);
             }
         });
 
@@ -223,6 +236,10 @@ public class ManualControl extends AppCompatActivity {
             }
         });
     }
+
+    //Type type = new TypeToken<ArrayList<String>>() {}.getType();
+    //
+    //ArrayList<String> finalOutputString = gson.fromJson(outputarray, type);
 
     /**
      * Pop-up of recordings which can be selected and played.
@@ -245,10 +262,13 @@ public class ManualControl extends AppCompatActivity {
             }
         });
 
+        ArrayList<String> finalOutputList = dbManager.getAllCotacts();
+
+
         //Setup the list of saves on pop-up.
         pathView = (ListView) popUpView.findViewById(R.id.pathList);
         pathView.setBackgroundColor(Color.parseColor("#c8c8c8"));
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathListName);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, finalOutputList);
         pathView.setAdapter(arrayAdapter);
         onListItemClick(pathView, popUpView, 1, 1000027);
 
