@@ -58,21 +58,23 @@
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="45dp"
-        android:layout_height="511dp"
+        android:layout_width="49dp"
+        android:layout_height="573dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/runButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSpeed">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.951">
 
         <SeekBar
             android:id="@+id/seekbar"
             android:layout_width="557dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:max="100"
-            android:min="0"
+            android:max="104"
+            android:min="8"
             android:progress="2"
             android:progressDrawable="@android:drawable/screen_background_light"
             android:progressTint="#8685EF"
@@ -123,24 +125,12 @@
         app:layout_constraintHorizontal_bias="0.53"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewSpeed"
-        android:layout_width="79dp"
-        android:layout_height="27dp"
-        android:layout_marginTop="28dp"
-        android:text="Speed: 0"
-        android:textColor="#77000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
-        android:id="@+id/numberViewCellSize"
+        android:id="@+id/numberViewSpeed"
         android:layout_width="73dp"
         android:layout_height="48dp"
         android:ems="10"
-        android:hint="Cell Size"
+        android:hint="Speed"
         android:inputType="number"
         android:textColor="@color/black"
         android:textColorHint="#d1d1d1"
@@ -165,7 +155,7 @@
         android:textColorHint="#d1d1d1"
         app:layout_constraintBottom_toTopOf="@+id/ReadMEScreen"
         app:layout_constraintEnd_toStartOf="@+id/runButton"
-        app:layout_constraintStart_toEndOf="@+id/numberViewCellSize"
+        app:layout_constraintStart_toEndOf="@+id/numberViewSpeed"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.944" />
 
@@ -174,14 +164,15 @@
         android:layout_width="319dp"
         android:layout_height="512dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="68dp"
-        app:layout_constraintBottom_toTopOf="@+id/numberViewCellLength"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="8dp"
         android:background="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/numberViewCellLength"
         app:layout_constraintEnd_toStartOf="@+id/frameLayout"
-        app:layout_constraintHorizontal_bias="0.695"
+        app:layout_constraintHorizontal_bias="0.545"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

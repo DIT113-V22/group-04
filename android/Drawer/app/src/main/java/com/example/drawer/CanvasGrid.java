@@ -143,6 +143,8 @@ public class CanvasGrid extends View {
         }
 
         cellChecked = new boolean[numColumns][numRows];
+        firstTouch = true;
+        vectorMap.clear();
         pureCellChecked = new boolean[numColumns][numRows];
         invalidate();
     }

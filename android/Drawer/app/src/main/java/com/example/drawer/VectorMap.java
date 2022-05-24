@@ -36,6 +36,8 @@ public class VectorMap {
 
 
     public ArrayList<Instruction> generateInstructions(double scale) {
+        if( vectorList.isEmpty() )        return new ArrayList<Instruction>();
+
         ArrayList<Instruction> instructions = new ArrayList<>();
 
         for (int i = 0; i < vectorList.size()-1 ; i++){
