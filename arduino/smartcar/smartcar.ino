@@ -86,6 +86,7 @@ void setup(){
 
 void loop() {
   unsigned int distance = ultrasonic.getDistance();
+  unsigned int distanceTravled = odometer.getDistance();
 
   //Main MQTT loop
   if (mqtt.connected()) {
@@ -95,13 +96,18 @@ void loop() {
     if (currentTime - previousTransmission >= oneSecond) {
       previousTransmission = currentTime;
       const auto current_distance = String(distance);
+      mqtt.publish("/smartcar/odometer/distance", String(distanceTravled));
       mqtt.publish("/smartcar/ultrasound/front", current_distance);
     }
+   
 
     //camera
     #ifdef __SMCE__
       static auto previousCameraTransmission = 0UL;
       if (currentTime - previousCameraTransmission >= 65) { //15fps
+        
+         
+        
         previousCameraTransmission = currentTime;
         Camera.readFrame(frameBuffer.data());
         mqtt.publish("/smartcar/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
