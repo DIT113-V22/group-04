@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -15,7 +14,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -45,10 +43,9 @@ public class DrawControl extends AppCompatActivity {
     ImageButton uploadBtn;
     ImageButton downloadBtn;
     ImageButton clearBtn;
-    EditText numberViewCellSize;
+    EditText numberViewSpeed;
     EditText numberViewCellLength;
     SeekBar seekBar;
-    TextView speedView;
     TextView pathLengthView;
     CanvasGrid pixelGrid;
     MQTTController mqttController = MQTTController.getInstance();
@@ -69,7 +66,7 @@ public class DrawControl extends AppCompatActivity {
         downloadBtn = findViewById(R.id.downloadBttn);
         clearBtn = findViewById(R.id.clearBttn);
 
-        numberViewCellSize = findViewById(R.id.numberViewCellSize);
+        numberViewSpeed = findViewById(R.id.numberViewSpeed);
         numberViewCellLength = findViewById(R.id.numberViewCellLength);
 
         pixelGrid = findViewById(R.id.pixelGridA);
@@ -77,7 +74,6 @@ public class DrawControl extends AppCompatActivity {
         pixelGrid.setResizeMode(CanvasGrid.ResizeMode.FIT_CONTENT);
 
         seekBar = findViewById(R.id.seekbar);
-        speedView = findViewById(R.id.textViewSpeed);
         pathLengthView = findViewById(R.id.textViewPathLength);
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
@@ -153,11 +149,15 @@ public class DrawControl extends AppCompatActivity {
         runBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String speed = Integer.toString(seekBar.getProgress());
-                pixelGrid.executePath();
+                String speed =  numberViewSpeed.getText().toString();
+                if(speed.isEmpty()) return;
+
+                //pixelGrid.executePath();
+
                 for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1) ) {
                     System.out.println("[ " + instruction.getDistance() + " ] Meters then turn [ " + instruction.getTurn() + " ] degrees");
                 }
+
                 mqttController.publish("/smartcar/control/throttle", speed);
             }
         });
@@ -165,10 +165,13 @@ public class DrawControl extends AppCompatActivity {
             new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                    String speedText = Integer.toString(i);
-                    speedView.setText("Speed:" + speedText);
-                    System.out.println(pixelGrid.getVectorMap().getVectorAngle(new Vector(-1, 1), new Vector(0, 1) ));
-                    speedView.setTextColor(Color.BLACK);
+                    int value;
+                    value = seekBar.getProgress();
+
+                    if(value > 4) {
+                        pixelGrid.setCellLength(value);
+                    }
+
                 }
 
                 @Override
@@ -182,39 +185,7 @@ public class DrawControl extends AppCompatActivity {
                 }
             });
 
-        numberViewCellSize.addTextChangedListener(new TextWatcher() {
 
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                try {
-                    int value;
-                    value = Integer.parseInt(numberViewCellSize.getText().toString());
-
-                    if(value > 4) {
-                       pixelGrid.setCellLength(value);
-                       speedView.setText("Speed:" + seekBar.getProgress());
-                       speedView.setTextColor(Color.BLACK);
-                    } else {
-                        throw new Exception();
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    speedView.setText("Number must be\n       over > 4");
-                    speedView.setTextColor(Color.RED);
-                }
-            }
-        });
         numberViewCellLength.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
