@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,7 +39,7 @@ public class ManualControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/auto", "0");
 
         status = findViewById(R.id.statusText);
-        mqttController.updateTextView(status, "/smartcar/control/throttle");
+        //mqttController.updateTextView(status, "/smartcar/control/throttle");
 
         readMeScreen = findViewById(R.id.ReadMEScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
@@ -47,6 +48,7 @@ public class ManualControl extends AppCompatActivity {
         angleStat = findViewById(R.id.angleSTat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
+        mqttController.subscribe("/smartcar/odometer/distance");
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
 
@@ -74,6 +76,7 @@ public class ManualControl extends AppCompatActivity {
     public void circleOnTouch(MotionEvent event) {
         Drawable outerCircle;
         Drawable innerCircle;
+        mqttController.updateTextView(status,"/smartcar/odometer/distance");
         Resources res = getResources();
         outerCircle = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
         innerCircle = ResourcesCompat.getDrawable(res, R.drawable.inner_circle, null);
