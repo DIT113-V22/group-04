@@ -40,7 +40,7 @@ public class VectorMap {
 
         ArrayList<Instruction> instructions = new ArrayList<>();
 
-        for (int i = 0; i < vectorList.size()-1 ; i++){
+        for (int i = 1; i < vectorList.size()-1 ; i++){
             double distance = vectorList.get(i).getMagnitude();
             double angle = getVectorAngle(vectorList.get(i), vectorList.get(i+1));
             instructions.add(new Instruction(distance, angle));

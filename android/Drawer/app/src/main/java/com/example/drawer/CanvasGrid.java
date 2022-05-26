@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import java.lang.Object;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -38,12 +39,14 @@ public class CanvasGrid extends View {
     private boolean[][] cellChecked = new boolean[50][100];
     private int lastx;
     private int lasty;
+    MQTTController mqttController = MQTTController.getInstance();
+
     private boolean[][] pureCellChecked = new boolean[50][100];
     private VectorMap vectorMap = new VectorMap();
     private double vectorSmoothnes = 3.0;
     private boolean firstTouch = true;
+
     Queue<Point> pointQueue = new LinkedList<>();
-    MQTTController mqttController = MQTTController.getInstance();
 
     // Constructors
     public CanvasGrid(Context context) {
@@ -143,7 +146,6 @@ public class CanvasGrid extends View {
 
         cellChecked = new boolean[numColumns][numRows];
         firstTouch = true;
-        vectorMap.clear();
         pureCellChecked = new boolean[numColumns][numRows];
         invalidate();
     }
@@ -173,6 +175,7 @@ public class CanvasGrid extends View {
                 }
             }
         }
+
 
         for (int i = 1; i < numColumns; i++) {
             canvas.drawLine(i * cellLength, 0,
@@ -236,6 +239,7 @@ public class CanvasGrid extends View {
                     if(column != lastx && row != lasty){
                         vectorMap.add(column, row);
                     }
+
                     lastx = column;
                     lasty = row;
                 }
@@ -255,18 +259,81 @@ public class CanvasGrid extends View {
     // The current implementation assumes slow drawing (i.e. each cell will be adjacent
     // to another cell in one of the 8 possible directions.
     // The implementation is currently incompatible with the Bresenham's drawing algorithm.
-    //TODO: LINK THE DISTANCES! NOT 0
     public void executePath() {
-        int diagonalDistance = 0;
-        int adjacentDistance = 0;
-        DrawControlRun drawControlRun = new DrawControlRun(diagonalDistance, adjacentDistance, pointQueue, mqttController);
-        drawControlRun.run();
+
+        Point start = pointQueue.poll();
+
+        Point end;
+
+        // TODO Need to find proper upper limit for the loop condition -KC
+        for (int i = 0; i < (pointQueue.size()*10); i++) {
+
+            end = pointQueue.poll();
+
+            Log.d("abcd", "start" + String.valueOf(start));
+            Log.d("abcd", "end" + String.valueOf(end));
+
+            int dx = end.x - start.x;
+            int dy = end.y - start.y;
+
+            if (dx == 0 && dy == 0) {
+                Log.d("movement", "No more than one cell left");
+
+            } else if (dx == 0 || dy == 0) {
+                if (dx == 0) {
+                    if (dy == 1) {
+                        Log.d("movement", "Move backward");
+                    } else if (dy == -1) {
+                        Log.d("movement", "Move forward");
+                    } else {
+                        Log.d("movement", "Unexpected" + String.valueOf(dy));
+                    }
+                } else if (dy == 0) {
+                    if (dx == 1) {
+                        Log.d("movement", "Move right");
+                    } else if (dx == -1) {
+                        Log.d("movement", "Move left");
+                    } else {
+                        Log.d("movement", "Unexpected" + String.valueOf(dx));
+                    }
+                } else {
+                    Log.d("movement", "Unexpected State");
+                }
+            } else {
+
+                if (dx == 1 && dy == 1) {
+                    Log.d("movement", "Move bottom-right");
+                } else if (dx == 1 && dy == -1) {
+                    Log.d("movement", "Move top-right");
+                } else if (dx == -1 && dy == 1) {
+                    Log.d("movement", "Move bottom-left");
+                } else if (dx == -1 && dy == -1) {
+                    Log.d("movement", "Move top-left");
+                } else {
+                    Log.d("movement", "unexpected State");
+                }
+
+            }
+
+            start = end;
+
+        }
+
+    }
+
+    public void executePathV2() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Instruction I: vectorMap.generateInstructions(pathScale)) {
+            stringBuilder.append(I.toString());
+        }
+        mqttController.publish("/smartcar/instructions", stringBuilder.toString());
+
     }
 
     //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
         // TODO: 2022-05-10 might need to rewrite the while true    -no
         // while true is fine
-
     private void gridDrawLine(int x0, int y0, int x1, int y1){
 
         //Delta X, Y

@@ -102,6 +102,7 @@ public class MQTTController {
                         }
                     }
 
+
                     if (subscriptionMap.get(topic) != null) {
                         subscriptionMap.get(topic).forEach((id, textView) -> textView.setText(message));
                     }

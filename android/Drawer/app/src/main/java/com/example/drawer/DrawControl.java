@@ -147,15 +147,16 @@ public class DrawControl extends AppCompatActivity {
         runBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println("test");
                 String speed =  numberViewSpeed.getText().toString();
                 if(speed.isEmpty()) return;
 
-                //pixelGrid.executePath();
 
                 for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1) ) {
                     System.out.println("[ " + instruction.getDistance() + " ] Meters then turn [ " + instruction.getTurn() + " ] degrees");
                 }
 
+                pixelGrid.executePathV2();
                 mqttController.publish("/smartcar/control/throttle", speed);
             }
         });
