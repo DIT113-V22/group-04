@@ -1,17 +1,12 @@
 package com.example.drawer;
 
-import static java.lang.Thread.sleep;
-
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
-import android.util.MalformedJsonException;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,14 +21,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,8 +38,7 @@ public class ManualControl extends AppCompatActivity {
     private boolean timerStart = false;
     private boolean wasChecked = false;
 
-    //UI objects/views
-    private Switch recordToggle; //switch to turn on and off the recordings
+    private Switch recordToggle;
     private Chronometer time;
     private Chronometer executeTimer;
     private ListView pathView;
@@ -62,26 +50,24 @@ public class ManualControl extends AppCompatActivity {
     private TextView speedStat;
     private TextView angleStat;
     private TextView status;
+
     private Button viewPaths;
 
     private Gson gson = new Gson();
     private DBManager dbManager;
-    private final String TAG = "myActivity";
 
-    //Lists for saved recordings
     private LinkedList carSpeedQueue = new LinkedList();
-    private List savedPathListName = new ArrayList(); //for setting a name to the path
-    private ArrayList savedPathList = new ArrayList(); //the actual saved path
+    private List savedPathListName = new ArrayList();
+    private ArrayList savedPathList = new ArrayList();
+    private ArrayList carAngleList = new ArrayList();
     private LinkedList carAngleQueue = new LinkedList();
-    private LinkedList carTimerQueue= new LinkedList();
+    private LinkedList carTimerList= new LinkedList();
     private Pair<Integer, Double> carStatus;
 
-    //POP-UP for playing recordings
     private AlertDialog.Builder builderReplays;
-    private AlertDialog alertDialogReplays;
+    private AlertDialog replays;
     private Button stopPlay;
 
-    //POP-UP for saving replay and name.
     private AlertDialog.Builder builderSaved;
     private AlertDialog alertDialogSaved;
     private EditText saveName;
@@ -155,7 +141,7 @@ public class ManualControl extends AppCompatActivity {
                 wasChecked = true;
             }else if(wasChecked){   // If toggle is off but was previously on
                 carStatus = new Pair(carSpeedQueue, carAngleQueue);
-                savedPathList.add(carStatus);
+                savedPathList.add(carSpeedQueue);
                 endOfRecordingPopUpOptions();
                 wasChecked = false;
                 time.stop();
@@ -171,7 +157,7 @@ public class ManualControl extends AppCompatActivity {
      * @param speed individual speed command extracted from joystick.
      * @param angle individual angle command extracted from joystick.
      */
-    public void recordMovements(int speed, int angle){
+    public void recordMovements(int speed, double angle){
         if (recordToggle.isChecked()) {
             //IS THIS NEEDED?(START)
             if(!timerStart){
@@ -185,7 +171,9 @@ public class ManualControl extends AppCompatActivity {
             carAngleQueue.add(angle);
 
             //Changes time to be saved as milliseconds
-            carTimerQueue.add((int) (SystemClock.elapsedRealtime() - time.getBase()));
+            carTimerList.add((int) (SystemClock.elapsedRealtime() - time.getBase()));
+            String timerJson = gson.toJson(carTimerList);
+            dbManager.addNewTimer(timerJson);
 
             //Saves that the record was toggled
             wasChecked = true;
@@ -214,7 +202,7 @@ public class ManualControl extends AppCompatActivity {
         alertDialogSaved.show();
 
         //Saves replay with the name.
-        // stores the name of the reply and the respective array list to the database.
+        //stores the name of the reply and the respective array list to the database.
         saveReplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,13 +225,10 @@ public class ManualControl extends AppCompatActivity {
         });
     }
 
-    //Type type = new TypeToken<ArrayList<String>>() {}.getType();
-    //
-    //ArrayList<String> finalOutputString = gson.fromJson(outputarray, type);
-
     /**
      * Pop-up of recordings which can be selected and played.
      * Selected played in separate thread.
+     * @author Sejal Kanaskar
      */
     public void createViewContactDialogueReplays() {
         //Pop-Up setup
@@ -251,56 +236,62 @@ public class ManualControl extends AppCompatActivity {
         final View popUpView = getLayoutInflater().inflate(R.layout.activity_view_saved_paths, null);
         stopPlay = (Button) popUpView.findViewById(R.id.stopPlay); //stops the play and closes the window
         builderReplays.setView(popUpView);
-        alertDialogReplays = builderReplays.create();
-        alertDialogReplays.show();
+        replays = builderReplays.create();
+        replays.show();
 
         //Stops recording from playing
         stopPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alertDialogReplays.dismiss();
+                replays.dismiss();
             }
         });
 
-        ArrayList<String> finalOutputList = dbManager.getAllCotacts();
+        //Gets the all the path information and path names stored in the database
+        ArrayList<String> finalOutputList = dbManager.getAllPaths();
 
-
-        //Setup the list of saves on pop-up.
+        //creates a pop up window which has a list view
+        //in order to contain the array list of all the save paths
         pathView = (ListView) popUpView.findViewById(R.id.pathList);
         pathView.setBackgroundColor(Color.parseColor("#c8c8c8"));
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, finalOutputList);
         pathView.setAdapter(arrayAdapter);
-        onListItemClick(pathView, popUpView, 1, 1000027);
+        onListItemClick(pathView, popUpView, 1, 1000027); // delete
 
-        //Selection of a save
+        //When any list item is click, the respective saved recording is played.
         pathView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 //Execution of selected save with previously saved time and command. All in separate thread.
-                ManualRecordingRun executeRecording = new ManualRecordingRun(carTimerQueue, carSpeedQueue, carAngleQueue, mqttController, executeTimer);
-                new Thread(executeRecording).start();
-                alertDialogReplays.dismiss();
+                System.out.println(arrayAdapter.getItem(i));
+                if(dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))){
+                    String myItem = arrayAdapter.getItem(i).toString();
+                    System.out.println(dbManager.getPathDetails(myItem));
+                    ArrayList<String> itemCarSpeed = dbManager.getPathDetails(myItem);
+                    ArrayList itemCarAngle = dbManager.getPathDetails(myItem);
+                    ManualRecordingRun executeRecording = new ManualRecordingRun(carTimerList, itemCarAngle, itemCarSpeed, mqttController, executeTimer);
+                    new Thread(executeRecording).start();
+                    replays.dismiss();
+                }
             }
         });
     }
 
-    ///TODO: FILL IN DOCUMENTATION
     /**
-     *
+     * The method sets a background color to all the list items.
+     * @author Sejal Kanaskar
      * @param pathList
      * @param v
      * @param position
      * @param id
      */
-    //Is int position and long id necessary if they are not being used?
-    public void onListItemClick(ListView pathList, View v, int position, long id){
+    public void onListItemClick(ListView pathList, View v, int position, long id){ //delete
 
             //Set background of all items to white
             for (int i=0;i<pathList.getChildCount();i++){
                 pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
             }
-            v.setBackgroundColor(Color.WHITE);
+            v.setBackgroundColor(Color.BLACK);
     }
 
 
@@ -308,7 +299,7 @@ public class ManualControl extends AppCompatActivity {
      * When outerCircle is touched circleOnTouch is called.
      * Makes innerCircle follow the touch of user but clipping to outerCircle if drag outside.
      * Publishes speed and angle commands to car.
-     *
+     * @author Burak Askan
      * @param event User touch/drag.
      */
     public void circleOnTouch(MotionEvent event) {
@@ -331,10 +322,7 @@ public class ManualControl extends AppCompatActivity {
 
         traversX = traversX - outerRadius;
         traversY = traversY - outerRadius;
-
-
         double angle;
-
         angle = (Math.toDegrees(Math.atan2(((event.getY()-90) - outerRadius),((event.getX()-90) - outerRadius)) * -1));
 
 
@@ -344,7 +332,7 @@ public class ManualControl extends AppCompatActivity {
                 Math.pow(centerY - traversY, 2)
         );
 
-        //thumbstick clipping
+        //thumb-stick clipping
         if (joystickToPressedDistance > outerRadius) {
             innerCircle.setX(centerX + (float) Math.cos(Math.toRadians(angle)) * outerRadius);
             innerCircle.setY(centerY + (float) Math.sin(Math.toRadians(angle)) * outerRadius * -1);
@@ -356,15 +344,11 @@ public class ManualControl extends AppCompatActivity {
         outerCircle.setX(centerX -outerRadius);
         outerCircle.setY(centerY -outerRadius);
 
-
-
-
         //Retrieves calculated speed and angle values
         int carSpeed = carSpeed(event);
-        int carAngle = carAngle(event);
+        double carAngle = carAngle(event);
 
-
-        //Starts timer if recording toggle is activated
+        //Starts timer as soon as recording toggle is turned on.
         if (recordToggle.isChecked()) {
             if(!timerStart){
                 time.setBase(SystemClock.elapsedRealtime());
@@ -373,11 +357,17 @@ public class ManualControl extends AppCompatActivity {
             }
         }
 
-        //Publishes instructions of speed and angle to car
+        if(carAngle < 5 && carAngle > -5){
+            carAngle = 0;//0.1
+        }
+
+        //Publishes the car speed respective to the joystick position.
         mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
+        //Publishes the car angle respective to the joystick position.
         mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
 
-        //Records the movements.
+
+        //Records and saves the car speed and angle.
         recordMovements(carSpeed, carAngle);
 
         //Clips innerCircle back to the center of outerCircle after user lets go of touch.
@@ -388,8 +378,8 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Calculate speed percentage based on joystick position.
-     *
+     * Calculates speed percentage based on the joystick position.
+     * The methods returns the speed of the car.
      * @param event User touch/drag.
      * @return calculated speed.
      */
@@ -439,8 +429,8 @@ public class ManualControl extends AppCompatActivity {
 
 
     /**
-     * Calculate angle based on joystick position.
-     *
+     * Calculates angle of the car based on joystick movement.
+     * The method returns the angle in degrees.
      * @param event User touch/drag.
      * @return calculated angle.
      */
@@ -466,7 +456,7 @@ public class ManualControl extends AppCompatActivity {
 
 
     /**
-     * Sends to readMeScreen
+     * Opens ReadME  screen (home screen).
      */
     public void openReadMEScreen() {
         Intent intent = new Intent(this, MainActivity.class);
@@ -474,7 +464,7 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Sends to manualScreen
+     * Opens manual control screen.
      */
     public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
@@ -482,7 +472,7 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * sends to drawScreen
+     * Opens draw control screen.
      */
     public void openDrawScreen() {
         Intent intent = new Intent(this, DrawControl.class);

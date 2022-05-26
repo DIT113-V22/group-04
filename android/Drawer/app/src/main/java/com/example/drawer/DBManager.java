@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Pair;
 
 import androidx.annotation.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DBManager extends SQLiteOpenHelper {
@@ -19,10 +21,10 @@ public class DBManager extends SQLiteOpenHelper {
 
     //variable for table name
     private static final String TABLE_NAME = "mySavedPath";
-
     private static final String ID_COL = "pathID";
-    private static final String PATH_TITLE_COL = "savedName";
+    private static String PATH_TITLE_COL = "savedName";
     private static final String PATH_VALUES_COL = "pathList";
+    private static final String TIMER_VALUES_COL = "timerList";
 
     public DBManager(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -37,7 +39,8 @@ public class DBManager extends SQLiteOpenHelper {
         String query = "CREATE TABLE " + TABLE_NAME + " ("
                 + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + PATH_TITLE_COL + " TEXT,"
-                + PATH_VALUES_COL + " TEXT) ";
+                + PATH_VALUES_COL + " TEXT,"
+                + TIMER_VALUES_COL + "TEXT)";
 
         // at last we are calling a exec sql
         // method to execute above sql query
@@ -65,6 +68,14 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addNewTimer(String savedTimer){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TIMER_VALUES_COL, savedTimer);
+        db.insert(TABLE_NAME, null, values);
+        db.close();
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         // this method is called to check if the table exists already.
@@ -73,10 +84,9 @@ public class DBManager extends SQLiteOpenHelper {
 
     }
     @SuppressLint("Range")
-    public ArrayList<String> getAllCotacts() {
+    public ArrayList<String> getAllPaths() {
         ArrayList<String> array_list = new ArrayList<String>();
 
-        //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from mySavedPath", null );
         res.moveToFirst();
@@ -88,4 +98,40 @@ public class DBManager extends SQLiteOpenHelper {
         return array_list;
     }
 
+    @SuppressLint("Range")
+    public ArrayList<String> getAllPathNames(){
+        ArrayList<String> arrayList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] str2 = new String[1];
+        str2[0] = PATH_TITLE_COL;
+        Cursor res = db.query("mySavedPath", str2, null, null, null, null, null);
+        res.moveToFirst();
+        while(res.isAfterLast() == false){
+            arrayList.add(res.getString(res.getColumnIndex(PATH_TITLE_COL)));
+            res.moveToNext();
+        }
+        return arrayList;
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<String> getPathDetails(String pathName){
+        ArrayList<String> arrayList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select pathList from mySavedPath where savedName = '" + pathName + "' ", null);
+        res.moveToFirst();
+        arrayList.add(res.getString(res.getColumnIndex(PATH_VALUES_COL)));
+
+        return arrayList;
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<String> getTimeDetails(String pathName){
+        ArrayList<String> arrayList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select timerList from mySavedPath where savedName = '" + pathName + "' ", null);
+        res.moveToFirst();
+        arrayList.add(res.getString(res.getColumnIndex(TIMER_VALUES_COL)));
+
+        return arrayList;
+    }
 }
