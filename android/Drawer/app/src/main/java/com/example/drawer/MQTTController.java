@@ -71,6 +71,7 @@ public class MQTTController {
     /**
      * Attempt connection to the MQTT broker specified.
      * Creates the client first, sets the callback method, and then attempts connection.
+     * The disconnected method attempts to reconnect three times in the event of a connection loss.
      */
     public void connect() {
         if (mqttClient != null && !notConnected()) {
