@@ -8,6 +8,9 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +103,7 @@ public class ManualControl extends AppCompatActivity {
         executeTimer = findViewById(R.id.executeWatch);
         
         speedStat = findViewById(R.id.speedStat);
-        angleStat = findViewById(R.id.angleSTat);
+        angleStat = findViewById(R.id.angleStat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
 
@@ -483,6 +486,17 @@ public class ManualControl extends AppCompatActivity {
         angleStat.setText("The angle is: " + angle);
 
         return angle;
+    }
+
+    public Pair<Integer, Integer> getScreenDimensions() {
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        Log.d("rrr", height + " " + width);
+
+        return new Pair<>(width, height);
     }
 
     /**
