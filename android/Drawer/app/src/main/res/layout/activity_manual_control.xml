@@ -35,7 +35,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/ReadMEScreen"
+        android:id="@+id/ReadMeScreen"
         android:layout_width="93dp"
         android:layout_height="48dp"
         android:backgroundTint="#8685EF"
@@ -96,7 +96,7 @@
         app:layout_constraintVertical_bias="0.23" />
 
     <TextView
-        android:id="@+id/angleSTat"
+        android:id="@+id/angleStat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Angular direction of the Car"

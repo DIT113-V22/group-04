@@ -53,7 +53,9 @@ public class MainActivityInstrumentedTest {
      */
     @Test
     public void isNavBarVisible() {
-
+        onView(withId(R.id.ManualScreen)).check(matches(isDisplayed()));
+        onView(withId(R.id.ReadMeScreen)).check(matches(isDisplayed()));
+        onView(withId(R.id.DrawScreen)).check(matches(isDisplayed()));
     }
 
     @Test

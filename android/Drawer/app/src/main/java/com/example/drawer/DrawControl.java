@@ -59,7 +59,7 @@ public class DrawControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/obstacle", "0");
         mqttController.publish("/smartcar/control/auto", "1");
 
-        readMeScreen = findViewById(R.id.ReadMEScreen);
+        readMeScreen = findViewById(R.id.ReadMeScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
         drawControlScreen = findViewById(R.id.DrawScreen);
 

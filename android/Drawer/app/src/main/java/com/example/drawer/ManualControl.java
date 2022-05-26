@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,11 +41,11 @@ public class ManualControl extends AppCompatActivity {
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
 
-        readMeScreen = findViewById(R.id.ReadMEScreen);
+        readMeScreen = findViewById(R.id.ReadMeScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);
         drawControlScreen = findViewById(R.id.DrawScreen);
         speedStat = findViewById(R.id.speedStat);
-        angleStat = findViewById(R.id.angleSTat);
+        angleStat = findViewById(R.id.angleStat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
 
@@ -193,6 +194,7 @@ public class ManualControl extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
+        Log.d("rrr", height + " " + width);
 
         return new Pair<>(width, height);
     }

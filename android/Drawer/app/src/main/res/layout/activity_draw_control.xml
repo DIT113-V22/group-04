@@ -49,7 +49,7 @@
         android:layout_width="118dp"
         android:layout_height="47dp"
         android:text="RUN"
-        app:layout_constraintBottom_toTopOf="@+id/ReadMEScreen"
+        app:layout_constraintBottom_toTopOf="@+id/ReadMeScreen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.945"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,7 +101,7 @@
         android:layout_height="wrap_content"
         android:text="Manual Control"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ReadMEScreen"
+        app:layout_constraintEnd_toStartOf="@+id/ReadMeScreen"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -111,10 +111,10 @@
         android:text="Draw Control"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ReadMEScreen" />
+        app:layout_constraintStart_toEndOf="@+id/ReadMeScreen" />
 
     <Button
-        android:id="@+id/ReadMEScreen"
+        android:id="@+id/ReadMeScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="INTRO"
@@ -144,7 +144,7 @@
         android:inputType="number"
         android:textColor="@color/black"
         android:textColorHint="#d1d1d1"
-        app:layout_constraintBottom_toTopOf="@+id/ReadMEScreen"
+        app:layout_constraintBottom_toTopOf="@+id/ReadMeScreen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.091"
         app:layout_constraintStart_toStartOf="parent"
@@ -163,7 +163,7 @@
         android:numeric="decimal"
         android:textColor="@color/black"
         android:textColorHint="#d1d1d1"
-        app:layout_constraintBottom_toTopOf="@+id/ReadMEScreen"
+        app:layout_constraintBottom_toTopOf="@+id/ReadMeScreen"
         app:layout_constraintEnd_toStartOf="@+id/runButton"
         app:layout_constraintStart_toEndOf="@+id/numberViewCellSize"
         app:layout_constraintTop_toTopOf="parent"
