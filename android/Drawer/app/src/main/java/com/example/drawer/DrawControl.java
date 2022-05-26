@@ -142,8 +142,6 @@ public class DrawControl extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pixelGrid.clear();
-
-
             }
         });
         runBtn.setOnClickListener(new View.OnClickListener() {
@@ -151,8 +149,9 @@ public class DrawControl extends AppCompatActivity {
             public void onClick(View view) {
                 System.out.println("test");
                 String speed =  numberViewSpeed.getText().toString();
-                if(speed.isEmpty()) return;
-
+                if (speed.isEmpty()) {
+                    return;
+                }
 
                 for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1) ) {
                     System.out.println("[ " + instruction.getDistance() + " ] Meters then turn [ " + instruction.getTurn() + " ] degrees");
@@ -206,9 +205,9 @@ public class DrawControl extends AppCompatActivity {
                     pixelGrid.setPathScale(value);
                     updatePathLength();
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
-                };
+                }
             }
         });
 
@@ -240,7 +239,7 @@ public class DrawControl extends AppCompatActivity {
     }
 
     private void updatePathLength(){
-        double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
+        double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
         pathLength = Math.floor(pathLength * 100) / 100;
         pathLengthView.setText("Path length: " + pathLength);
     }
@@ -266,5 +265,4 @@ public class DrawControl extends AppCompatActivity {
         view.draw(canvas);
         return bitmap;
     }
-
 }

@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/report/camera");
             mqttController.subscribe("/smartcar/report/obstacle");
             mqttController.subscribe("/smartcar/report/ultrasound");
+            mqttController.subscribe("/smartcar/report/odometer");
             mqttController.subscribe("/smartcar/control/throttle");
         });
 
