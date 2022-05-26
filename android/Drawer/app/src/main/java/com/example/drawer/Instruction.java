@@ -31,5 +31,9 @@ public class Instruction {
         this.turn = turn;
     }
 
-
+    @Override
+    public String toString() {
+        return
+                "" + distance + ',' + turn + ';' ;
+    }
 }
