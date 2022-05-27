@@ -3,8 +3,11 @@ package com.example.drawer;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -56,6 +59,28 @@ public class MainActivityInstrumentedTest {
         onView(withId(R.id.ManualScreen)).check(matches(isDisplayed()));
         onView(withId(R.id.ReadMeScreen)).check(matches(isDisplayed()));
         onView(withId(R.id.DrawScreen)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Tests whether clicking the Draw Control Button creates an intent
+     * to the Draw Control Activity
+     */
+    @Test
+    public void doesDrawControlButtonCreateIntentToDrawControlScreen() {
+        onView(withId(R.id.DrawScreen)).check(matches(withText("Draw Control")));
+        onView(withId(R.id.DrawScreen)).perform(click());
+        intended(hasComponent(DrawControl.class.getName()));
+    }
+
+    /**
+     * Tests whether clicking the Manual Control Button creates an intent
+     * to the Manual Control Activity
+     */
+    @Test
+    public void doesManualControlButtonCreateIntentToManualControlScreen() {
+        onView(withId(R.id.ManualScreen)).check(matches(withText("Manual Control")));
+        onView(withId(R.id.ManualScreen)).perform(click());
+        intended(hasComponent(ManualControl.class.getName()));
     }
 
     @Test

@@ -1,12 +1,16 @@
 package com.example.drawer;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.PositionAssertions.isCompletelyAbove;
 import static androidx.test.espresso.assertion.PositionAssertions.isCompletelyBelow;
-import static androidx.test.espresso.assertion.PositionAssertions.isCompletelyLeftOf;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -40,12 +44,20 @@ public class ManualControlInstrumentedTest {
         Intents.release();
     }
 
+    /**
+     * Tests if the text that displays the speed is positioned above
+     * the text that displays the angle the joystick is pointed at
+     */
     @Test
     public void isSpeedTextDisplayedAboveAngleText() {
         onView(withId(R.id.speedStat)).check(matches(isDisplayed()));
         onView(withId(R.id.speedStat)).check(isCompletelyAbove(withId(R.id.angleStat)));
     }
 
+    /**
+     * Tests if the Joystick is placed below both text boxes in order
+     * to ensure that the intended GUI positioning is maintained
+     */
     @Test
     public void isJoystickDisplayedBelowSpeedAndAngle() {
         onView(withId(R.id.outerCircle)).check(matches(isDisplayed()));
@@ -73,5 +85,27 @@ public class ManualControlInstrumentedTest {
         onView(withId(R.id.ManualScreen)).check(matches(isDisplayed()));
         onView(withId(R.id.ReadMeScreen)).check(matches(isDisplayed()));
         onView(withId(R.id.DrawScreen)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Tests whether clicking the Draw Control Button creates an intent
+     * to the Draw Control Activity
+     */
+    @Test
+    public void doesDrawControlButtonCreateIntentToDrawControlScreen() {
+        onView(withId(R.id.DrawScreen)).check(matches(withText("Draw Control")));
+        onView(withId(R.id.DrawScreen)).perform(click());
+        intended(hasComponent(DrawControl.class.getName()));
+    }
+
+    /**
+     * Tests whether clicking the Intro Button creates an intent
+     * to the Intro Activity
+     */
+    @Test
+    public void doesIntroButtonCreateIntentToIntroScreen() {
+        onView(withId(R.id.ReadMeScreen)).check(matches(withText("Intro")));
+        onView(withId(R.id.ReadMeScreen)).perform(click());
+        intended(hasComponent(MainActivity.class.getName()));
     }
 }
