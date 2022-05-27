@@ -94,7 +94,7 @@ jobs:
           api-level: 29
           arch: x86_64
           working-directory: ./android/Drawer
-          script: cd android/Drawer && ./gradlew connectedAndroidTest
+          script: ./gradlew connectedAndroidTest
           
       # Upload artifacts
       - name: Archive test artifacts
