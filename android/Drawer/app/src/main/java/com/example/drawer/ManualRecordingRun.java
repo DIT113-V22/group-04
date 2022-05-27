@@ -2,7 +2,6 @@ package com.example.drawer;
 
 import android.os.SystemClock;
 import android.widget.Chronometer;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -17,7 +16,7 @@ public class ManualRecordingRun implements Runnable {
     private boolean obstacle = false;
     private ArrayList finalOutputList;
 
-    public ManualRecordingRun(LinkedList carTimerQueue,ArrayList carAngleQueue, ArrayList carSpeedQueue, MQTTController mqttController, Chronometer executeTimer){
+    public ManualRecordingRun(LinkedList carTimerQueue,ArrayList carAngleQueue, ArrayList carSpeedQueue, MQTTController mqttController, Chronometer executeTimer) {
         this.carTimerQueue = carTimerQueue;
         this.mqttController = mqttController;
         this.carAngleQueue =carAngleQueue;
@@ -32,20 +31,20 @@ public class ManualRecordingRun implements Runnable {
     @Override
     public void run() {
         //Start a new timer if none has been run before
-        if(!executeTimerBool){
+        if (!executeTimerBool) {
             executeTimer.setBase(SystemClock.elapsedRealtime());
             executeTimer.start();
             executeTimerBool = true;
         }
         //Go through and publish all commands
-        for(int m = 0; m < carSpeedQueue.size(); m++) {
+        for (int m = 0; m < carSpeedQueue.size(); m++) {
             boolean timerChecked = true;
 
-            while(timerChecked && !obstacle){
+            while (timerChecked && !obstacle) {
                 executeTimerInt = (int) (SystemClock.elapsedRealtime() - executeTimer.getBase());
                 ///TODO: TEST WITHOUT /10
                 //Publish only with correct timing
-                if ((int) executeTimerInt / 10  >= (int) ((int) carTimerQueue.get(m) /10 )){
+                if ((int) executeTimerInt / 10  >= (int) ((int) carTimerQueue.get(m) /10)) {
                     mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeedQueue.get(m)));
                     mqttController.publish("/smartcar/control/steering", String.valueOf(carAngleQueue.get(m)));
                     timerChecked = false;

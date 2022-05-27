@@ -21,7 +21,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
-
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -99,9 +98,6 @@ public class ManualControl extends AppCompatActivity {
         saveReplay = findViewById(R.id.saveRecording);
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
-
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
         viewPaths.setOnClickListener(new View.OnClickListener() {
@@ -133,13 +129,12 @@ public class ManualControl extends AppCompatActivity {
      *
      * @param b toggled on or off.
      */
-    public void onRecordEnd(boolean b){
+    public void onRecordEnd(boolean b) {
 
-        if (!b){
+        if (!b) {
             if (recordToggle.isChecked()) {
-
                 wasChecked = true;
-            }else if(wasChecked){   // If toggle is off but was previously on
+            } else if (wasChecked) {   // If toggle is off but was previously on
                 carStatus = new Pair(carSpeedQueue, carAngleQueue);
                 savedPathList.add(carSpeedQueue);
                 endOfRecordingPopUpOptions();
@@ -157,10 +152,10 @@ public class ManualControl extends AppCompatActivity {
      * @param speed individual speed command extracted from joystick.
      * @param angle individual angle command extracted from joystick.
      */
-    public void recordMovements(int speed, double angle){
+    public void recordMovements(int speed, double angle) {
         if (recordToggle.isChecked()) {
             //IS THIS NEEDED?(START)
-            if(!timerStart){
+            if (!timerStart) {
                 time.setBase(SystemClock.elapsedRealtime());
                 time.start();
                 timerStart = true;
@@ -178,7 +173,7 @@ public class ManualControl extends AppCompatActivity {
             //Saves that the record was toggled
             wasChecked = true;
 
-        }else{
+        } else {
             //IS THIS NEEDED?(START)
             time.stop();
             time.setBase(SystemClock.elapsedRealtime());
@@ -264,7 +259,7 @@ public class ManualControl extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Execution of selected save with previously saved time and command. All in separate thread.
                 System.out.println(arrayAdapter.getItem(i));
-                if(dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))){
+                if (dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))) {
                     String myItem = arrayAdapter.getItem(i).toString();
                     System.out.println(dbManager.getPathDetails(myItem));
                     ArrayList<String> itemCarSpeed = dbManager.getPathDetails(myItem);
@@ -285,15 +280,13 @@ public class ManualControl extends AppCompatActivity {
      * @param position
      * @param id
      */
-    public void onListItemClick(ListView pathList, View v, int position, long id){ //delete
-
+    public void onListItemClick(ListView pathList, View v, int position, long id) { //delete
             //Set background of all items to white
-            for (int i=0;i<pathList.getChildCount();i++){
+            for (int i=0; i<pathList.getChildCount(); i++) {
                 pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
             }
             v.setBackgroundColor(Color.BLACK);
     }
-
 
     /**
      * When outerCircle is touched circleOnTouch is called.
@@ -308,7 +301,7 @@ public class ManualControl extends AppCompatActivity {
         OC = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
 
         //Retrieves the starting position of the Drawable Views.
-        if(!saved){
+        if (!saved) {
             centerX = (int)innerCircle.getX();
             centerY = (int)innerCircle.getY();
             saved = true;
@@ -323,13 +316,13 @@ public class ManualControl extends AppCompatActivity {
         traversX = traversX - outerRadius;
         traversY = traversY - outerRadius;
         double angle;
-        angle = (Math.toDegrees(Math.atan2(((event.getY()-90) - outerRadius),((event.getX()-90) - outerRadius)) * -1));
+        angle = (Math.toDegrees(Math.atan2(((event.getY() - 90) - outerRadius),((event.getX() - 90) - outerRadius)) * -1));
 
 
         //Sets up clipping and actual moving of innerCircle to touch position.
         double joystickToPressedDistance = Math.sqrt(
-                Math.pow(centerX - traversX, 2) +
-                Math.pow(centerY - traversY, 2)
+            Math.pow(centerX - traversX, 2) +
+            Math.pow(centerY - traversY, 2)
         );
 
         //thumb-stick clipping
@@ -341,8 +334,8 @@ public class ManualControl extends AppCompatActivity {
             innerCircle.setY(traversY);
         }
 
-        outerCircle.setX(centerX -outerRadius);
-        outerCircle.setY(centerY -outerRadius);
+        outerCircle.setX(centerX - outerRadius);
+        outerCircle.setY(centerY - outerRadius);
 
         //Retrieves calculated speed and angle values
         int carSpeed = carSpeed(event);
@@ -350,22 +343,21 @@ public class ManualControl extends AppCompatActivity {
 
         //Starts timer as soon as recording toggle is turned on.
         if (recordToggle.isChecked()) {
-            if(!timerStart){
+            if (!timerStart) {
                 time.setBase(SystemClock.elapsedRealtime());
                 time.start();
                 timerStart = true;
             }
         }
 
-        if(carAngle < 5 && carAngle > -5){
-            carAngle = 0;//0.1
+        if (carAngle < 5 && carAngle > -5) {
+            carAngle = 0;
         }
 
         //Publishes the car speed respective to the joystick position.
         mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
         //Publishes the car angle respective to the joystick position.
         mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
-
 
         //Records and saves the car speed and angle.
         recordMovements(carSpeed, carAngle);
@@ -404,21 +396,23 @@ public class ManualControl extends AppCompatActivity {
             speedTempY *= -1;
         }
 
-        //MORE MATH
-
         //Touch distance from the center of outerCircle
-        int speedTemp = (int) Math.sqrt((speedTempX*speedTempX)+(speedTempY*speedTempY));
+        int speedTemp = (int) Math.sqrt((speedTempX * speedTempX) + (speedTempY * speedTempY));
 
-        int startTemp = (int) Math.sqrt((centerX * centerX)+(centerY * centerY));
+        int startTemp = (int) Math.sqrt((centerX * centerX) + (centerY * centerY));
 
-        if (speedTemp > startTemp) speedTemp = startTemp;
-
-        if (speedTemp > outerRadius) speedTemp = outerRadius;
+        if (speedTemp > startTemp) {
+            speedTemp = startTemp;
+        }
+        if (speedTemp > outerRadius) {
+            speedTemp = outerRadius;
+        }
 
         int speedProc = (speedTemp * 100) / outerRadius;
 
-        if (traversY > centerY) speedProc = speedProc * -1;
-
+        if (traversY > centerY) {
+            speedProc = speedProc * -1;
+        }
         if (event.getAction() == MotionEvent.ACTION_UP) {
             speedProc = 0;
         }
@@ -426,7 +420,6 @@ public class ManualControl extends AppCompatActivity {
 
         return speedProc;
     }
-
 
     /**
      * Calculates angle of the car based on joystick movement.
@@ -438,36 +431,29 @@ public class ManualControl extends AppCompatActivity {
         int angle;
 
         //Math to get degrees based on a circle in a position.
-        angle = (int)(Math.toDegrees(Math.atan2((event.getX()-90 - outerRadius), (event.getY()-90 - outerRadius) * -1)));
+        angle = (int)(Math.toDegrees(Math.atan2((event.getX() - 90 - outerRadius), (event.getY() - 90 - outerRadius) * -1)));
 
         //Switching where degrees are located where.
-        if (angle >= 90){
+        if (angle >= 90) {
             angle = 180 - angle;
-        }else if(angle <= -90){
+        } else if (angle <= -90) {
             angle = -180 - angle;
         }
 
         //Set angle to 0 if there is no touch.
-        if (event.getAction() == MotionEvent.ACTION_UP) angle = 0;
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            angle = 0;
+        }
         angleStat.setText("The angle is: " + angle);
 
         return angle;
     }
-
 
     /**
      * Opens ReadME  screen (home screen).
      */
     public void openReadMEScreen() {
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    /**
-     * Opens manual control screen.
-     */
-    public void openManualScreen() {
-        Intent intent = new Intent(this, ManualControl.class);
         startActivity(intent);
     }
 

@@ -1,15 +1,12 @@
 package com.example.drawer;
+
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Pair;
-
 import androidx.annotation.Nullable;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DBManager extends SQLiteOpenHelper {
@@ -45,11 +42,9 @@ public class DBManager extends SQLiteOpenHelper {
         // at last we are calling a exec sql
         // method to execute above sql query
         sqLiteDatabase.execSQL(query);
-
     }
 
     public void addNewPath(String savedName, String pathList) {
-
         // creating a variable for sqlite database
         // and calling writable method to write data in our database
         SQLiteDatabase db = this.getWritableDatabase();
@@ -68,7 +63,7 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addNewTimer(String savedTimer){
+    public void addNewTimer(String savedTimer) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TIMER_VALUES_COL, savedTimer);
@@ -81,32 +76,16 @@ public class DBManager extends SQLiteOpenHelper {
         // this method is called to check if the table exists already.
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(sqLiteDatabase);
-
     }
+
     @SuppressLint("Range")
     public ArrayList<String> getAllPaths() {
-        ArrayList<String> array_list = new ArrayList<String>();
-
+        ArrayList<String> arrayList = new ArrayList<String>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from mySavedPath", null );
+        Cursor res =  db.rawQuery( "select * from mySavedPath", null);
         res.moveToFirst();
 
-        while(res.isAfterLast() == false){
-            array_list.add(res.getString(res.getColumnIndex(PATH_TITLE_COL)));
-            res.moveToNext();
-        }
-        return array_list;
-    }
-
-    @SuppressLint("Range")
-    public ArrayList<String> getAllPathNames(){
-        ArrayList<String> arrayList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] str2 = new String[1];
-        str2[0] = PATH_TITLE_COL;
-        Cursor res = db.query("mySavedPath", str2, null, null, null, null, null);
-        res.moveToFirst();
-        while(res.isAfterLast() == false){
+        while (res.isAfterLast() == false) {
             arrayList.add(res.getString(res.getColumnIndex(PATH_TITLE_COL)));
             res.moveToNext();
         }
@@ -114,7 +93,22 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Range")
-    public ArrayList<String> getPathDetails(String pathName){
+    public ArrayList<String> getAllPathNames() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] str2 = new String[1];
+        str2[0] = PATH_TITLE_COL;
+        Cursor res = db.query("mySavedPath", str2, null, null, null, null, null);
+        res.moveToFirst();
+        while (res.isAfterLast() == false) {
+            arrayList.add(res.getString(res.getColumnIndex(PATH_TITLE_COL)));
+            res.moveToNext();
+        }
+        return arrayList;
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<String> getPathDetails(String pathName) {
         ArrayList<String> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select pathList from mySavedPath where savedName = '" + pathName + "' ", null);
@@ -125,7 +119,7 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Range")
-    public ArrayList<String> getTimeDetails(String pathName){
+    public ArrayList<String> getTimeDetails(String pathName) {
         ArrayList<String> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select timerList from mySavedPath where savedName = '" + pathName + "' ", null);
