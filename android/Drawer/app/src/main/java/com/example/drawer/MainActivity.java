@@ -66,11 +66,6 @@ public class MainActivity extends AppCompatActivity {
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
     }
 
-    public void openReadMEScreen() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
     public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
         startActivity(intent);

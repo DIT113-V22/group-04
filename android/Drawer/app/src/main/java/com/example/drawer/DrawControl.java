@@ -260,11 +260,6 @@ public class DrawControl extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void openDrawScreen() {
-        Intent intent = new Intent(this, DrawControl.class);
-        startActivity(intent);
-    }
-
     public Bitmap viewToBitmap(View view) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

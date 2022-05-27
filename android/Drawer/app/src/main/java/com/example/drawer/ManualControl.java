@@ -494,7 +494,6 @@ public class ManualControl extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        Log.d("rrr", height + " " + width);
 
         return new Pair<>(width, height);
     }
