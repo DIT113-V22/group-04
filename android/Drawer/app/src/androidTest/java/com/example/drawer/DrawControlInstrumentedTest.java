@@ -160,4 +160,6 @@ public class DrawControlInstrumentedTest {
         onView(withId(R.id.numberViewCellLength)).perform(typeText("3"), closeSoftKeyboard()).check(matches(withText("3")));
         onView(withId(R.id.numberViewCellSize)).perform(typeText("2"), closeSoftKeyboard()).check(matches(withText("2")));
     }
+
+
 }
