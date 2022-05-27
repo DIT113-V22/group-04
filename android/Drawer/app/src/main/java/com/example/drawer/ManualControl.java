@@ -50,9 +50,6 @@ public class ManualControl extends AppCompatActivity {
         outerCircle = findViewById(R.id.outerCircle);
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
-
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
         innerCircle.setOnTouchListener(new View.OnTouchListener() {
@@ -194,18 +191,12 @@ public class ManualControl extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        Log.d("rrr", height + " " + width);
 
         return new Pair<>(width, height);
     }
 
     public void openReadMEScreen() {
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    public void openManualScreen() {
-        Intent intent = new Intent(this, ManualControl.class);
         startActivity(intent);
     }
 
