@@ -2,6 +2,7 @@ package com.example.drawer;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -9,15 +10,25 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import android.view.View;
+import android.widget.SeekBar;
+
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
 import androidx.test.espresso.action.Tap;
 import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,6 +54,24 @@ public class DrawControlInstrumentedTest {
     @After
     public void intentsTeardown() {
         Intents.release();
+    }
+
+    public static ViewAction setProgress(final int progress) {
+        return new ViewAction() {
+            @Override
+            public void perform(UiController uiController, View view) {
+                SeekBar seekBar = (SeekBar) view;
+                seekBar.setProgress(progress);
+            }
+            @Override
+            public String getDescription() {
+                return "Set a progress on a SeekBar";
+            }
+            @Override
+            public Matcher<View> getConstraints() {
+                return ViewMatchers.isAssignableFrom(SeekBar.class);
+            }
+        };
     }
 
     /**
@@ -113,24 +142,22 @@ public class DrawControlInstrumentedTest {
      */
     @Test
     public void testSeekBar() {
-        onView(withId(R.id.seekbar)).perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
-        onView(withId(R.id.textViewSpeed)).check(matches(withText("Speed: 0")));
+        onView(withId(R.id.seekbar)).perform(setProgress(0));
+        onView(withId(R.id.textViewSpeed)).check(matches(withText("Current speed:0")));
 
-        onView(withId(R.id.seekbar)).perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER, Press.FINGER));
+        onView(withId(R.id.seekbar)).perform(setProgress(50));
         onView(withId(R.id.textViewSpeed)).check(matches(withText("Current speed:50")));
 
-        onView(withId(R.id.seekbar)).perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
+        onView(withId(R.id.seekbar)).perform(setProgress(100));
         onView(withId(R.id.textViewSpeed)).check(matches(withText("Current speed:100")));
     }
 
-    @Test
     /**
      * Test editing text fields
      */
+    @Test
     public void testEditTexts() {
-        onView(withId(R.id.numberViewCellLength)).perform(typeText("3")).check(matches(withText("3")));
-        onView(withId(R.id.numberViewCellSize)).perform(typeText("2")).check(matches(withText("2")));
+        onView(withId(R.id.numberViewCellLength)).perform(typeText("3"), closeSoftKeyboard()).check(matches(withText("3")));
+        onView(withId(R.id.numberViewCellSize)).perform(typeText("2"), closeSoftKeyboard()).check(matches(withText("2")));
     }
-
-
 }

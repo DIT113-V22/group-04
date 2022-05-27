@@ -125,13 +125,13 @@
 
     <TextView
         android:id="@+id/textViewSpeed"
-        android:layout_width="79dp"
-        android:layout_height="27dp"
-        android:layout_marginTop="28dp"
+        android:layout_width="77dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="24dp"
         android:text="Speed: 0"
         android:textColor="#77000000"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.979"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
