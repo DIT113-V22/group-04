@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         conBtn = findViewById(R.id.conBtn);
         conBtn.setOnClickListener(view -> mqttController.connect());
 
+        // Publish button
         pubBtn = findViewById(R.id.pubBtn);
         pubBtn.setOnClickListener(view ->
                 mqttController.publish("/smartcar/control/throttle", "50"));
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         disBtn = findViewById(R.id.disBtn);
         disBtn.setOnClickListener(view -> mqttController.disconnect());
 
-        // Subscription buttons
+        // Subscription button
         subBtn = findViewById(R.id.subBtn);
         subBtn.setOnClickListener(view -> {
             mqttController.subscribe("/smartcar/report/startup");
