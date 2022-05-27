@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Connection button
         conBtn = findViewById(R.id.conBtn);
         conBtn.setOnClickListener(view -> mqttController.connect());
 
