@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         disBtn = findViewById(R.id.disBtn);
         disBtn.setOnClickListener(view -> mqttController.disconnect());
 
-        // Subscription button
+        // Subscription buttons
         subBtn = findViewById(R.id.subBtn);
         subBtn.setOnClickListener(view -> {
             mqttController.subscribe("/smartcar/report/startup");
