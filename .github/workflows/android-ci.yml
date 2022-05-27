@@ -57,6 +57,16 @@ jobs:
           cd android/Drawer
           ./gradlew test --info
           
+      # Upload artifacts
+      - name: Archive test artifacts
+        if: ${{ success() }} || ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: Unit test reports
+          path: |
+            report
+            unit-tests.log
+          
           
   run-instrumented-tests:
     runs-on: macos-latest
@@ -80,5 +90,15 @@ jobs:
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: 30
           script: cd android/Drawer && ./gradlew connectedAndroidTest
+          
+      # Upload artifacts
+      - name: Archive test artifacts
+        if: ${{ success() }} || ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: Instrumented test reports
+          path: |
+            report
+            instrumented-tests.log
