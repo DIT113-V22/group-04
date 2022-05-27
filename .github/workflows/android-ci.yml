@@ -90,9 +90,9 @@ jobs:
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          profile: Pixel 5
+          profile: Pixel 4
           api-level: 31
-          arch: x86_64
+          arch: x86
           working-directory: ./android/Drawer
           script: cd android/Drawer && ./gradlew connectedAndroidTest
           
