@@ -81,7 +81,6 @@ public class DrawControl extends AppCompatActivity {
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         manualControlScreen.setOnClickListener(view -> openManualScreen());
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,11 +267,6 @@ public class DrawControl extends AppCompatActivity {
 
     public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
-        startActivity(intent);
-    }
-
-    public void openDrawScreen() {
-        Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
 

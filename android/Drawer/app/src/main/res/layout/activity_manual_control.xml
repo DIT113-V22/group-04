@@ -39,7 +39,7 @@
         android:layout_width="93dp"
         android:layout_height="48dp"
         android:backgroundTint="#8685EF"
-        android:text="INTRO"
+        android:text="Intro"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.53"
