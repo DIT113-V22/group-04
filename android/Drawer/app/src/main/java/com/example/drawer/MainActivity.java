@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/control/throttle");
         });
 
+        // Navbar
         introScreenBtn = findViewById(R.id.ReadMeScreen);
         manualControlScreenBtn = findViewById(R.id.ManualScreen);
         drawControlScreenBtn = findViewById(R.id.DrawScreen);
