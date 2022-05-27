@@ -87,7 +87,8 @@ jobs:
           chmod +x gradlew
        
       - name: Run instrumented tests
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: ReactiveCircus/android-emulator-runner@v2.24.0
+
         with:
           profile: Nexus 6
           api-level: 29
