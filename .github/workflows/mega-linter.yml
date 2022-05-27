@@ -7,9 +7,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   build:
     name: MegaLinter
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3.0.1
