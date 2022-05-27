@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         pubBtn.setOnClickListener(view ->
                 mqttController.publish("/smartcar/control/throttle", "50"));
 
+        // Disconnection button
         disBtn = findViewById(R.id.disBtn);
         disBtn.setOnClickListener(view -> mqttController.disconnect());
 
