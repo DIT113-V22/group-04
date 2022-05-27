@@ -64,7 +64,7 @@ jobs:
         with:
           name: Unit test reports
           path: |
-            android/Drawer/app/build/reports/tests/testReleaseUnitTest/index.html
+            android/Drawer/app/build/reports/tests/testReleaseUnitTest
           
           
   run-instrumented-tests:
@@ -89,9 +89,9 @@ jobs:
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          profile: Pixel 4 XL
-          api-level: 31
-          arch: x86
+          profile: Nexus 6
+          api-level: 29
+          arch: x86_64
           working-directory: ./android/Drawer
           script: cd android/Drawer && ./gradlew connectedAndroidTest
           
@@ -102,4 +102,4 @@ jobs:
         with:
           name: Instrumented test reports
           path: |
-            android/Drawer/app/build/reports/androidTests/connected/index.html
+            android/Drawer/app/build/reports/androidTests/connected
