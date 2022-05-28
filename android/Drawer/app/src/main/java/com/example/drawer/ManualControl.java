@@ -1,7 +1,5 @@
 package com.example.drawer;
 
-import static java.lang.Thread.sleep;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -21,8 +19,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
-import org.json.JSONArray;
-import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -78,6 +74,9 @@ public class ManualControl extends AppCompatActivity {
     private ArrayAdapter<String> arrayAdapter;
     private String myItem = "";
     private long lastTransmission = System.currentTimeMillis();
+    ArrayList<Integer> itemCarSpeed = new ArrayList<>();
+    ArrayList<Integer> itemCarAngle = new ArrayList<>();
+    ArrayList<Long> itemCarTimer = new ArrayList<>();
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -107,6 +106,7 @@ public class ManualControl extends AppCompatActivity {
         saveReplay = findViewById(R.id.saveRecording);
         camera = findViewById(R.id.camera);
         playPath = findViewById(R.id.playPath);
+        deletePath = findViewById(R.id.deletePath);
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
@@ -137,8 +137,6 @@ public class ManualControl extends AppCompatActivity {
             if (recordToggle.isChecked()) {
                 wasChecked = true;
             } else if (wasChecked) {   // If toggle is off but was previously on
-//                carStatus = new Pair(carSpeedQueue, carAngleQueue);
-//                savedPathList.add(carSpeedQueue);
                 endOfRecordingPopUpOptions();
                 wasChecked = false;
                 time.stop();
@@ -159,6 +157,7 @@ public class ManualControl extends AppCompatActivity {
 
             currentSaveTime = System.currentTimeMillis();
 
+            //Adding car speed and angle to the list respectively.
             carSpeedQueue.add(speed);
             carAngleQueue.add(angle);
 
@@ -167,14 +166,17 @@ public class ManualControl extends AppCompatActivity {
 
             //Saves that the record was toggled
             wasChecked = true;
-
         }
     }
 
     /**
-     * End of recording pop-up. Allows user to give name and save or delete recording.
+     * This method is used when the record toggle is turned off.
+     * Allows the user to give name to the recorded path and a choice save or delete recording.
+     * On save clicked, the details of path are stored in a database.
+     * On discard clicked, the recording is discarded.
      */
     public void endOfRecordingPopUpOptions() {
+
         //Pop-Up setup
         builderSaved = new AlertDialog.Builder(this);
         final View popUpView = getLayoutInflater().inflate(R.layout.record_path_save, null);
@@ -210,8 +212,6 @@ public class ManualControl extends AppCompatActivity {
     /**
      * Pop-up of recordings which can be selected and played.
      * Selected played in separate thread.
-     *
-     * @author Sejal Kanaskar
      */
     public void createViewContactDialogueReplays() {
 
@@ -223,29 +223,7 @@ public class ManualControl extends AppCompatActivity {
         replays = builderReplays.create();
         replays.show();
 
-        playRecordings = new AlertDialog.Builder(this);
-        //final View popUpView2 = getLayoutInflater().inflate(R.layout.activity_play_recording, null);
-        //playRecordings.setView(popUpView2);
-        playRec = playRecordings.create();
-
-
-        //Deletes that recording
-        deletePath.setOnClickListener(view -> {
-            if (myItem.equals("")) {
-                //toast
-            } else {
-                delete(view);
-            }
-        });
-
-//        playPath.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                delete(view);
-//            }
-//        });
-
-        //Gets the all the path information and path names stored in the database
+        //Gets the all the path information stored from the database
         ArrayList<String> finalOutputList = dbManager.getAllPaths();
 
         //creates a pop up window which has a list view
@@ -255,53 +233,36 @@ public class ManualControl extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, finalOutputList);
 
         pathView.setAdapter(arrayAdapter);
-        onListItemClick(pathView, popUpView); // delete
 
         //When any list item is click, the respective saved recording is played.
         pathView.setOnItemClickListener((adapterView, view, i, l) -> {
             //Execution of selected save with previously saved time and command. All in separate thread.
-            playRecordings.show();
 
             //System.out.println(arrayAdapter.getItem(i));
             if (dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))) {
                 myItem = arrayAdapter.getItem(i);
 
                 //System.out.println(dbManager.getPathDetails(myItem));
-
-                ArrayList<Integer> itemCarSpeed = dbManager.getPathDetails(myItem);
-                ArrayList<Integer> itemCarAngle = dbManager.getAngleDetails(myItem);
-                ArrayList<Long> itemCarTimer = dbManager.getTimeDetails(myItem);
+                itemCarSpeed = dbManager.getPathDetails(myItem);
+                itemCarAngle = dbManager.getAngleDetails(myItem);
+                itemCarTimer = dbManager.getTimeDetails(myItem);
 
                 ManualRecordingRun executeRecording = new ManualRecordingRun(itemCarTimer, itemCarAngle, itemCarSpeed, mqttController, executeTimer);
                 new Thread(executeRecording).start();
-                replays.dismiss();
             }
+
+            //delete the selected item
+            deletePath.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(!(myItem.equals(" "))){
+
+                    }
+                    dbManager.deleteSpecific(myItem);
+                    replays.dismiss();
+                }
+            });
         });
-    }
-
-    public <E> void delete(View v) {
-        ListView listview1 = new ListView(this);
-        ArrayList<E> datalist = new ArrayList<>();
-
-        final int position = listview1.getPositionForView((View) v.getParent());
-        datalist.remove(position);
-        arrayAdapter.notifyDataSetChanged();
-
-    }
-
-    /**
-     * The method sets a background color to all the list items.
-     *
-     * @param pathList
-     * @param v
-     * @author Sejal Kanaskar
-     */
-    public void onListItemClick(ListView pathList, View v) { //delete
-        //Set background of all items to white
-        for (int i = 0; i < pathList.getChildCount(); i++) {
-            pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
-        }
-        v.setBackgroundColor(Color.BLACK);
     }
 
     /**
