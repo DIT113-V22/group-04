@@ -19,9 +19,18 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,20 +67,25 @@ public class ManualControl extends AppCompatActivity {
     private LinkedList carSpeedQueue = new LinkedList();
     private List savedPathListName = new ArrayList();
     private ArrayList savedPathList = new ArrayList();
-    private ArrayList carAngleList = new ArrayList();
+    //private ArrayList carAngleList = new ArrayList();
     private LinkedList carAngleQueue = new LinkedList();
     private LinkedList carTimerList= new LinkedList();
     private Pair<Integer, Double> carStatus;
 
     private AlertDialog.Builder builderReplays;
+    private AlertDialog.Builder playRecordings;
     private AlertDialog replays;
-    private Button stopPlay;
+    private AlertDialog playRec;
 
     private AlertDialog.Builder builderSaved;
     private AlertDialog alertDialogSaved;
     private EditText saveName;
     private Button saveReplay;
     private Button discardReplay;
+    private Button deletePath;
+    private Button playPath;
+    private ArrayAdapter arrayAdapter;
+    private String myItem = "";
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -80,7 +94,7 @@ public class ManualControl extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
         dbManager = new DBManager(this);
-
+        //dbManager.deleteAll();
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
         time = findViewById(R.id.stopWatch);
@@ -96,6 +110,7 @@ public class ManualControl extends AppCompatActivity {
         recordToggle = findViewById(R.id.recordToggle);
         innerCircle.setEnabled(true);
         saveReplay = findViewById(R.id.saveRecording);
+
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
@@ -135,8 +150,8 @@ public class ManualControl extends AppCompatActivity {
             if (recordToggle.isChecked()) {
                 wasChecked = true;
             } else if (wasChecked) {   // If toggle is off but was previously on
-                carStatus = new Pair(carSpeedQueue, carAngleQueue);
-                savedPathList.add(carSpeedQueue);
+//                carStatus = new Pair(carSpeedQueue, carAngleQueue);
+//                savedPathList.add(carSpeedQueue);
                 endOfRecordingPopUpOptions();
                 wasChecked = false;
                 time.stop();
@@ -167,8 +182,8 @@ public class ManualControl extends AppCompatActivity {
 
             //Changes time to be saved as milliseconds
             carTimerList.add((int) (SystemClock.elapsedRealtime() - time.getBase()));
-            String timerJson = gson.toJson(carTimerList);
-            dbManager.addNewTimer(timerJson);
+            //String timerJson = gson.toJson(carTimerList);
+            //dbManager.addNewTimer(timerJson);
 
             //Saves that the record was toggled
             wasChecked = true;
@@ -196,6 +211,9 @@ public class ManualControl extends AppCompatActivity {
         alertDialogSaved = builderSaved.create();
         alertDialogSaved.show();
 
+        playRecordings = new AlertDialog.Builder(this);
+
+
         //Saves replay with the name.
         //stores the name of the reply and the respective array list to the database.
         saveReplay.setOnClickListener(new View.OnClickListener() {
@@ -204,9 +222,16 @@ public class ManualControl extends AppCompatActivity {
                 savedPathListName.add(saveName.getText());
                 alertDialogSaved.dismiss();
                 String saveNameString = saveName.getText().toString();
-                String json = gson.toJson(savedPathList);
-                System.out.println(json + saveNameString);
-                dbManager.addNewPath(saveNameString, json);
+                String json = gson.toJson(carSpeedQueue);
+                String jsonAngle = gson.toJson(carAngleQueue);
+                String jsonTimer = gson.toJson(carTimerList);
+                System.out.println(json + jsonAngle + saveNameString + jsonTimer);
+                dbManager.addNewPath(saveNameString, json, jsonAngle, jsonTimer);
+//                try {
+//                    JSONObject jsonObject = new JSONObject(json);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
@@ -226,19 +251,39 @@ public class ManualControl extends AppCompatActivity {
      * @author Sejal Kanaskar
      */
     public void createViewContactDialogueReplays() {
+
         //Pop-Up setup
         builderReplays = new AlertDialog.Builder(this);
         final View popUpView = getLayoutInflater().inflate(R.layout.activity_view_saved_paths, null);
-        stopPlay = (Button) popUpView.findViewById(R.id.stopPlay); //stops the play and closes the window
+        deletePath = (Button) popUpView.findViewById(R.id.deletePath); //stops the play and closes the window
         builderReplays.setView(popUpView);
         replays = builderReplays.create();
         replays.show();
 
-        //Stops recording from playing
-        stopPlay.setOnClickListener(new View.OnClickListener() {
+        playRecordings = new AlertDialog.Builder(this);
+        final View popUpView2 = getLayoutInflater().inflate(R.layout.activity_play_recording, null);
+        playRecordings.setView(popUpView2);
+        playRec = playRecordings.create();
+
+
+
+        //Deletes that recording
+        deletePath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                replays.dismiss();
+                if(myItem == ""){
+                    //toast
+                }else{
+                    delete(view);
+                }
+
+            }
+        });
+
+        playPath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                delete(view);
             }
         });
 
@@ -249,7 +294,8 @@ public class ManualControl extends AppCompatActivity {
         //in order to contain the array list of all the save paths
         pathView = (ListView) popUpView.findViewById(R.id.pathList);
         pathView.setBackgroundColor(Color.parseColor("#c8c8c8"));
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, finalOutputList);
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, finalOutputList);
+
         pathView.setAdapter(arrayAdapter);
         onListItemClick(pathView, popUpView, 1, 1000027); // delete
 
@@ -258,19 +304,57 @@ public class ManualControl extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Execution of selected save with previously saved time and command. All in separate thread.
+                playRecordings.show();
+
                 System.out.println(arrayAdapter.getItem(i));
                 if (dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))) {
-                    String myItem = arrayAdapter.getItem(i).toString();
+                   myItem = arrayAdapter.getItem(i).toString();
+
                     System.out.println(dbManager.getPathDetails(myItem));
+
                     ArrayList<String> itemCarSpeed = dbManager.getPathDetails(myItem);
-                    ArrayList itemCarAngle = dbManager.getPathDetails(myItem);
-                    ManualRecordingRun executeRecording = new ManualRecordingRun(carTimerList, itemCarAngle, itemCarSpeed, mqttController, executeTimer);
-                    new Thread(executeRecording).start();
-                    replays.dismiss();
+                    ArrayList<String> itemCarAngle = dbManager.getAngleDetails(myItem);
+                    ArrayList<String> itemCarTimer = dbManager.getTimeDetails(myItem);
+
+                    try {
+                        ArrayList itemCarSpeedList = carSpeedList(itemCarSpeed);
+                        ArrayList itemCarAngleList = carSpeedList(itemCarAngle);
+                        ArrayList itemCarTimerList = carSpeedList(itemCarTimer);
+
+
+                        ManualRecordingRun executeRecording = new ManualRecordingRun(itemCarTimerList, itemCarAngleList, itemCarSpeedList, mqttController, executeTimer);
+                        new Thread(executeRecording).start();
+                        replays.dismiss();
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
     }
+
+    public <E> void delete(View v){
+
+        ListView listview1 = new ListView(this);
+        ArrayList<E> datalist = new ArrayList<>();
+
+        final int position = listview1.getPositionForView((View) v.getParent());
+        datalist.remove(position);
+        arrayAdapter.notifyDataSetChanged();
+
+    }
+
+
+    private ArrayList carSpeedList(ArrayList<String> itemCarSpeed) throws JSONException {
+        JSONArray jsonArray = new JSONArray(itemCarSpeed);
+        ArrayList<String> itemCarSpeedList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            itemCarSpeedList.add(jsonArray.getString(i));
+        }
+        return itemCarSpeedList;
+    }
+
+
 
     /**
      * The method sets a background color to all the list items.

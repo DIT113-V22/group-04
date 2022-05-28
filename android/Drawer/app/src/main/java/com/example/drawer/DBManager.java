@@ -13,14 +13,16 @@ public class DBManager extends SQLiteOpenHelper {
     //Name of the database
     public static final String DB_NAME = "savedPaths";
 
+
     // below int is our database version
     private static final int DB_VERSION = 1;
 
     //variable for table name
     private static final String TABLE_NAME = "mySavedPath";
     private static final String ID_COL = "pathID";
+    private static final String PATH_ANGLES_COL = "angleList";
     private static String PATH_TITLE_COL = "savedName";
-    private static final String PATH_VALUES_COL = "pathList";
+    private static final String PATH_SPEED_COL = "pathList";
     private static final String TIMER_VALUES_COL = "timerList";
 
     public DBManager(@Nullable Context context) {
@@ -36,15 +38,17 @@ public class DBManager extends SQLiteOpenHelper {
         String query = "CREATE TABLE " + TABLE_NAME + " ("
                 + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + PATH_TITLE_COL + " TEXT,"
-                + PATH_VALUES_COL + " TEXT,"
-                + TIMER_VALUES_COL + "TEXT)";
+                + PATH_SPEED_COL + " TEXT,"
+                + PATH_ANGLES_COL + " TEXT,"
+                + TIMER_VALUES_COL + " TEXT)";
 
         // at last we are calling a exec sql
         // method to execute above sql query
         sqLiteDatabase.execSQL(query);
     }
 
-    public void addNewPath(String savedName, String pathList) {
+    public void addNewPath(String savedName, String speedList, String angleList, String timerList) {
+
         // creating a variable for sqlite database
         // and calling writable method to write data in our database
         SQLiteDatabase db = this.getWritableDatabase();
@@ -54,7 +58,9 @@ public class DBManager extends SQLiteOpenHelper {
 
         // passing all the values along with its key and value pair.
         values.put(PATH_TITLE_COL, savedName);
-        values.put(PATH_VALUES_COL, pathList);
+        values.put(PATH_SPEED_COL, speedList);
+        values.put(PATH_ANGLES_COL, angleList);
+        values.put(TIMER_VALUES_COL, timerList);
 
         // after adding all values we are passing content values to our table.
         db.insert(TABLE_NAME, null, values);
@@ -113,7 +119,18 @@ public class DBManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select pathList from mySavedPath where savedName = '" + pathName + "' ", null);
         res.moveToFirst();
-        arrayList.add(res.getString(res.getColumnIndex(PATH_VALUES_COL)));
+        arrayList.add(res.getString(res.getColumnIndex(PATH_SPEED_COL)));
+
+        return arrayList;
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<String> getAngleDetails(String pathName){
+        ArrayList<String> arrayList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select angleList from mySavedPath where savedName = '" + pathName + "' ", null);
+        res.moveToFirst();
+        arrayList.add(res.getString(res.getColumnIndex(PATH_ANGLES_COL)));
 
         return arrayList;
     }
@@ -128,4 +145,20 @@ public class DBManager extends SQLiteOpenHelper {
 
         return arrayList;
     }
+
+    public void deleteAll(){
+        SQLiteDatabase db = this.getWritableDatabase();
+         db.delete(TABLE_NAME,null,null);
+        db.execSQL("delete from mySavedPath" );
+        //db.execSQL("TRUNCATE table" + TABLE_NAME);
+        db.close();
+    }
+
+    public void deleteSpecific(String pathName){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME,null,null);
+        db.execSQL("delete from mySavedPath where savedName = '" + pathName + "' ");
+        db.close();
+    }
+
 }

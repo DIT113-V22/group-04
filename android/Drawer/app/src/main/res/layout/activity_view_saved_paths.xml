@@ -6,19 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <Button
-        android:id="@+id/stopPlay"
+        android:id="@+id/deletePath"
         android:layout_width="143dp"
         android:layout_height="55dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="643dp"
-        android:layout_marginEnd="100dp"
+        android:layout_marginTop="600dp"
+        android:layout_marginEnd="65dp"
         android:layout_marginBottom="40dp"
-        android:text="Stop"
+        android:text="Delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.632"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
@@ -31,6 +29,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.141" />
+        app:layout_constraintVertical_bias="0.168">
+
+
+    </ListView>
+
+    <Button
+        android:id="@+id/playPath"
+        android:layout_width="143dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="600dp"
+        android:layout_marginEnd="70dp"
+        android:layout_marginBottom="40dp"
+        android:text="Play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.136"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
