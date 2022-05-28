@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -73,6 +74,7 @@ public class ManualControl extends AppCompatActivity {
     private Button discardReplay;
     private Button deletePath;
     private Button playPath;
+    private ImageView camera;
     private ArrayAdapter<String> arrayAdapter;
     private String myItem = "";
     private long lastTransmission = System.currentTimeMillis();
@@ -100,10 +102,12 @@ public class ManualControl extends AppCompatActivity {
         recordToggle = findViewById(R.id.recordToggle);
         innerCircle.setEnabled(true);
         saveReplay = findViewById(R.id.saveRecording);
-
+        camera = findViewById(R.id.camera);
         playPath = findViewById(R.id.playPath);
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
+
+        mqttController.updateCamera(camera);
 
         viewPaths.setOnClickListener(view -> {
             //open the pop up window
