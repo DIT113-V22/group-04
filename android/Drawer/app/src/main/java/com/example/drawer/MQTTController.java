@@ -144,11 +144,6 @@ public class MQTTController {
                         }
                     }
 
-                    if (topic.equals("/smartcar/odometer/distance")){
-                        DrawControl.updateOdometer(message);
-                        System.out.println(message);
-                    }
-
                     if (textViewSubscriptionMap.get(topic) != null) {
                         textViewSubscriptionMap.get(topic).forEach((id, textView) -> textView.setText(message));
                     }

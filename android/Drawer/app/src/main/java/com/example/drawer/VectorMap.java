@@ -51,7 +51,6 @@ public class VectorMap {
     }
 
 
-
     public double calculateSize() {
         double total = 0;
 
@@ -134,11 +133,3 @@ public class VectorMap {
         }
     }
 }
-
-
-
-
-
-
-
-

@@ -48,7 +48,7 @@ public class DrawControl extends AppCompatActivity {
     EditText numberViewCellLength;
     SeekBar seekBar;
     TextView pathLengthView;
-    static TextView distanceTraveledView;
+    TextView distanceTraveledView;
     CanvasGrid pixelGrid;
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -78,6 +78,7 @@ public class DrawControl extends AppCompatActivity {
         seekBar = findViewById(R.id.seekbar);
         pathLengthView = findViewById(R.id.textViewPathLength);
         distanceTraveledView = findViewById(R.id.textViewDistanceTraveled);
+        mqttController.updateTextView(distanceTraveledView, "/smartcar/report/odometer");
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         manualControlScreen.setOnClickListener(view -> openManualScreen());
@@ -150,13 +151,12 @@ public class DrawControl extends AppCompatActivity {
         runBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("test");
                 String speed =  numberViewSpeed.getText().toString();
                 if (speed.isEmpty()) {
                     return;
                 }
 
-                for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1) ) {
+                for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1)) {
                     System.out.println("[ " + instruction.getDistance() + " ] Meters then turn [ " + instruction.getTurn() + " ] degrees");
                 }
 
@@ -251,10 +251,5 @@ public class DrawControl extends AppCompatActivity {
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
         return bitmap;
-    }
-
-    public static void updateOdometer(String odometerReading){
-        distanceTraveledView.setText("Distance: " + odometerReading);
-        System.out.println("ゴゴゴゴゴゴゴゴゴゴゴ");
     }
 }
