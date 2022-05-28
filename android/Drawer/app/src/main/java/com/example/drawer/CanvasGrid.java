@@ -192,25 +192,24 @@ public class CanvasGrid extends View {
             int row = (int)(event.getY() / cellLength);
 
             try {
-                if (true) { //why disable going over the same point twice?
-                    cellChecked[column][row] = true;
-                    pureCellChecked[column][row] = true;
+                //why disable going over the same point twice?
+                cellChecked[column][row] = true;
+                pureCellChecked[column][row] = true;
 
-                    if (firstTouch == false && (Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1 ) ) {
-                        gridDrawLine(lastx, lasty, column, row);
-                    } else {
-                        firstTouch = false;
-                    }
-
-                    if (vectorMap.getVectorList().isEmpty()) {
-                        vectorMap = new VectorMap(column, row);
-                    } else {
-                        vectorMap.add(column, row);
-                    }
-
-                    lastx = column;
-                    lasty = row;
+                if (!firstTouch && (Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1)) {
+                    gridDrawLine(lastx, lasty, column, row);
+                } else {
+                    firstTouch = false;
                 }
+
+                if (vectorMap.getVectorList().isEmpty()) {
+                    vectorMap = new VectorMap(column, row);
+                } else {
+                    vectorMap.add(column, row);
+                }
+
+                lastx = column;
+                lasty = row;
 
             } catch(Exception e) {
                 e.printStackTrace();

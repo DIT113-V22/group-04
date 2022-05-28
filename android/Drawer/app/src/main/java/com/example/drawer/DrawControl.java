@@ -14,8 +14,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,8 +22,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,85 +80,71 @@ public class DrawControl extends AppCompatActivity {
         manualControlScreen.setOnClickListener(view -> openManualScreen());
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
-        downloadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bitmap bitmap = viewToBitmap(pixelGrid);
-                OutputStream imageOutStream = null;
+        downloadBtn.setOnClickListener(view -> {
+            Bitmap bitmap = viewToBitmap(pixelGrid);
+            OutputStream imageOutStream;
 
-                ContentValues contentValues = new ContentValues();
+            ContentValues contentValues = new ContentValues();
 
-                contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, "drawing.png");
-                contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
-                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
+            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, "drawing.png");
+            contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
 
-                Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                try {
-                    imageOutStream = getContentResolver().openOutputStream(uri);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOutStream);
-                    Toast toast = Toast.makeText(DrawControl.this,"Saved!", Toast.LENGTH_LONG);
-                    toast.show();
-                    imageOutStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            try {
+                imageOutStream = getContentResolver().openOutputStream(uri);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOutStream);
+                Toast toast = Toast.makeText(DrawControl.this,"Saved!", Toast.LENGTH_LONG);
+                toast.show();
+                imageOutStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            Intent data = result.getData();
-                            Uri imageUri = data.getData();
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Uri imageUri = null;
+                        if (data != null) {
+                            imageUri = data.getData();
+                        }
 
-                            InputStream inputStream;
-                            try {
-                                inputStream = getContentResolver().openInputStream(imageUri);
-                                Bitmap image = BitmapFactory.decodeStream(inputStream);
-                                Drawable myDrawable = new BitmapDrawable(getResources(), image);
-                                myDrawable.setAlpha(60);
-                                pixelGrid.setBackground(myDrawable);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
+                        InputStream inputStream;
+                        try {
+                            inputStream = getContentResolver().openInputStream(imageUri);
+                            Bitmap image = BitmapFactory.decodeStream(inputStream);
+                            Drawable myDrawable = new BitmapDrawable(getResources(), image);
+                            myDrawable.setAlpha(60);
+                            pixelGrid.setBackground(myDrawable);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
-                File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                String imageDirectoryPath = imageDirectory.getPath();
-                Uri data = Uri.parse(imageDirectoryPath);
-                imagePickerIntent.setDataAndType(data, "image/*");
-                someActivityResultLauncher.launch(imagePickerIntent);
-            }
+        uploadBtn.setOnClickListener(view -> {
+            Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
+            File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            String imageDirectoryPath = imageDirectory.getPath();
+            Uri data = Uri.parse(imageDirectoryPath);
+            imagePickerIntent.setDataAndType(data, "image/*");
+            someActivityResultLauncher.launch(imagePickerIntent);
         });
-        clearBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pixelGrid.clear();
+        clearBtn.setOnClickListener(v -> pixelGrid.clear());
+        runBtn.setOnClickListener(view -> {
+            String speed =  numberViewSpeed.getText().toString();
+            if (speed.isEmpty()) {
+                return;
             }
-        });
-        runBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String speed =  numberViewSpeed.getText().toString();
-                if (speed.isEmpty()) {
-                    return;
-                }
 
-                for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1)) {
-                    System.out.println("[ " + instruction.getDistance() + " ] Meters then turn [ " + instruction.getTurn() + " ] degrees");
-                }
-
-                pixelGrid.executePathV2();
-                mqttController.publish("/smartcar/control/throttle", speed);
+            for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1)) {
+                System.out.println("[ " + instruction.getDistance() + " ] Meters then turn [ " + instruction.getTurn() + " ] degrees");
             }
+
+            pixelGrid.executePathV2();
+            mqttController.publish("/smartcar/control/throttle", speed);
         });
         seekBar.setOnSeekBarChangeListener(
             new SeekBar.OnSeekBarChangeListener() {
@@ -214,12 +196,10 @@ public class DrawControl extends AppCompatActivity {
             }
         });
 
-        pixelGrid.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                updatePathLength();
-                return false;
-            }
+        pixelGrid.setOnTouchListener((view, motionEvent) -> {
+            view.performClick();
+            updatePathLength();
+            return false;
         });
 
 

@@ -1,11 +1,13 @@
 package com.example.drawer;
 
+import androidx.annotation.NonNull;
+
 public class Instruction {
 
     private double distance;
     private double turn;
 
-    public Instruction(double distance, double turn){
+    public Instruction(double distance, double turn) {
         this.distance = distance;
         this.turn = turn;
     }
@@ -28,6 +30,6 @@ public class Instruction {
 
     @Override
     public String toString() {
-        return "" + distance + ',' + turn + ';' ;
+        return "" + distance + ',' + turn + ';';
     }
 }
