@@ -364,11 +364,11 @@ public class ManualControl extends AppCompatActivity {
             }
         }
 
-        if(carAngle < 3 && carAngle > -3){
+        if (carAngle < 3 && carAngle > -3) {
             carAngle = 0;
         }
 
-        if ((System.currentTimeMillis() - lastTransmission) > 10) {
+        if (((System.currentTimeMillis() - lastTransmission) > 10) || (carAngle == 0 || carSpeed == 0)) {
             //Publishes the car speed respective to the joystick position.
             mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeed));
             //Publishes the car angle respective to the joystick position.

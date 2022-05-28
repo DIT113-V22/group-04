@@ -31,8 +31,6 @@ public class DBManager extends SQLiteOpenHelper {
     private static final String PATH_SPEED_COL = "pathList";
     private static final String TIMER_VALUES_COL = "timerList";
 
-    private final Type type = new TypeToken<ArrayList<String>>(){}.getType();
-
     public DBManager(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
