@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -47,6 +48,7 @@ public class DrawControl extends AppCompatActivity {
     EditText numberViewCellLength;
     SeekBar seekBar;
     TextView pathLengthView;
+    static TextView distanceTraveledView;
     CanvasGrid pixelGrid;
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -75,6 +77,7 @@ public class DrawControl extends AppCompatActivity {
 
         seekBar = findViewById(R.id.seekbar);
         pathLengthView = findViewById(R.id.textViewPathLength);
+        distanceTraveledView = findViewById(R.id.textViewDistanceTraveled);
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         manualControlScreen.setOnClickListener(view -> openManualScreen());
@@ -219,23 +222,7 @@ public class DrawControl extends AppCompatActivity {
             }
         });
 
-        numberViewCellLength.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
     }
 
     private void updatePathLength(){
@@ -264,5 +251,10 @@ public class DrawControl extends AppCompatActivity {
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
         return bitmap;
+    }
+
+    public static void updateOdometer(String odometerReading){
+        distanceTraveledView.setText("Distance: " + odometerReading);
+        System.out.println("ゴゴゴゴゴゴゴゴゴゴゴ");
     }
 }
