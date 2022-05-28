@@ -74,9 +74,6 @@ public class ManualControl extends AppCompatActivity {
     private ArrayAdapter<String> arrayAdapter;
     private String myItem = "";
     private long lastTransmission = System.currentTimeMillis();
-    ArrayList<Integer> itemCarSpeed = new ArrayList<>();
-    ArrayList<Integer> itemCarAngle = new ArrayList<>();
-    ArrayList<Long> itemCarTimer = new ArrayList<>();
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -223,7 +220,29 @@ public class ManualControl extends AppCompatActivity {
         replays = builderReplays.create();
         replays.show();
 
-        //Gets the all the path information stored from the database
+        playRecordings = new AlertDialog.Builder(this);
+        //final View popUpView2 = getLayoutInflater().inflate(R.layout.activity_play_recording, null);
+        //playRecordings.setView(popUpView2);
+        playRec = playRecordings.create();
+
+
+        //Deletes that recording
+        deletePath.setOnClickListener(view -> {
+            if (myItem.equals("")) {
+                //toast
+            } else {
+                delete(view);
+            }
+        });
+
+        //playPath.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View view) {
+        //        delete(view);
+        //    }
+        //});
+
+        //Gets the all the path information and path names stored in the database
         ArrayList<String> finalOutputList = dbManager.getAllPaths();
 
         //creates a pop up window which has a list view
@@ -238,7 +257,6 @@ public class ManualControl extends AppCompatActivity {
         pathView.setOnItemClickListener((adapterView, view, i, l) -> {
             //Execution of selected save with previously saved time and command. All in separate thread.
 
-            //System.out.println(arrayAdapter.getItem(i));
             if (dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))) {
                 myItem = arrayAdapter.getItem(i);
 
@@ -246,8 +264,12 @@ public class ManualControl extends AppCompatActivity {
                 itemCarSpeed = dbManager.getPathDetails(myItem);
                 itemCarAngle = dbManager.getAngleDetails(myItem);
                 itemCarTimer = dbManager.getTimeDetails(myItem);
+                ArrayList<Integer> itemCarSpeed = dbManager.getPathDetails(myItem);
+                ArrayList<Integer> itemCarAngle = dbManager.getAngleDetails(myItem);
+                ArrayList<Long> itemCarTimer = dbManager.getTimeDetails(myItem);
 
-                ManualRecordingRun executeRecording = new ManualRecordingRun(itemCarTimer, itemCarAngle, itemCarSpeed, mqttController, executeTimer);
+                ManualRecordingRun executeRecording = new ManualRecordingRun(itemCarTimer, itemCarAngle,
+                        itemCarSpeed, mqttController, executeTimer);
                 new Thread(executeRecording).start();
             }
 
@@ -265,6 +287,31 @@ public class ManualControl extends AppCompatActivity {
         });
     }
 
+    public <E> void delete(View v) {
+        ListView listview1 = new ListView(this);
+        ArrayList<E> datalist = new ArrayList<>();
+
+        final int position = listview1.getPositionForView((View) v.getParent());
+        datalist.remove(position);
+        arrayAdapter.notifyDataSetChanged();
+
+    }
+
+    /**
+     * The method sets a background color to all the list items.
+     *
+     * @param pathList Overarching listview for all recordings
+     * @param v Pop up view that shows all the saved recordings
+     * @author Sejal Kanaskar
+     */
+    public void onListItemClick(ListView pathList, View v) { //delete
+        //Set background of all items to white
+        for (int i = 0; i < pathList.getChildCount(); i++) {
+            pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
+        }
+        v.setBackgroundColor(Color.BLACK);
+    }
+
     /**
      * When outerCircle is touched circleOnTouch is called.
      * Makes innerCircle follow the touch of user but clipping to outerCircle if drag outside.
@@ -274,9 +321,9 @@ public class ManualControl extends AppCompatActivity {
      * @author Burak Askan
      */
     public void circleOnTouch(MotionEvent event) {
-        Drawable OC;
+        Drawable oc;
         Resources res = getResources();
-        OC = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
+        oc = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
 
         //Retrieves the starting position of the Drawable Views.
         if (!saved) {
@@ -285,7 +332,7 @@ public class ManualControl extends AppCompatActivity {
             saved = true;
         }
 
-        outerRadius = OC.getMinimumWidth() / 2;
+        outerRadius = oc.getMinimumWidth() / 2;
 
         //Gets actual position of travers within users touch.
         int traversX = (int) (event.getX() + centerX - 90);
@@ -294,13 +341,13 @@ public class ManualControl extends AppCompatActivity {
         traversX = traversX - outerRadius;
         traversY = traversY - outerRadius;
         double angle;
-        angle = (Math.toDegrees(Math.atan2(((event.getY() - 90) - outerRadius), ((event.getX() - 90) - outerRadius)) * -1));
+        angle = (Math.toDegrees(Math.atan2(((event.getY() - 90) - outerRadius),
+                ((event.getX() - 90) - outerRadius)) * -1));
 
 
         //Sets up clipping and actual moving of innerCircle to touch position.
         double joystickToPressedDistance = Math.sqrt(
-                Math.pow(centerX - traversX, 2) +
-                        Math.pow(centerY - traversY, 2)
+            Math.pow(centerX - traversX, 2) + Math.pow(centerY - traversY, 2)
         );
 
         //thumb-stick clipping
@@ -359,17 +406,12 @@ public class ManualControl extends AppCompatActivity {
      * @return calculated speed.
      */
     public int carSpeed(MotionEvent event) {
-        int speedTempX;
-        int speedTempY;
-        int traversX = (int) (event.getX() + centerX - 90);
-        int traversY = (int) (event.getY() + centerY - 90);
-
-        traversX = traversX - outerRadius;
-        traversY = traversY - outerRadius;
+        int traversX = (int) (event.getX() + centerX - 90 - outerRadius);
+        int traversY = (int) (event.getY() + centerY - 90 - outerRadius);
 
         //Touch positions from the center position of outerCircle
-        speedTempX = (int) traversX - centerX;
-        speedTempY = (int) traversY - centerY;
+        int speedTempX = (int) traversX - centerX;
+        int speedTempY = (int) traversY - centerY;
 
         //Turn all negative numbers to positives
         if (speedTempX < 0) {
@@ -414,7 +456,8 @@ public class ManualControl extends AppCompatActivity {
         int angle;
 
         //Math to get degrees based on a circle in a position.
-        angle = (int) (Math.toDegrees(Math.atan2((event.getX() - 90 - outerRadius), (event.getY() - 90 - outerRadius) * -1)));
+        angle = (int) (Math.toDegrees(Math.atan2((event.getX() - 90 - outerRadius),
+                (event.getY() - 90 - outerRadius) * -1)));
 
         //Switching where degrees are located where.
         if (angle >= 90) {
