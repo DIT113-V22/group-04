@@ -87,6 +87,9 @@ public class ManualControl extends AppCompatActivity {
         setContentView(R.layout.activity_manual_control);
         dbManager = new DBManager(this);
         //dbManager.deleteAll();
+        innerCircle = findViewById(R.id.innerCircle);
+        mqttController.publish("/smartcar/control/obstacle", "0");
+        mqttController.publish("/smartcar/control/auto", "0");
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/control/throttle");
         time = findViewById(R.id.stopWatch);

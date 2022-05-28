@@ -7,13 +7,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.mqttv5.client.IMqttToken;
+import org.eclipse.paho.mqttv5.client.MqttCallback;
+import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
+import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
+import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
+import org.eclipse.paho.mqttv5.common.MqttException;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 
 /**
  * Controller for managing MQTT connections, subscriptions, and publishing of messages.
@@ -27,26 +29,30 @@ public class MQTTController {
     private static final String clientId = "MQTT-publisher";
     private static final String TAG = "MainActivity";
     private static final String STARTTAG = "Startup";
+    private static final String CONTAG = "Connection";
     private static final String SUBTAG = "Subscription";
     private static final String PUBTAG = "Publishing";
     private static final String ETAG = "Error";
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
-    private final HashMap<String, HashMap<Integer, TextView>> subscriptionMap;
+    private final HashMap<String, HashMap<Integer, TextView>> textViewSubscriptionMap;
     private final ArrayList<ImageView> cameraViews;
     private final MemoryPersistence persistence;
     private MqttClient mqttClient;
     private static MQTTController mqttController_instance = null;
+    private String previousTopic;
     private String previousMessage;
+    public int obstacleFlag = 0; // 0 == OFF | 1 == ON
 
     /**
      * Constructs the MQTT controller, limited to one instance by Singleton pattern.
      */
     private MQTTController() {
         previousMessage = "";
+        previousTopic = "";
         cameraViews = new ArrayList<>();
         persistence = new MemoryPersistence();
-        subscriptionMap = new HashMap<>();
+        textViewSubscriptionMap = new HashMap<>();
     }
 
     /**
@@ -66,25 +72,61 @@ public class MQTTController {
      * Creates the client first, sets the callback method, and then attempts connection.
      */
     public void connect() {
+        if (mqttClient != null && !notConnected()) {
+            Log.d(CONTAG, "Connection already established");
+            return;
+        }
         try {
             //Create client
             mqttClient = new MqttClient(broker, clientId, persistence);
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setCleanSession(true);
+            MqttConnectionOptions connOpts = new MqttConnectionOptions();
+            connOpts.setCleanStart(true);
+            connOpts.setConnectionTimeout(15);
 
             //Enable callback
             mqttClient.setCallback(new MqttCallback() {
                 @Override
-                public void connectionLost(Throwable throwable) {
+                public void disconnected(MqttDisconnectResponse disconnectResponse) {
                     Log.d(ETAG, "Connection lost");
-                    throwable.printStackTrace();
+                    disconnectResponse.getException().printStackTrace();
+                    if (notConnected()) {
+                        for (int i = 1; i <= 3; i++) {
+                            try {
+                                Log.d(CONTAG, "Attempting reconnection to: " + broker);
+                                Log.d(CONTAG, "Attempt: " + i);
+                                mqttClient.connect(connOpts);
+                                if (!notConnected()) {
+                                    Log.d(CONTAG, "Reconnection successful");
+                                    return;
+                                } else {
+                                    Log.d(ETAG, "Attempt: " + i + " failed.");
+                                }
+                            } catch (MqttException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void mqttErrorOccurred(MqttException exception) {
+                    exception.printStackTrace();
                 }
 
                 @Override
                 public void messageArrived(String topic, MqttMessage mqttMessage) {
                     String message = new String(mqttMessage.getPayload());
 
-                    if (topic.equals("/smartcar/camera")) {
+                    if (topic.equals("/smartcar/report/startup") || topic.equals("/smartcar/report/status")) {
+                        Log.d(STARTTAG, message);
+                    }
+
+                    if (topic.equals("/smartcar/report/obstacle")) {
+                        obstacleFlag = Integer.parseInt(message);
+                        Log.d(SUBTAG, message);
+                    }
+
+                    if (topic.equals("/smartcar/report/camera")) {
                         final Bitmap bm = Bitmap
                                 .createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, Bitmap.Config.ARGB_8888);
 
@@ -102,19 +144,30 @@ public class MQTTController {
                         }
                     }
 
-                    if (subscriptionMap.get(topic) != null) {
-                        subscriptionMap.get(topic).forEach((id, textView) -> textView.setText(message));
+                    if (textViewSubscriptionMap.get(topic) != null) {
+                        textViewSubscriptionMap.get(topic).forEach((id, textView) -> textView.setText(message));
                     }
                 }
 
                 @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
+                public void deliveryComplete(IMqttToken token) {
+                    //needed for MQTT callback, useful for debugging.
+                }
+
+                @Override
+                public void connectComplete(boolean reconnect, String serverURI) {
+                    //needed for MQTT callback, useful for debugging.
+                }
+
+                @Override
+                public void authPacketArrived(int reasonCode, MqttProperties properties) {
                     //needed for MQTT callback, useful for debugging.
                 }
             });
 
             //Attempt connection
-            Log.d(STARTTAG, "Connecting to broker: " + broker);
+            Log.d(STARTTAG, "Attempting connection to: " + broker);
+            Log.d(STARTTAG, "Client ID: " + clientId);
             mqttClient.connect(connOpts);
             if (!notConnected()) {
                 Log.d(STARTTAG, "Connected");
@@ -132,7 +185,7 @@ public class MQTTController {
     /**
      * Simple connection test.
      *
-     * @return connection status
+     * @return inverted connection status
      */
     public boolean notConnected() {
         if (mqttClient == null) {
@@ -149,12 +202,12 @@ public class MQTTController {
      * @param topic MQTT topic
      */
     public void updateTextView(TextView textView, String topic) {
-        HashMap<Integer, TextView> textViewHashMap = subscriptionMap.get(topic);
+        HashMap<Integer, TextView> textViewHashMap = textViewSubscriptionMap.get(topic);
         if (textViewHashMap == null) {
             textViewHashMap = new HashMap<>();
         }
         textViewHashMap.put(textView.getId(), textView);
-        subscriptionMap.put(topic, textViewHashMap);
+        textViewSubscriptionMap.put(topic, textViewHashMap);
     }
 
     /**
@@ -198,15 +251,14 @@ public class MQTTController {
             return;
         }
         try {
-            if (previousMessage.equals(content)) {
+            if (previousMessage.equals(content) && previousTopic.equals(topic)) {
                 return;
             }
-            //Log.d(PUBTAG, "Publishing message: " + content);
-            //Log.d(PUBTAG, "                to: " + topic);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
             mqttClient.publish(topic, message);
             previousMessage = content;
+            previousTopic = topic;
         } catch (MqttException e) {
             //Standard error printing
             Log.d(ETAG, "Message could not be published");

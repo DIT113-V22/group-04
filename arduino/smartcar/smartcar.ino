@@ -15,6 +15,10 @@ const char pass[] = "";
 const unsigned long PULSES_PER_METER = 40;
 const unsigned int OFFSET = 0;
 
+//flags for controlling obstacle detection
+auto auto_drive = 0;
+auto obstacle_detection = 0;
+
 const auto oneSecond = 1000UL;
 #ifdef __SMCE__
 const auto triggerPin = 6;
@@ -69,11 +73,31 @@ void setup(){
     Serial.print(".");
     delay(1000);
   }
-  Serial.println("Connected to MQTT broker.");
+  mqtt.publish("/smartcar/report/startup", "Connected to MQTT broker.");
 
   //MQTT subscription
   mqtt.subscribe("/smartcar/control/#", 1);
+  mqtt.publish("/smartcar/report/startup", "MQTT subscriptions setup complete.");
   mqtt.onMessage([](String topic, String message) {
+    if (topic == "/smartcar/control/auto") {
+      auto_drive = message.toInt();
+      if (message.toInt() == 1) {
+        mqtt.publish("/smartcar/report/status", "Auto drive enabled.");
+      } else {
+        mqtt.publish("/smartcar/report/status", "Manual drive enabled.");
+      }
+    }
+    if (topic == "/smartcar/control/obstacle") {
+      obstacle_detection = message.toInt();
+      if (message.toInt() == 1) {
+        mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to true.");
+      } else {
+        mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to false.");
+      }
+    }
+    if (obstacle_detection == 1) {
+      return;
+    }
     if (topic == "/smartcar/control/throttle") {
       car.setSpeed(message.toInt());
     } else if (topic == "/smartcar/control/steering") {
@@ -91,11 +115,20 @@ void loop() {
   if (mqtt.connected()) {
     mqtt.loop();
     const auto currentTime = millis();
+    const auto obstacle_distance = String(distance);
     static auto previousTransmission = 0UL;
+
+    if (distance <= 100 && distance > 0) {
+      if ((auto_drive == 1) && (obstacle_detection == 0)) {
+        car.setSpeed(0);
+        obstacle_detection = 1;
+        mqtt.publish("/smartcar/report/obstacle", "1");
+      }
+    }
+    
     if (currentTime - previousTransmission >= oneSecond) {
       previousTransmission = currentTime;
-      const auto current_distance = String(distance);
-      mqtt.publish("/smartcar/ultrasound/front", current_distance);
+      mqtt.publish("/smartcar/report/ultrasound", obstacle_distance);
     }
 
     //camera
@@ -104,7 +137,7 @@ void loop() {
       if (currentTime - previousCameraTransmission >= 65) { //15fps
         previousCameraTransmission = currentTime;
         Camera.readFrame(frameBuffer.data());
-        mqtt.publish("/smartcar/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
+        mqtt.publish("/smartcar/report/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
       }
     #endif
   }
