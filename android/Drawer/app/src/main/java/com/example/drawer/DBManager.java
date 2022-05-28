@@ -7,14 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class DBManager extends SQLiteOpenHelper {
     //Name of the database
@@ -55,10 +49,6 @@ public class DBManager extends SQLiteOpenHelper {
 
     public void addNewPath(String savedName, String speedList, String angleList, String timerList) {
 
-        // creating a variable for sqlite database
-        // and calling writable method to write data in our database
-        SQLiteDatabase db = this.getWritableDatabase();
-
         // creating a variable for content values.
         ContentValues values = new ContentValues();
 
@@ -67,6 +57,10 @@ public class DBManager extends SQLiteOpenHelper {
         values.put(PATH_SPEED_COL, speedList);
         values.put(PATH_ANGLES_COL, angleList);
         values.put(TIMER_VALUES_COL, timerList);
+
+        // creating a variable for sqlite database
+        // and calling writable method to write data in our database
+        SQLiteDatabase db = this.getWritableDatabase();
 
         // after adding all values we are passing content values to our table.
         db.insert(TABLE_NAME, null, values);
@@ -129,10 +123,11 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Range")
-    public ArrayList<Integer> getAngleDetails(String pathName){
+    public ArrayList<Integer> getAngleDetails(String pathName) {
         ArrayList<Integer> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        try (Cursor res = db.rawQuery("select angleList from mySavedPath where savedName = '" + pathName + "' ", null)) {
+        try (Cursor res = db.rawQuery("select angleList from mySavedPath where savedName = '" + pathName + "' ",
+                null)) {
             res.moveToFirst();
             String result = res.getString(res.getColumnIndex(PATH_ANGLES_COL));
             result = result.replace(" ", "").replace("[", "").replace("]", "");
@@ -147,7 +142,8 @@ public class DBManager extends SQLiteOpenHelper {
     public ArrayList<Long> getTimeDetails(String pathName) {
         ArrayList<Long> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        try (Cursor res = db.rawQuery("select timerList from mySavedPath where savedName = '" + pathName + "' ", null)) {
+        try (Cursor res = db.rawQuery("select timerList from mySavedPath where savedName = '" + pathName + "' ",
+                null)) {
             res.moveToFirst();
             String result = res.getString(res.getColumnIndex(TIMER_VALUES_COL));
             result = result.replace(" ", "").replace("[", "").replace("]", "");
@@ -158,15 +154,15 @@ public class DBManager extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME,null,null);
-        db.execSQL("delete from mySavedPath" );
+        db.execSQL("delete from mySavedPath");
         //db.execSQL("TRUNCATE table" + TABLE_NAME);
         db.close();
     }
 
-    public void deleteSpecific(String pathName){
+    public void deleteSpecific(String pathName) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME,null,null);
         db.execSQL("delete from mySavedPath where savedName = '" + pathName + "' ");
