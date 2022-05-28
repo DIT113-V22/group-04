@@ -1,7 +1,5 @@
 package com.example.drawer;
 
-import static java.lang.Thread.sleep;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -163,7 +161,6 @@ public class ManualControl extends AppCompatActivity {
 
             //Saves that the record was toggled
             wasChecked = true;
-
         }
     }
 

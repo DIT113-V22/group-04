@@ -3,7 +3,6 @@ package com.example.drawer;
 import android.os.SystemClock;
 import android.widget.Chronometer;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class ManualRecordingRun implements Runnable {
     private final Chronometer executeTimer;
@@ -16,7 +15,6 @@ public class ManualRecordingRun implements Runnable {
     private boolean obstacle = false;
     private long executeCheckingTime = 0;
     private long executeCheckingTimeBeninging = 0;
-    private ArrayList<String> finalOutputList;
 
     public ManualRecordingRun(ArrayList<Long> carTimerQueue,
                               ArrayList<Integer> carAngleQueue,
