@@ -7,12 +7,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class DBManager extends SQLiteOpenHelper {
     //Name of the database
     public static final String DB_NAME = "savedPaths";
-
 
     // below int is our database version
     private static final int DB_VERSION = 1;
@@ -24,6 +30,8 @@ public class DBManager extends SQLiteOpenHelper {
     private static String PATH_TITLE_COL = "savedName";
     private static final String PATH_SPEED_COL = "pathList";
     private static final String TIMER_VALUES_COL = "timerList";
+
+    private final Type type = new TypeToken<ArrayList<String>>(){}.getType();
 
     public DBManager(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -88,12 +96,13 @@ public class DBManager extends SQLiteOpenHelper {
     public ArrayList<String> getAllPaths() {
         ArrayList<String> arrayList = new ArrayList<String>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from mySavedPath", null);
-        res.moveToFirst();
+        try (Cursor res = db.rawQuery("select * from mySavedPath", null)) {
+            res.moveToFirst();
 
-        while (res.isAfterLast() == false) {
-            arrayList.add(res.getString(res.getColumnIndex(PATH_TITLE_COL)));
-            res.moveToNext();
+            while (!res.isAfterLast()) {
+                arrayList.add(res.getString(res.getColumnIndex(PATH_TITLE_COL)));
+                res.moveToNext();
+            }
         }
         return arrayList;
     }
@@ -104,51 +113,64 @@ public class DBManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] str2 = new String[1];
         str2[0] = PATH_TITLE_COL;
-        Cursor res = db.query("mySavedPath", str2, null, null, null, null, null);
-        res.moveToFirst();
-        while (res.isAfterLast() == false) {
-            arrayList.add(res.getString(res.getColumnIndex(PATH_TITLE_COL)));
-            res.moveToNext();
+        try (Cursor res = db.query("mySavedPath", str2, null, null, null, null, null)) {
+            res.moveToFirst();
+            while (!res.isAfterLast()) {
+                arrayList.add(res.getString(res.getColumnIndex(PATH_TITLE_COL)));
+                res.moveToNext();
+            }
         }
         return arrayList;
     }
 
     @SuppressLint("Range")
-    public ArrayList<String> getPathDetails(String pathName) {
-        ArrayList<String> arrayList = new ArrayList<>();
+    public ArrayList<Integer> getPathDetails(String pathName) {
+        ArrayList<Integer> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select pathList from mySavedPath where savedName = '" + pathName + "' ", null);
-        res.moveToFirst();
-        arrayList.add(res.getString(res.getColumnIndex(PATH_SPEED_COL)));
+        try (Cursor res = db.rawQuery("select pathList from mySavedPath where savedName = '" + pathName + "' ", null)) {
+            res.moveToFirst();
+            String result = res.getString(res.getColumnIndex(PATH_SPEED_COL));
+            result = result.replace(" ", "").replace("[", "").replace("]", "");
+            System.out.println("PathDetails: " + result);
+            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Integer.parseInt(item)));
+        }
 
         return arrayList;
     }
 
     @SuppressLint("Range")
-    public ArrayList<String> getAngleDetails(String pathName){
-        ArrayList<String> arrayList = new ArrayList<>();
+    public ArrayList<Integer> getAngleDetails(String pathName){
+        ArrayList<Integer> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select angleList from mySavedPath where savedName = '" + pathName + "' ", null);
-        res.moveToFirst();
-        arrayList.add(res.getString(res.getColumnIndex(PATH_ANGLES_COL)));
+        try (Cursor res = db.rawQuery("select angleList from mySavedPath where savedName = '" + pathName + "' ", null)) {
+            res.moveToFirst();
+            String result = res.getString(res.getColumnIndex(PATH_ANGLES_COL));
+            result = result.replace(" ", "").replace("[", "").replace("]", "");
+            System.out.println("AngleDetails: " + result);
+            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Integer.parseInt(item)));
+        }
 
         return arrayList;
     }
 
     @SuppressLint("Range")
-    public ArrayList<String> getTimeDetails(String pathName) {
-        ArrayList<String> arrayList = new ArrayList<>();
+    public ArrayList<Integer> getTimeDetails(String pathName) {
+        ArrayList<Integer> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select timerList from mySavedPath where savedName = '" + pathName + "' ", null);
-        res.moveToFirst();
-        arrayList.add(res.getString(res.getColumnIndex(TIMER_VALUES_COL)));
+        try (Cursor res = db.rawQuery("select timerList from mySavedPath where savedName = '" + pathName + "' ", null)) {
+            res.moveToFirst();
+            String result = res.getString(res.getColumnIndex(TIMER_VALUES_COL));
+            result = result.replace(" ", "").replace("[", "").replace("]", "");
+            System.out.println("TimeDetails: " + result);
+            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Integer.parseInt(item)));
+        }
 
         return arrayList;
     }
 
     public void deleteAll(){
         SQLiteDatabase db = this.getWritableDatabase();
-         db.delete(TABLE_NAME,null,null);
+        db.delete(TABLE_NAME,null,null);
         db.execSQL("delete from mySavedPath" );
         //db.execSQL("TRUNCATE table" + TABLE_NAME);
         db.close();
@@ -160,5 +182,4 @@ public class DBManager extends SQLiteOpenHelper {
         db.execSQL("delete from mySavedPath where savedName = '" + pathName + "' ");
         db.close();
     }
-
 }

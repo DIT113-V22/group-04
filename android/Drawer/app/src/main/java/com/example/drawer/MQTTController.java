@@ -201,8 +201,8 @@ public class MQTTController {
             if (previousMessage.equals(content)) {
                 return;
             }
-            Log.d(PUBTAG, "Publishing message: " + content);
-            Log.d(PUBTAG, "                to: " + topic);
+            //Log.d(PUBTAG, "Publishing message: " + content);
+            //Log.d(PUBTAG, "                to: " + topic);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
             mqttClient.publish(topic, message);
