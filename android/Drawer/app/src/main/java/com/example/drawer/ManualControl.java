@@ -157,8 +157,6 @@ public class ManualControl extends AppCompatActivity {
 
             //Changes time to be saved as milliseconds
             carTimerList.add(currentSaveTime - previousSaveTime);
-            //previousSaveTime = currentSaveTime;
-            dbManager.addNewTimer(carTimerList.toString());
 
             //Saves that the record was toggled
             wasChecked = true;

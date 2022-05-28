@@ -77,14 +77,6 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addNewTimer(String savedTimer) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(TIMER_VALUES_COL, savedTimer);
-        db.insert(TABLE_NAME, null, values);
-        db.close();
-    }
-
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         // this method is called to check if the table exists already.
