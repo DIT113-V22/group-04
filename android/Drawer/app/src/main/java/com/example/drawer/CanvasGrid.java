@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -249,66 +250,10 @@ public class CanvasGrid extends View {
     // to another cell in one of the 8 possible directions.
     // The implementation is currently incompatible with the Bresenham's drawing algorithm.
     public void executePath() {
-        Point start = pointQueue.poll();
-        Point end;
-
-        // TODO Need to find proper upper limit for the loop condition -KC
-        for (int i = 0; i < (pointQueue.size() * 10); i++) {
-            end = pointQueue.poll();
-
-            Log.d("abcd", "start" + start);
-            Log.d("abcd", "end" + end);
-
-            int dx = end.x - start.x;
-            int dy = end.y - start.y;
-
-            if (dx == 0 && dy == 0) {
-                Log.d("movement", "No more than one cell left");
-
-            } else if (dx == 0 || dy == 0) {
-                if (dx == 0) {
-                    if (dy == 1) {
-                        Log.d("movement", "Move backward");
-                    } else if (dy == -1) {
-                        Log.d("movement", "Move forward");
-                    } else {
-                        Log.d("movement", "Unexpected" + String.valueOf(dy));
-                    }
-                } else if (dy == 0) {
-                    if (dx == 1) {
-                        Log.d("movement", "Move right");
-                    } else if (dx == -1) {
-                        Log.d("movement", "Move left");
-                    } else {
-                        Log.d("movement", "Unexpected" + String.valueOf(dx));
-                    }
-                } else {
-                    Log.d("movement", "Unexpected State");
-                }
-            } else {
-                if (dx == 1 && dy == 1) {
-                    Log.d("movement", "Move bottom-right");
-                } else if (dx == 1 && dy == -1) {
-                    Log.d("movement", "Move top-right");
-                } else if (dx == -1 && dy == 1) {
-                    Log.d("movement", "Move bottom-left");
-                } else if (dx == -1 && dy == -1) {
-                    Log.d("movement", "Move top-left");
-                } else {
-                    Log.d("movement", "unexpected State");
-                }
-            }
-            start = end;
-        }
-    }
-
-    public void executePathV2(ArrayList<Instruction> instructions) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (Instruction I: instructions) {
-            stringBuilder.append(I.toString());
-        }
-        mqttController.publish("/smartcar/control/instructions", stringBuilder.toString());
+        double diagonalDistance = Math.sqrt(pathScale*2);
+        double adjacentDistance = (double) pathScale;
+        DrawControlRun drawControlRun = new DrawControlRun(diagonalDistance, adjacentDistance, pointQueue, mqttController);
+        new Thread(drawControlRun).start();
     }
 
     //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm

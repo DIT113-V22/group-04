@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/report/ultrasound");
             mqttController.subscribe("/smartcar/report/odometer");
             mqttController.subscribe("/smartcar/control/throttle");
+            mqttController.subscribe("/smartcar/odometer/destinationbool");
         });
 
         introScreenBtn = findViewById(R.id.ReadMeScreen);

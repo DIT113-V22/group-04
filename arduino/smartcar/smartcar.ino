@@ -33,16 +33,6 @@ const auto mqttInterval = 200UL;
 #endif
   const auto maxDistance = 400;
 
-struct instruction {
-    double Distance;
-    double Angle;
-};
-
-int instructionIndex = 0;
-int lastOdometer = 0;
-
-std::vector<instruction> instructions;
-bool followInstructions = false;
 std::vector<char> frameBuffer;
 
 //Car creation
@@ -54,6 +44,10 @@ DirectionalOdometer odometer(arduinoRuntime, smartcarlib::pins::v2::leftOdometer
 GY50 gyroscope(arduinoRuntime, OFFSET);
 SR04 ultrasonic(arduinoRuntime, triggerPin, echoPin, maxDistance);
 SmartCar car(arduinoRuntime, control, gyroscope, odometer);
+String drawMode = "false";
+int traveledMessage = 9999999;
+unsigned long distanceTraveled;
+double angleTurned;
 
 void setup() {
   Serial.begin(9600);
@@ -90,89 +84,82 @@ void setup() {
   mqtt.publish("/smartcar/report/startup", "MQTT subscriptions setup complete.");
 
   mqtt.onMessage([](String topic, String message) {
-    //Allow setting flags regardless of current detection flag
-    if (topic == "/smartcar/control/auto") {
-      auto_drive = message.toInt();
-      if (message.toInt() == 1) {
-        mqtt.publish("/smartcar/report/status", "Auto drive enabled.");
-      } else {
-        mqtt.publish("/smartcar/report/status", "Manual drive enabled.");
-      }
-    }
-    if (topic == "/smartcar/control/obstacle") {
-      obstacle_detection = message.toInt();
-      if (message.toInt() == 1) {
-        mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to true.");
-      } else {
-        mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to false.");
-      }
-    }
-    
-    //Block further instructions unless flags above have been reset.
-    if (obstacle_detection == 1) {
-      return;
-    }
-    
-    if (topic == "/smartcar/control/throttle") {
-      car.setSpeed(message.toInt());
-    } else if (topic == "/smartcar/control/steering") {
-      car.setAngle(message.toInt());
-    } else if (topic == "/smartcar/control/instructions") {
-        //resets
-        instructionIndex = 0;
-        instructions.clear();
-      
-        String data = message;
-        int iteratorNew = 0;
-        int iteratorOld = 0;
-        String distance;
-        String angle;
-        Serial.println("test");
-        //2.0, 20
-        
-        //10.0 -190; 3.5, 145; 9, 45;
-        for (int i = 0; i < data.length(); i++) {
-          if (data.charAt(i) == ';') {
-            iteratorNew = i;
-            String sub = data.substring(iteratorOld, iteratorNew);
-            //Serial.println(sub);
-            for (int j = 0; j < sub.length(); j++) {
-              if (sub.charAt(j) == ',') {
-                Serial.print("sub: ");
-                Serial.println(sub);
-                distance = sub.substring(0, j);
-                angle = sub.substring((j + 1), (sub.length() - 1));
-                instructions.push_back({distance.toDouble(), angle.toDouble()});
-                delay(100);
-                break;
-              }
-            }
-            iteratorOld = i + 1;
-          }
+      //Allow setting flags regardless of current detection flag
+      if (topic == "/smartcar/control/auto") {
+        auto_drive = message.toInt();
+        if (message.toInt() == 1) {
+          mqtt.publish("/smartcar/report/status", "Auto drive enabled.");
+        } else {
+          mqtt.publish("/smartcar/report/status", "Manual drive enabled.");
         }
-        for (int i = 0; i < instructions.size(); i++) {
-          Serial.print("Distance: ");
-          Serial.print(instructions[i].Distance);
-          Serial.print(", angle: ");
-          Serial.println(instructions[i].Angle);
-          delay(100);
+      }
+      if (topic == "/smartcar/control/obstacle") {
+        obstacle_detection = message.toInt();
+        if (message.toInt() == 1) {
+          mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to true.");
+        } else {
+          mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to false.");
         }
-        followInstructions = true;
-    } else {
-      Serial.println(topic + " " + message);
+      }
+
+      //Block further instructions unless flags above have been reset.
+      if (obstacle_detection == 1) {
+        return;
+      }
+
+
+    if (topic == "/smartcar/control/draw") {
+      drawMode = message;
+    }
+
+    if(drawMode == "true"){
+
+      if (topic == "/smartcar/control/distance") {
+        car.setSpeed(25);
+        traveledMessage = message.toInt();
+
+      } else if (topic == "/smartcar/control/steering") {
+       // while(message.toInt()){
+       //   car.setAngle(message.toInt());
+       //}
+
+      } else if (topic == "/smartcar/control/throttle") {
+        car.setSpeed(message.toInt());
+
+      }else {
+        Serial.println(topic + " " + message);
+
+      }
+
+      if (topic == "/smartcar/control/throttle") {
+        car.setSpeed(message.toInt());
+      }
+
+    }else{
+      if (topic == "/smartcar/control/throttle") {
+        car.setSpeed(message.toInt());
+      } else if (topic == "/smartcar/control/steering") {
+        car.setAngle(message.toInt());
+      } else {
+        Serial.println(topic + " " + message);
+      }
     }
   });
 }
 
-double targetDistance;
-double targetAngle;
 auto currentTime = millis();
 
 void loop() {
   unsigned int distance = ultrasonic.getDistance();
-  unsigned int distanceTraveled = odometer.getDistance();
-  //Serial.println("current distance: " + String(distanceTraveled));
-  
+  distanceTraveled = odometer.getDistance();
+  angleTurned = gyroscope.getHeading();
+  Serial.println(distanceTraveled);
+  Serial.println(traveledMessage);
+
+  if(traveledMessage <= (int)distanceTraveled+5){
+    mqtt.publish("/smartcar/odometer/destinationbool", "true");
+  }
+
   //Main MQTT loop
   if (mqtt.connected()) {
     mqtt.loop();
@@ -187,47 +174,12 @@ void loop() {
         mqtt.publish("/smartcar/report/obstacle", "1");
       }
     }
-    
-    //instructions
-    if (followInstructions == true && (instructionIndex < instructions.size())) {
-      if (instructionIndex == 0) {
-        Serial.println("first instruction");
-        //car.setSpeed(50);
-        targetDistance = instructions[instructionIndex].Distance;
-        targetAngle = instructions[instructionIndex].Angle;
-        Serial.println(String(targetDistance));
-        Serial.println(String(targetAngle));
-        
-        lastOdometer = distanceTraveled;
-        instructionIndex++;
-      }
-
-      if ((distanceTraveled - lastOdometer) >= targetDistance) {
-        Serial.println("rotation started");
-        rotateCar(targetAngle);
-        Serial.println("rotation complete");
-        car.setAngle(0);
-
-        if (instructionIndex < instructions.size()) {
-          targetDistance = instructions[instructionIndex].Distance;
-          targetAngle = instructions[instructionIndex].Angle;
-          Serial.println("traveled: " + String(distanceTraveled));
-          Serial.println("last: " + String(lastOdometer));
-          Serial.println("target: " + String(targetDistance));
-          Serial.println("changing target angle");
-          lastOdometer = distanceTraveled;
-          instructionIndex++;
-        } else {
-          car.setSpeed(0);
+     if (currentTime - previousTransmission >= mqttInterval) {
+          mqtt.publish("/smartcar/report/odometer", String(distanceTraveled));
+          mqtt.publish("/smartcar/report/ultrasound", obstacle_distance);
         }
-      }
-    }
-    
-    if (currentTime - previousTransmission >= mqttInterval) {
-      mqtt.publish("/smartcar/report/odometer", String(distanceTraveled));
-      mqtt.publish("/smartcar/report/ultrasound", obstacle_distance);
-    }
-  
+   
+
     //camera
     #ifdef __SMCE__
       static auto previousCameraTransmission = 0UL;
@@ -237,27 +189,10 @@ void loop() {
         mqtt.publish("/smartcar/report/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
       }
     #endif
-      
+
     #ifdef __SMCE__
       // Avoid over-using the CPU if we are running in the emulator
       delay(1);
     #endif
   }
-}
-
-void rotateCar(double angle) {
-  #define CALIBRATE360 6301
-  #define SPEED 50
-
-  car.setSpeed(0);
-  
-  if (angle > 0) {
-    car.overrideMotorSpeed(   SPEED, - SPEED);
-  } else if (angle < 0) {
-    car.overrideMotorSpeed( - SPEED,   SPEED);
-  }
-
-  delay(6301);
-  
-  car.setSpeed(40);
 }

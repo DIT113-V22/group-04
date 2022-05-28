@@ -47,6 +47,10 @@ public class ManualControl extends AppCompatActivity {
         angleStat = findViewById(R.id.angleSTat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
+        mqttController.subscribe("/smartcar/odometer/distance");
+        mqttController.subscribe("/smartcar/gyroscope/angle");
+        mqttController.publish("/smartcar/control/draw", "false");
+
 
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
 

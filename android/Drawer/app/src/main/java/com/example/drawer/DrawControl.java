@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -14,6 +15,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -80,6 +85,8 @@ public class DrawControl extends AppCompatActivity {
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         manualControlScreen.setOnClickListener(view -> openManualScreen());
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
+        //mqttController.publish("/smartcar/control/throttle", "5");
+        mqttController.publish("/smartcar/control/draw", "true");
 
         downloadBtn.setOnClickListener(view -> {
             Bitmap bitmap = viewToBitmap(pixelGrid);
@@ -148,7 +155,7 @@ public class DrawControl extends AppCompatActivity {
                 System.out.println("[ " + instruction.getDistance() + " ] centimeters then turn [ " + instruction.getAngle() + " ] degrees");
             }
 
-            pixelGrid.executePathV2(instructions);
+            pixelGrid.executePath();
             mqttController.publish("/smartcar/control/throttle", speed);
         });
 
@@ -208,7 +215,6 @@ public class DrawControl extends AppCompatActivity {
     private void updatePathLength() {
         double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
         pathLength = Math.floor(pathLength * 100) / 100;
-        System.out.println(pathLength);
         pathLengthView.setText("Path length: " + pathLength);
     }
 

@@ -42,6 +42,8 @@ public class MQTTController {
     private static MQTTController mqttController_instance = null;
     private String previousTopic;
     private String previousMessage;
+    public String finishDistance = "false";
+    public String finishAngle;
     public int obstacleFlag = 0; // 0 == OFF | 1 == ON
 
     /**
@@ -116,6 +118,11 @@ public class MQTTController {
                 @Override
                 public void messageArrived(String topic, MqttMessage mqttMessage) {
                     String message = new String(mqttMessage.getPayload());
+                    if (topic.equals("/smartcar/odometer/destinationbool")) {
+                        finishDistance = message;
+                        System.out.println(message + " aahhhhhhhhhh");
+                        Log.d(SUBTAG, message);
+                    }
 
                     if (topic.equals("/smartcar/report/startup") || topic.equals("/smartcar/report/status")) {
                         Log.d(STARTTAG, message);
