@@ -7,14 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class DBManager extends SQLiteOpenHelper {
     //Name of the database
@@ -158,7 +152,7 @@ public class DBManager extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME,null,null);
         db.execSQL("delete from mySavedPath" );
