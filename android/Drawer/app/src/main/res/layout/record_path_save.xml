@@ -20,6 +20,8 @@
         android:layout_width="176dp"
         android:layout_height="74dp"
         android:hint="Recording Name"
+        android:textColor="#000000"
+        android:textColorHint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -31,28 +33,24 @@
         android:id="@+id/saveRecording"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="47dp"
-        android:layout_marginEnd="45dp"
-        android:layout_marginBottom="252dp"
         android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/discardRecording"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.283"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/savedName" />
+        app:layout_constraintTop_toBottomOf="@+id/savedName"
+        app:layout_constraintVertical_bias="0.297" />
 
     <Button
         android:id="@+id/discardRecording"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="47dp"
-        android:layout_marginEnd="68dp"
-        android:layout_marginBottom="252dp"
         android:text="Discard"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/saveRecording"
-        app:layout_constraintTop_toBottomOf="@+id/savedName" />
+        app:layout_constraintHorizontal_bias="0.74"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/savedName"
+        app:layout_constraintVertical_bias="0.297" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

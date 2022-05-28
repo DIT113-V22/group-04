@@ -4,22 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/savePathScreen"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#111111">
 
     <Button
         android:id="@+id/deletePath"
         android:layout_width="143dp"
         android:layout_height="55dp"
         android:layout_marginTop="600dp"
-        android:layout_marginEnd="65dp"
-        android:layout_marginBottom="40dp"
         android:text="Delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.865"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.486" />
 
     <ListView
         android:id="@+id/pathList"
@@ -39,14 +38,12 @@
         android:layout_width="143dp"
         android:layout_height="55dp"
         android:layout_marginTop="600dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="40dp"
         android:text="Play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.136"
+        app:layout_constraintHorizontal_bias="0.119"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.486" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
