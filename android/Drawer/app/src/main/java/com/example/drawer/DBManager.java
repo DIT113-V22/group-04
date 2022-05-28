@@ -154,15 +154,15 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Range")
-    public ArrayList<Integer> getTimeDetails(String pathName) {
-        ArrayList<Integer> arrayList = new ArrayList<>();
+    public ArrayList<Long> getTimeDetails(String pathName) {
+        ArrayList<Long> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor res = db.rawQuery("select timerList from mySavedPath where savedName = '" + pathName + "' ", null)) {
             res.moveToFirst();
             String result = res.getString(res.getColumnIndex(TIMER_VALUES_COL));
             result = result.replace(" ", "").replace("[", "").replace("]", "");
             System.out.println("TimeDetails: " + result);
-            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Integer.parseInt(item)));
+            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Long.parseLong(item)));
         }
 
         return arrayList;

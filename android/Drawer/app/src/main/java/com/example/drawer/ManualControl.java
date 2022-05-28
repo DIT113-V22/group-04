@@ -1,5 +1,7 @@
 package com.example.drawer;
 
+import static java.lang.Thread.sleep;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -30,11 +32,14 @@ public class ManualControl extends AppCompatActivity {
     private boolean saved = false;
     private int centerX = 0;
     private int centerY = 0;
+    private long previousSaveTime = 0;
+    private long currentSaveTime = 0;
 
     private boolean timerStart = false;
     private boolean wasChecked = false;
 
-    private Switch recordToggle;
+    //UI objects/views
+    private Switch recordToggle; //switch to turn on and off the recordings
     private Chronometer time;
     private Chronometer executeTimer;
     private ListView pathView;
@@ -46,20 +51,21 @@ public class ManualControl extends AppCompatActivity {
     private TextView speedStat;
     private TextView angleStat;
     private TextView status;
-
     private Button viewPaths;
 
     private DBManager dbManager;
 
     private final LinkedList<Integer> carSpeedQueue = new LinkedList<>();
     private final LinkedList<Integer> carAngleQueue = new LinkedList<>();
-    private final LinkedList<Integer> carTimerList = new LinkedList<>();
+    private final LinkedList<Long> carTimerList = new LinkedList<>();
 
+    //POP-UP for playing recordings
     private AlertDialog.Builder builderReplays;
     private AlertDialog.Builder playRecordings;
     private AlertDialog replays;
     private AlertDialog playRec;
 
+    //POP-UP for saving replay and name.
     private AlertDialog.Builder builderSaved;
     private AlertDialog alertDialogSaved;
     private EditText saveName;
@@ -143,31 +149,20 @@ public class ManualControl extends AppCompatActivity {
      */
     public void recordMovements(int speed, int angle) {
         if (recordToggle.isChecked()) {
-            //IS THIS NEEDED?(START)
-            if (!timerStart) {
-                time.setBase(SystemClock.elapsedRealtime());
-                time.start();
-                timerStart = true;
-            }
-            //IS THIS NEEDED?(END)
+
+            currentSaveTime = System.currentTimeMillis();
 
             carSpeedQueue.add(speed);
             carAngleQueue.add(angle);
 
             //Changes time to be saved as milliseconds
-            carTimerList.add((int) (SystemClock.elapsedRealtime() - time.getBase()));
-            //String timerJson = gson.toJson(carTimerList);
-            //dbManager.addNewTimer(timerJson);
+            carTimerList.add(currentSaveTime - previousSaveTime);
+            //previousSaveTime = currentSaveTime;
+            dbManager.addNewTimer(carTimerList.toString());
 
             //Saves that the record was toggled
             wasChecked = true;
 
-        } else {
-            //IS THIS NEEDED?(START)
-            time.stop();
-            time.setBase(SystemClock.elapsedRealtime());
-            timerStart = false;
-            //IS THIS NEEDED?(END)
         }
     }
 
@@ -272,7 +267,7 @@ public class ManualControl extends AppCompatActivity {
 
                 ArrayList<Integer> itemCarSpeed = dbManager.getPathDetails(myItem);
                 ArrayList<Integer> itemCarAngle = dbManager.getAngleDetails(myItem);
-                ArrayList<Integer> itemCarTimer = dbManager.getTimeDetails(myItem);
+                ArrayList<Long> itemCarTimer = dbManager.getTimeDetails(myItem);
 
                 ManualRecordingRun executeRecording = new ManualRecordingRun(itemCarTimer, itemCarAngle, itemCarSpeed, mqttController, executeTimer);
                 new Thread(executeRecording).start();
@@ -360,16 +355,18 @@ public class ManualControl extends AppCompatActivity {
         int carSpeed = carSpeed(event);
         int carAngle = carAngle(event);
 
-        //Starts timer as soon as recording toggle is turned on.
+
+        //Starts timer if recording toggle is activated
         if (recordToggle.isChecked()) {
             if (!timerStart) {
                 time.setBase(SystemClock.elapsedRealtime());
                 time.start();
                 timerStart = true;
+                previousSaveTime = System.currentTimeMillis();
             }
         }
 
-        if (carAngle < 5 && carAngle > -5) {
+        if(carAngle < 3 && carAngle > -3){
             carAngle = 0;
         }
 
@@ -392,8 +389,7 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Calculates speed percentage based on the joystick position.
-     * The methods returns the speed of the car.
+     * Calculate speed percentage based on joystick position.
      *
      * @param event User touch/drag.
      * @return calculated speed.
@@ -445,8 +441,7 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Calculates angle of the car based on joystick movement.
-     * The method returns the angle in degrees.
+     * Calculate angle based on joystick position.
      *
      * @param event User touch/drag.
      * @return calculated angle.
