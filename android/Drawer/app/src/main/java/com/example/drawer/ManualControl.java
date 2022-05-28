@@ -38,7 +38,7 @@ public class ManualControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/auto", "0");
 
         status = findViewById(R.id.statusText);
-        mqttController.updateTextView(status, "/smartcar/control/throttle");
+        mqttController.updateTextView(status, "/smartcar/report/odometer");
 
         readMeScreen = findViewById(R.id.ReadMEScreen);
         manualControlScreen = findViewById(R.id.ManualScreen);

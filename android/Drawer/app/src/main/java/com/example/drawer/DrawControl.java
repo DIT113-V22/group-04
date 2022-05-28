@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class DrawControl extends AppCompatActivity {
 
@@ -103,27 +104,28 @@ public class DrawControl extends AppCompatActivity {
         });
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        Uri imageUri = null;
-                        if (data != null) {
-                            imageUri = data.getData();
-                        }
-
-                        InputStream inputStream;
-                        try {
-                            inputStream = getContentResolver().openInputStream(imageUri);
-                            Bitmap image = BitmapFactory.decodeStream(inputStream);
-                            Drawable myDrawable = new BitmapDrawable(getResources(), image);
-                            myDrawable.setAlpha(60);
-                            pixelGrid.setBackground(myDrawable);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    Uri imageUri = null;
+                    if (data != null) {
+                        imageUri = data.getData();
                     }
-                });
+
+                    InputStream inputStream;
+                    try {
+                        inputStream = getContentResolver().openInputStream(imageUri);
+                        Bitmap image = BitmapFactory.decodeStream(inputStream);
+                        Drawable myDrawable = new BitmapDrawable(getResources(), image);
+                        myDrawable.setAlpha(60);
+                        pixelGrid.setBackground(myDrawable);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
         uploadBtn.setOnClickListener(view -> {
             Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
             File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
@@ -132,43 +134,46 @@ public class DrawControl extends AppCompatActivity {
             imagePickerIntent.setDataAndType(data, "image/*");
             someActivityResultLauncher.launch(imagePickerIntent);
         });
+
         clearBtn.setOnClickListener(v -> pixelGrid.clear());
         runBtn.setOnClickListener(view -> {
             String speed =  numberViewSpeed.getText().toString();
+            ArrayList<Instruction> instructions = pixelGrid.getVectorMap().generateInstructions(pixelGrid.getPathScale());
+
             if (speed.isEmpty()) {
                 return;
             }
 
-            for (Instruction instruction: pixelGrid.getVectorMap().generateInstructions(1)) {
-                System.out.println("[ " + instruction.getDistance() + " ] Meters then turn [ " + instruction.getTurn() + " ] degrees");
+            for (Instruction instruction: instructions) {
+                System.out.println("[ " + instruction.getDistance() + " ] centimeters then turn [ " + instruction.getAngle() + " ] degrees");
             }
 
-            pixelGrid.executePathV2();
+            pixelGrid.executePathV2(instructions);
             mqttController.publish("/smartcar/control/throttle", speed);
         });
-        seekBar.setOnSeekBarChangeListener(
-            new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                    int value;
-                    value = seekBar.getProgress();
 
-                    if(value > 4) {
-                        pixelGrid.setCellLength(value);
-                    }
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                int value;
+                value = seekBar.getProgress();
 
+                if (value > 4) {
+                    pixelGrid.setCellLength(value);
                 }
 
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-                }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
+            }
 
-                }
-            });
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
 
         numberViewCellLength.addTextChangedListener(new TextWatcher() {
@@ -189,25 +194,21 @@ public class DrawControl extends AppCompatActivity {
 
                     pixelGrid.setPathScale(value);
                     updatePathLength();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-
         pixelGrid.setOnTouchListener((view, motionEvent) -> {
-            view.performClick();
             updatePathLength();
             return false;
         });
-
-
     }
 
-    private void updatePathLength(){
+    private void updatePathLength() {
         double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
         pathLength = Math.floor(pathLength * 100) / 100;
+        System.out.println(pathLength);
         pathLengthView.setText("Path length: " + pathLength);
     }
 

@@ -14,20 +14,20 @@ public class Vector {
         this.posY = y;
     }
 
-    public Vector(int x, int y){
+    public Vector(int x, int y) {
         this.posX = x;
         this.posY = y;
     }
 
     //copy constructor
-    public Vector(com.example.drawer.Vector vector){
+    public Vector(Vector vector) {
         this.posX = vector.posX;
         this.posY = vector.posY;
         this.absoluteX = vector.absoluteX;
         this.absoluteY = vector.absoluteY;
     }
 
-    public com.example.drawer.Vector add(com.example.drawer.Vector vector){
+    public Vector add(Vector vector) {
         this.posX += vector.posX;
         this.posY += vector.posY;
         return this;
@@ -49,10 +49,8 @@ public class Vector {
         return this;
     }
 
-    public double getMagnitude(){
-        return Math.sqrt( Math.pow(posX, 2) + Math.pow(posY, 2) );
+    public double getMagnitude() {
+        System.out.println(Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2)));
+        return Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2));
     }
-
-
-
 }

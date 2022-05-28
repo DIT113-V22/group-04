@@ -1,15 +1,13 @@
 package com.example.drawer;
 
-import androidx.annotation.NonNull;
-
 public class Instruction {
 
     private double distance;
-    private double turn;
+    private double angle;
 
-    public Instruction(double distance, double turn) {
+    public Instruction(double distance, double angle) {
         this.distance = distance;
-        this.turn = turn;
+        this.angle = angle;
     }
 
     public double getDistance() {
@@ -20,16 +18,16 @@ public class Instruction {
         this.distance = distance;
     }
 
-    public double getTurn() {
-        return turn;
+    public double getAngle() {
+        return angle;
     }
 
-    public void setTurn(double turn) {
-        this.turn = turn;
+    public void setAngle(double angle) {
+        this.angle = angle;
     }
 
     @Override
     public String toString() {
-        return "" + distance + ',' + turn + ';';
+        return "" + distance + ',' + angle + ';';
     }
 }

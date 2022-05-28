@@ -5,6 +5,8 @@
 #include <OV767X.h>
 #endif
 
+#define OFFSET 0
+
 //Variable declaration
 WiFiClient net;
 MQTTClient mqtt;
@@ -13,7 +15,6 @@ const char ssid[] = "";
 const char pass[] = "";
 
 const unsigned long PULSES_PER_METER = 40;
-const unsigned int OFFSET = 0;
 
 //flags for controlling obstacle detection
 auto auto_drive = 0;
@@ -36,6 +37,9 @@ struct instruction {
     double Distance;
     double Angle;
 };
+
+int instructionIndex = 0;
+int lastOdometer = 0;
 
 std::vector<instruction> instructions;
 bool followInstructions = false;
@@ -79,7 +83,7 @@ void setup() {
     delay(1000);
   }
   mqtt.publish("/smartcar/report/startup", "Connected to MQTT broker.");
-
+  Serial.println("Connected");
 
   //MQTT subscription
   mqtt.subscribe("/smartcar/control/#", 1);
@@ -114,11 +118,17 @@ void setup() {
     } else if (topic == "/smartcar/control/steering") {
       car.setAngle(message.toInt());
     } else if (topic == "/smartcar/control/instructions") {
+        //resets
+        instructionIndex = 0;
+        instructions.clear();
+      
         String data = message;
         int iteratorNew = 0;
         int iteratorOld = 0;
         String distance;
         String angle;
+        Serial.println("test");
+        //2.0, 20
         
         //10.0 -190; 3.5, 145; 9, 45;
         for (int i = 0; i < data.length(); i++) {
@@ -128,14 +138,24 @@ void setup() {
             //Serial.println(sub);
             for (int j = 0; j < sub.length(); j++) {
               if (sub.charAt(j) == ',') {
+                Serial.print("sub: ");
+                Serial.println(sub);
                 distance = sub.substring(0, j);
                 angle = sub.substring((j + 1), (sub.length() - 1));
                 instructions.push_back({distance.toDouble(), angle.toDouble()});
+                delay(100);
                 break;
               }
             }
             iteratorOld = i + 1;
           }
+        }
+        for (int i = 0; i < instructions.size(); i++) {
+          Serial.print("Distance: ");
+          Serial.print(instructions[i].Distance);
+          Serial.print(", angle: ");
+          Serial.println(instructions[i].Angle);
+          delay(100);
         }
         followInstructions = true;
     } else {
@@ -144,21 +164,19 @@ void setup() {
   });
 }
 
-int instructionIndex = 0;
-int lastOdometer = 0;
-
 double targetDistance;
 double targetAngle;
+auto currentTime = millis();
 
 void loop() {
-
   unsigned int distance = ultrasonic.getDistance();
   unsigned int distanceTraveled = odometer.getDistance();
+  //Serial.println("current distance: " + String(distanceTraveled));
   
   //Main MQTT loop
   if (mqtt.connected()) {
     mqtt.loop();
-    const auto currentTime = millis();
+    currentTime = millis();
     const auto obstacle_distance = String(distance);
     static auto previousTransmission = 0UL;
 
@@ -170,37 +188,46 @@ void loop() {
       }
     }
     
-    if (currentTime - previousTransmission >= mqttInterval) { // every 200ms
-      previousTransmission = currentTime;
-      
-      //instructions
-      if (followInstructions == true) {
-        //Serial.println("test");
-        if (instructionIndex == 0) {
-          //car.setSpeed(50);
-          targetDistance = instructions[instructionIndex].Distance;
-          //Serial.println(targetDistance);
-          targetAngle = instructions[instructionIndex].Angle;
-          //Serial.println(targetAngle);
-          instructionIndex++;
-          lastOdometer = distanceTraveled / 100;
-        }
+    //instructions
+    if (followInstructions == true && (instructionIndex < instructions.size())) {
+      if (instructionIndex == 0) {
+        Serial.println("first instruction");
+        //car.setSpeed(50);
+        targetDistance = instructions[instructionIndex].Distance;
+        targetAngle = instructions[instructionIndex].Angle;
+        Serial.println(String(targetDistance));
+        Serial.println(String(targetAngle));
+        
+        lastOdometer = distanceTraveled;
+        instructionIndex++;
+      }
 
-        if (((distanceTraveled / 100) - lastOdometer) >= targetDistance) {
-          car.setAngle(targetAngle);
-          delay(1000);
-          car.setAngle(0);
-  
-          instructionIndex++;
+      if ((distanceTraveled - lastOdometer) >= targetDistance) {
+        Serial.println("rotation started");
+        rotateCar(targetAngle);
+        Serial.println("rotation complete");
+        car.setAngle(0);
+
+        if (instructionIndex < instructions.size()) {
           targetDistance = instructions[instructionIndex].Distance;
           targetAngle = instructions[instructionIndex].Angle;
+          Serial.println("traveled: " + String(distanceTraveled));
+          Serial.println("last: " + String(lastOdometer));
+          Serial.println("target: " + String(targetDistance));
           Serial.println("changing target angle");
           lastOdometer = distanceTraveled;
+          instructionIndex++;
+        } else {
+          car.setSpeed(0);
         }
       }
+    }
+    
+    if (currentTime - previousTransmission >= mqttInterval) {
       mqtt.publish("/smartcar/report/odometer", String(distanceTraveled));
       mqtt.publish("/smartcar/report/ultrasound", obstacle_distance);
     }
+  
     //camera
     #ifdef __SMCE__
       static auto previousCameraTransmission = 0UL;
@@ -210,10 +237,27 @@ void loop() {
         mqtt.publish("/smartcar/report/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
       }
     #endif
+      
+    #ifdef __SMCE__
+      // Avoid over-using the CPU if we are running in the emulator
+      delay(1);
+    #endif
+  }
+}
+
+void rotateCar(double angle) {
+  #define CALIBRATE360 6301
+  #define SPEED 50
+
+  car.setSpeed(0);
+  
+  if (angle > 0) {
+    car.overrideMotorSpeed(   SPEED, - SPEED);
+  } else if (angle < 0) {
+    car.overrideMotorSpeed( - SPEED,   SPEED);
   }
 
-  #ifdef __SMCE__
-    // Avoid over-using the CPU if we are running in the emulator
-    delay(1);
-  #endif
+  delay(6301);
+  
+  car.setSpeed(40);
 }

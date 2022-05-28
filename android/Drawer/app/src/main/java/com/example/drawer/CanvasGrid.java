@@ -4,13 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -164,7 +164,7 @@ public class CanvasGrid extends View {
 //                    }
                 }
                 //again why disable going over the same point twice
-                //also your making a path drawing between each point in a Z patern
+                //also your making a path drawing between each point in a Z pattern
                 if (pureCellChecked[i][j]) {
                     if (!pointQueue.contains(new Point(i, j))) {
                         pointQueue.add(new Point(i, j));
@@ -302,10 +302,10 @@ public class CanvasGrid extends View {
         }
     }
 
-    public void executePathV2() {
+    public void executePathV2(ArrayList<Instruction> instructions) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (Instruction I: vectorMap.generateInstructions(pathScale)) {
+        for (Instruction I: instructions) {
             stringBuilder.append(I.toString());
         }
         mqttController.publish("/smartcar/control/instructions", stringBuilder.toString());
@@ -314,7 +314,7 @@ public class CanvasGrid extends View {
     //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
         // TODO: 2022-05-10 might need to rewrite the while true    -no
         // while true is fine
-    private void gridDrawLine(int x0, int y0, int x1, int y1){
+    private void gridDrawLine(int x0, int y0, int x1, int y1) {
 
         //Delta X, Y
         int dx = Math.abs(x1 - x0);
