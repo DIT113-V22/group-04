@@ -4,6 +4,10 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.PositionAssertions.isCompletelyAbove;
+import static androidx.test.espresso.assertion.PositionAssertions.isCompletelyBelow;
+import static androidx.test.espresso.assertion.PositionAssertions.isCompletelyLeftOf;
+import static androidx.test.espresso.assertion.PositionAssertions.isCompletelyRightOf;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -127,7 +131,7 @@ public class DrawControlInstrumentedTest {
      * Test if the buttons are clickable
      */
     @Test
-    public void testButton() {
+    public void testButtons() {
         onView(withId(R.id.clearBttn)).check(matches(isClickable()));
         onView(withId(R.id.uploadBttn)).check(matches(isClickable()));
         onView(withId(R.id.downloadBttn)).check(matches(isClickable()));
@@ -135,6 +139,66 @@ public class DrawControlInstrumentedTest {
         onView(withId(R.id.ManualScreen)).check(matches(isClickable()));
         onView(withId(R.id.ReadMeScreen)).check(matches(isClickable()));
         onView(withId(R.id.DrawScreen)).check(matches(isClickable()));
+    }
+
+    /**
+     * Tests if the clear canvas button is position to the left of the download button
+     * and above the canvas
+     */
+    @Test
+    public void isClearCanvasButtonPositionedAppropriately() {
+        onView(withId(R.id.clearBttn)).check(matches(isDisplayed()));
+        onView(withId(R.id.clearBttn)).check(isCompletelyLeftOf(withId(R.id.downloadBttn)));
+        onView(withId(R.id.clearBttn)).check(isCompletelyAbove(withId(R.id.pixelGridA)));
+    }
+
+    /**
+     * Tests if the download button is position to the right of the clear canvas button
+     * and to the left of the upload button
+     */
+    @Test
+    public void isDownloadButtonBetweenClearCanvasButtonAndUploadButton() {
+        onView(withId(R.id.downloadBttn)).check(matches(isDisplayed()));
+        onView(withId(R.id.downloadBttn)).check(isCompletelyRightOf(withId(R.id.clearBttn)));
+        onView(withId(R.id.downloadBttn)).check(isCompletelyLeftOf(withId(R.id.uploadBttn)));
+    }
+
+    /**
+     * Tests if Canvas is positioned as intended in comparison to the above and below elements
+     */
+    @Test
+    public void isCanvasPositionedAppropriately() {
+        onView(withId(R.id.pixelGridA)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.clearBttn)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.downloadBttn)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.clearBttn)));
+
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.runButton)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.numberViewCellLength)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.numberViewCellSize)));
+
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.ReadMeScreen)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.ManualScreen)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.DrawScreen)));
+    }
+
+    /**
+     * Tests if the Run button is position to the appropriately in comparison to its
+     * surrounding elements
+     */
+    @Test
+    public void isRunButtonPositionedAppropriately() {
+        onView(withId(R.id.runButton)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.runButton)).check(isCompletelyBelow(withId(R.id.pixelGridA)));
+
+        onView(withId(R.id.runButton)).check(isCompletelyRightOf(withId(R.id.numberViewCellSize)));
+        onView(withId(R.id.runButton)).check(isCompletelyRightOf(withId(R.id.numberViewCellLength)));
+
+        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.ReadMeScreen)));
+        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.ManualScreen)));
+        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.DrawScreen)));
     }
 
     /**
@@ -160,6 +224,5 @@ public class DrawControlInstrumentedTest {
         onView(withId(R.id.numberViewCellLength)).perform(typeText("3"), closeSoftKeyboard()).check(matches(withText("3")));
         onView(withId(R.id.numberViewCellSize)).perform(typeText("2"), closeSoftKeyboard()).check(matches(withText("2")));
     }
-
 
 }
