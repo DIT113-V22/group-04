@@ -195,11 +195,9 @@ public class ManualControl extends AppCompatActivity {
             String carTimerString = carTimerList.toString();
             System.out.println(carSpeedString + carAngleString + saveNameString + carTimerString);
             dbManager.addNewPath(saveNameString, carSpeedString, carAngleString, carTimerString);
-//            try {
-//                JSONObject jsonObject = new JSONObject(carSpeedString);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+            carAngleQueue.clear();
+            carTimerList.clear();
+            carSpeedQueue.clear();
         });
 
         //Discards the replay
@@ -355,7 +353,7 @@ public class ManualControl extends AppCompatActivity {
 
         //Retrieves calculated speed and angle values
         int carSpeed = carSpeed(event);
-        int carAngle = carAngle(event);
+        double carAngle = carAngle(event);
 
 
         //Starts timer if recording toggle is activated
@@ -378,10 +376,10 @@ public class ManualControl extends AppCompatActivity {
             //Publishes the car angle respective to the joystick position.
             mqttController.publish("/smartcar/control/steering", String.valueOf(carAngle));
             lastTransmission = System.currentTimeMillis();
-        }
 
-        //Records and saves the car speed and angle.
-        recordMovements(carSpeed, carAngle);
+            //Records and saves the car speed and angle.
+            recordMovements(carSpeed, (int)carAngle);
+        }
 
         //Clips innerCircle back to the center of outerCircle after user lets go of touch.
         if (event.getAction() == MotionEvent.ACTION_UP) {
