@@ -15,9 +15,9 @@ public class MainActivity extends AppCompatActivity {
     private Button disBtn;
     private Button conBtn;
     private Button subBtn;
-    private Button introScreenBtn;
-    private Button manualControlScreenBtn;
-    private Button drawControlScreenBtn;
+    private Button mainScreenButton;
+    private Button manualControlScreenButton;
+    private Button drawControlScreenButton;
     private ImageView carImg;
     private ImageView smokeImg;
 
@@ -46,9 +46,14 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/report/camera");
             mqttController.subscribe("/smartcar/report/obstacle");
             mqttController.subscribe("/smartcar/report/ultrasound");
-            mqttController.subscribe("/smartcar/control/throttle");
+            mqttController.subscribe("/smartcar/report/odometer");
+            mqttController.subscribe("/smartcar/report/gyroscope");
+            mqttController.subscribe("/smartcar/report/instructionComplete");
         });
 
+        mainScreenButton = findViewById(R.id.MainNavbarMain);
+        manualControlScreenButton = findViewById(R.id.MainNavbarManual);
+        drawControlScreenButton = findViewById(R.id.MainNavbarDraw);
         carImg = findViewById(R.id.imageViewCarAndPen);
         smokeImg = findViewById(R.id.imageViewSmokeParticle);
 
@@ -56,13 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
         smokeImg.startAnimation(fadeOut);
 
-        introScreenBtn = findViewById(R.id.ReadMeScreen);
-        manualControlScreenBtn = findViewById(R.id.ManualScreen);
-        drawControlScreenBtn = findViewById(R.id.DrawScreen);
-
-        introScreenBtn.setOnClickListener(view -> openReadMEScreen());
-        manualControlScreenBtn.setOnClickListener(view -> openManualScreen());
-        drawControlScreenBtn.setOnClickListener(view -> openDrawScreen());
+        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreenButton.setOnClickListener(view -> openManualScreen());
+        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
     }
 
     public void openReadMEScreen() {

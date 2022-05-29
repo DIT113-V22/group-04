@@ -29,6 +29,10 @@ import java.util.Queue;
 
 public class ManualControl extends AppCompatActivity {
 
+    private Button mainScreenButton;
+    private Button manualControlScreenButton;
+    private Button drawControlScreenButton;
+  
     //Used global variables
     private int outerRadius = 0;
     private boolean saved = false;
@@ -45,14 +49,10 @@ public class ManualControl extends AppCompatActivity {
     private Chronometer time;
     private Chronometer executeTimer;
     private ListView pathView;
-    private Button readMeScreen;
-    private Button manualControlScreen;
-    private Button drawControlScreen;
     private TextView innerCircle;
     private View outerCircle;
     private TextView speedStat;
     private TextView angleStat;
-    private TextView status;
     private Button viewPaths;
 
     private DBManager dbManager;
@@ -92,29 +92,31 @@ public class ManualControl extends AppCompatActivity {
         innerCircle = findViewById(R.id.innerCircle);
         mqttController.publish("/smartcar/control/obstacle", "0");
         mqttController.publish("/smartcar/control/auto", "0");
-        status = findViewById(R.id.statusText);
-        //mqttController.updateTextView(status, "/smartcar/control/throttle");
+
+        mainScreenButton = findViewById(R.id.ManualNavbarMain);
+        manualControlScreenButton = findViewById(R.id.ManualNavbarManual);
+        drawControlScreenButton = findViewById(R.id.ManualNavbarDraw);
         time = findViewById(R.id.stopWatch);
         executeTimer = findViewById(R.id.executeWatch);
-        readMeScreen = findViewById(R.id.ReadMEScreen);
-        manualControlScreen = findViewById(R.id.ManualScreen);
-        drawControlScreen = findViewById(R.id.DrawScreen);
+        
         speedStat = findViewById(R.id.speedStat);
         angleStat = findViewById(R.id.angleSTat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
+
+        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
+
+        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
+      
         viewPaths = findViewById(R.id.viewPathsScreen);
         recordToggle = findViewById(R.id.recordToggle);
         innerCircle.setEnabled(true);
         saveReplay = findViewById(R.id.saveRecording);
         camera = findViewById(R.id.camera);
+        mqttController.updateCamera(camera);
         playPath = findViewById(R.id.playPath);
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
         testPoints();
-
-        mqttController.updateCamera(camera);
 
         viewPaths.setOnClickListener(view -> {
             //open the pop up window
@@ -136,7 +138,6 @@ public class ManualControl extends AppCompatActivity {
      * @param buttonToggle toggled on or off.
      */
     public void onRecordEnd(boolean buttonToggle) {
-
         if (!buttonToggle) {
             if (recordToggle.isChecked()) {
                 wasChecked = true;
@@ -158,7 +159,6 @@ public class ManualControl extends AppCompatActivity {
      */
     public void recordMovements(int speed, int angle) {
         if (recordToggle.isChecked()) {
-
             currentSaveTime = System.currentTimeMillis();
 
             carSpeedQueue.add(speed);

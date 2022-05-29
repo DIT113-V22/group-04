@@ -1,6 +1,7 @@
 package com.example.drawer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,17 +16,16 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,24 +33,31 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DrawControl extends AppCompatActivity {
 
-    private Button readMeScreen;
-    private Button manualControlScreen;
-    private Button drawControlScreen;
+    private Button mainScreenButton;
+    private Button manualControlScreenButton;
+    private Button drawControlScreenButton;
     ImageView uploadedImage;
     Button runBtn;
     ImageButton uploadBtn;
     ImageButton downloadBtn;
     ImageButton clearBtn;
-    EditText numberViewCellSize;
+    EditText numberViewSpeed;
     EditText numberViewCellLength;
     SeekBar seekBar;
-    TextView speedView;
     TextView pathLengthView;
+    TextView distanceTraveledView;
     CanvasGrid pixelGrid;
     MQTTController mqttController = MQTTController.getInstance();
+
+    private Button viewPoints;
+    private AlertDialog.Builder builder;
+    private AlertDialog alertDialog;
+    private ListView pathList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +66,16 @@ public class DrawControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/obstacle", "0");
         mqttController.publish("/smartcar/control/auto", "1");
 
-        readMeScreen = findViewById(R.id.ReadMEScreen);
-        manualControlScreen = findViewById(R.id.ManualScreen);
-        drawControlScreen = findViewById(R.id.DrawScreen);
+        mainScreenButton = findViewById(R.id.DrawNavbarMain);
+        manualControlScreenButton = findViewById(R.id.DrawNavbarManual);
+        drawControlScreenButton = findViewById(R.id.DrawNavbarDraw);
 
         runBtn = findViewById(R.id.runButton);
         uploadBtn = findViewById(R.id.uploadBttn);
         downloadBtn = findViewById(R.id.downloadBttn);
         clearBtn = findViewById(R.id.clearBttn);
 
-        numberViewCellSize = findViewById(R.id.numberViewCellSize);
+        numberViewSpeed = findViewById(R.id.numberViewSpeed);
         numberViewCellLength = findViewById(R.id.numberViewCellLength);
 
         pixelGrid = findViewById(R.id.pixelGridA);
@@ -76,138 +83,105 @@ public class DrawControl extends AppCompatActivity {
         pixelGrid.setResizeMode(CanvasGrid.ResizeMode.FIT_CONTENT);
 
         seekBar = findViewById(R.id.seekbar);
-        speedView = findViewById(R.id.textViewSpeed);
         pathLengthView = findViewById(R.id.textViewPathLength);
+        distanceTraveledView = findViewById(R.id.textViewDistanceTraveled);
+        mqttController.updateTextView(distanceTraveledView, "/smartcar/report/odometer");
 
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
+        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreenButton.setOnClickListener(view -> openManualScreen());
+        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
+        viewPoints = findViewById(R.id.viewPointsSaved);
 
-        downloadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bitmap bitmap = viewToBitmap(pixelGrid);
-                OutputStream imageOutStream = null;
+        downloadBtn.setOnClickListener(view -> {
+            Bitmap bitmap = viewToBitmap(pixelGrid);
+            OutputStream imageOutStream;
 
-                ContentValues contentValues = new ContentValues();
+            ContentValues contentValues = new ContentValues();
 
-                contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, "drawing.png");
-                contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
-                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
+            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, "drawing.png");
+            contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
 
-                Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                try {
-                    imageOutStream = getContentResolver().openOutputStream(uri);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOutStream);
-                    Toast toast = Toast.makeText(DrawControl.this,"Saved!", Toast.LENGTH_LONG);
-                    toast.show();
-                    imageOutStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            try {
+                imageOutStream = getContentResolver().openOutputStream(uri);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOutStream);
+                Toast toast = Toast.makeText(DrawControl.this,"Saved!", Toast.LENGTH_LONG);
+                toast.show();
+                imageOutStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            Intent data = result.getData();
-                            Uri imageUri = data.getData();
-
-                            InputStream inputStream;
-                            try {
-                                inputStream = getContentResolver().openInputStream(imageUri);
-                                Bitmap image = BitmapFactory.decodeStream(inputStream);
-                                Drawable myDrawable = new BitmapDrawable(getResources(), image);
-                                myDrawable.setAlpha(60);
-                                pixelGrid.setBackground(myDrawable);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
-                        }
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    Uri imageUri = null;
+                    if (data != null) {
+                        imageUri = data.getData();
                     }
-                });
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
-                File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                String imageDirectoryPath = imageDirectory.getPath();
-                Uri data = Uri.parse(imageDirectoryPath);
-                imagePickerIntent.setDataAndType(data, "image/*");
-                someActivityResultLauncher.launch(imagePickerIntent);
-            }
-        });
-        clearBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pixelGrid.clear();
-            }
-        });
-        runBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String speed = Integer.toString(seekBar.getProgress());
-                pixelGrid.executePath();
-                mqttController.publish("/smartcar/control/throttle", speed);
-            }
-        });
-        seekBar.setOnSeekBarChangeListener(
-            new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                    String speedText = Integer.toString(i);
-                    speedView.setText("Current speed:" + speedText);
-                    speedView.setTextColor(Color.BLACK);
-                }
 
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
+                    InputStream inputStream;
+                    try {
+                        inputStream = getContentResolver().openInputStream(imageUri);
+                        Bitmap image = BitmapFactory.decodeStream(inputStream);
+                        Drawable myDrawable = new BitmapDrawable(getResources(), image);
+                        myDrawable.setAlpha(60);
+                        pixelGrid.setBackground(myDrawable);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
-        numberViewCellSize.addTextChangedListener(new TextWatcher() {
+        uploadBtn.setOnClickListener(view -> {
+            Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
+            File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            String imageDirectoryPath = imageDirectory.getPath();
+            Uri data = Uri.parse(imageDirectoryPath);
+            imagePickerIntent.setDataAndType(data, "image/*");
+            someActivityResultLauncher.launch(imagePickerIntent);
+        });
 
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                try {
-                    int value;
-                    value = Integer.parseInt(numberViewCellSize.getText().toString());
-
-                    if (value > 4) {
-                        pixelGrid.setCellLength(value);
-                        speedView.setText("Speed:" + seekBar.getProgress());
-                        speedView.setTextColor(Color.BLACK);
-                    } else {
-                        throw new Exception();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    speedView.setText("Number must be\n       over > 4");
-                    speedView.setTextColor(Color.RED);
-                }
-            }
+        clearBtn.setOnClickListener(view -> {
+            pixelGrid.clear();
 
         });
+        runBtn.setOnClickListener(view -> {
+            mqttController.publish("/smartcar/control/auto", "1");
+            String speed = numberViewSpeed.getText().toString();
+            if (speed.isEmpty()) {
+                return;
+            }
+            pixelGrid.executePath(speed);
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                int value;
+                value = seekBar.getProgress();
+
+                if (value > 4) {
+                    pixelGrid.setCellLength(value);
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         numberViewCellLength.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -222,36 +196,26 @@ public class DrawControl extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 try {
-                    float value = Float.parseFloat(numberViewCellLength.getText().toString());
-
-                    pixelGrid.setPathScale(value);
-                    double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
-                    pathLength = Math.floor(pathLength * 100) / 100;
-                    pathLengthView.setText("Path length: " +  pathLength);
-
+                    if (!numberViewCellLength.getText().toString().isEmpty()) {
+                        float value = Float.parseFloat(numberViewCellLength.getText().toString());
+                        pixelGrid.setPathScale(value / 100);
+                        updatePathLength();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-        numberViewCellLength.addTextChangedListener(new TextWatcher() {
+
+        distanceTraveledView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                pixelGrid.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-                        double pathLength = (pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale());
-                        pathLength = Math.floor(pathLength * 100) / 100;
-                        pathLengthView.setText("Path length: " + pathLength);
-                        return false;
-                    }
-                });
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                distanceTraveledView.setText(distanceTraveledView.getText() + " m");
             }
 
             @Override
@@ -259,6 +223,48 @@ public class DrawControl extends AppCompatActivity {
 
             }
         });
+
+
+        pixelGrid.setOnTouchListener((view, motionEvent) -> {
+            view.performClick();
+            updatePathLength();
+            return false;
+        });
+
+        viewPoints.setOnClickListener(view -> {
+            //open the pop up window
+            createViewContactDialogue();
+        });
+    }
+
+    public void createViewContactDialogue() {
+        builder = new AlertDialog.Builder(this);
+        final View popUpView = getLayoutInflater().inflate(R.layout.activity_draw_saves, null);
+        builder.setView(popUpView);
+        alertDialog = builder.create();
+        alertDialog.show();
+
+        pathList = (ListView) popUpView.findViewById(R.id.pathListDraw);
+        List savedPathList = new ArrayList();
+
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
+        pathList.setAdapter(arrayAdapter);
+        onListItemClick(pathList, popUpView);
+    }
+
+    public void onListItemClick(ListView pathList, View v) {
+        //Set background of all items to white
+        for (int i = 0; i < pathList.getChildCount(); i++) {
+            pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
+        }
+
+        v.setBackgroundColor(Color.WHITE);
+    }
+
+    private void updatePathLength() {
+        double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
+        pathLength = Math.floor(pathLength * 100) / 100;
+        pathLengthView.setText("Path length: " + pathLength + " m");
     }
 
     public void openReadMEScreen() {
@@ -282,5 +288,4 @@ public class DrawControl extends AppCompatActivity {
         view.draw(canvas);
         return bitmap;
     }
-
 }

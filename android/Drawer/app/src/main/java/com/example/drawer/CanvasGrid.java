@@ -29,14 +29,18 @@ public class CanvasGrid extends View {
     private int numColumns = 4;
     private int numRows = 4;
     private int cellLength = 50;
-    private float pathScale = 1;
+    private float pathScale = 0.01f;
     private Paint blackPaint = new Paint();
     private boolean[][] cellChecked = new boolean[50][100];
     private int lastx;
     private int lasty;
+    MQTTController mqttController = MQTTController.getInstance();
+
     private boolean[][] pureCellChecked = new boolean[50][100];
     private VectorMap vectorMap = new VectorMap();
+    private double vectorSmoothnes = 3.0;
     private boolean firstTouch = true;
+
     Queue<Point> pointQueue = new LinkedList<>();
 
     // Constructors
@@ -70,6 +74,11 @@ public class CanvasGrid extends View {
         return pathScale;
     }
 
+    public double getVectorSmoothnes() {
+        return  vectorSmoothnes;
+    }
+
+
     // Setters
     public void setCellLength(int cellLength) {
         this.cellLength = cellLength;
@@ -83,6 +92,10 @@ public class CanvasGrid extends View {
 
     public void setPathScale(float pathScale) {
         this.pathScale = pathScale;
+    }
+
+    public void setVectorSmoothnes(double smoothnes) {
+        vectorSmoothnes = smoothnes;
     }
 
     //public functions
@@ -127,6 +140,7 @@ public class CanvasGrid extends View {
         }
 
         cellChecked = new boolean[numColumns][numRows];
+        firstTouch = true;
         pureCellChecked = new boolean[numColumns][numRows];
         invalidate();
     }
@@ -144,6 +158,8 @@ public class CanvasGrid extends View {
                             (i + 1) * cellLength, (j + 1) * cellLength,
                             blackPaint);
                 }
+                //again why disable going over the same point twice
+                //also your making a path drawing between each point in a Z pattern
                 if (pureCellChecked[i][j]) {
                     if (!pointQueue.contains(new Point(i, j))) {
                         pointQueue.add(new Point(i, j));
@@ -166,139 +182,71 @@ public class CanvasGrid extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
             int column = (int)(event.getX() / cellLength);
             int row = (int)(event.getY() / cellLength);
 
             try {
+                //why disable going over the same point twice?
+                cellChecked[column][row] = true;
+                pureCellChecked[column][row] = true;
 
-                if (cellChecked[column][row] != true) {
-                    cellChecked[column][row] = true;
-                    pureCellChecked[column][row] = true;
-
-                    if (firstTouch == false && (Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1)) {
-                        gridDrawLine(lastx, lasty, column, row);
-                    } else {
-                        firstTouch = false;
-                    }
-
-                    if (vectorMap.getVectorList().isEmpty()) {
-                        vectorMap = new VectorMap(column, row);
-                    } else {
-                        vectorMap.add(column, row);
-                    }
-
-                    lastx = column;
-                    lasty = row;
+                if (!firstTouch && (Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1)) {
+                    gridDrawLine(lastx, lasty, column, row);
+                } else {
+                    firstTouch = false;
                 }
+
+                if (vectorMap.getVectorList().isEmpty()) {
+                    vectorMap = new VectorMap(column, row);
+                } else {
+                    vectorMap.add(column, row);
+                }
+
+                lastx = column;
+                lasty = row;
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             invalidate();
 
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-
             int column = (int)(event.getX() / cellLength);
             int row = (int)(event.getY() / cellLength);
 
             try {
-
-                if (cellChecked[column][row] != true) {
+                if (Math.hypot(column - lastx, row - lasty) > vectorSmoothnes) {
                     cellChecked[column][row] = true;
                     pureCellChecked[column][row] = true;
                     // if the difference between current x, y and new x, y is bigger than 1 draw a line in between
-                    if (Math.abs(row - lastx) > 1 || Math.abs(column - lasty) > 1) {
+                    if (Math.abs(row - lastx) > .5 || Math.abs(column - lasty) > .5) {
                         gridDrawLine(lastx, lasty, column, row);
                     }
-
                     if (column != lastx && row != lasty) {
                         vectorMap.add(column, row);
                     }
                     lastx = column;
                     lasty = row;
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             invalidate();
         }
-        System.out.println("-----------Total------------: " + vectorMap.calculateSize());
-
         return true;
     }
 
     // The current implementation assumes slow drawing (i.e. each cell will be adjacent
     // to another cell in one of the 8 possible directions.
     // The implementation is currently incompatible with the Bresenham's drawing algorithm.
-    public void executePath() {
-
-        Point start = pointQueue.poll();
-
-        Point end;
-
-        // TODO Need to find proper upper limit for the loop condition -KC
-        for (int i = 0; i < (pointQueue.size() * 10); i++) {
-
-            end = pointQueue.poll();
-
-            Log.d("abcd", "start" + String.valueOf(start));
-            Log.d("abcd", "end" + String.valueOf(end));
-
-            int dx = end.x - start.x;
-            int dy = end.y - start.y;
-
-            if (dx == 0 && dy == 0) {
-                Log.d("movement", "No more than one cell left");
-
-            } else if (dx == 0 || dy == 0) {
-                if (dx == 0) {
-                    if (dy == 1) {
-                        Log.d("movement", "Move backward");
-                    } else if (dy == -1) {
-                        Log.d("movement", "Move forward");
-                    } else {
-                        Log.d("movement", "Unexpected" + String.valueOf(dy));
-                    }
-                } else if (dy == 0) {
-                    if (dx == 1) {
-                        Log.d("movement", "Move right");
-                    } else if (dx == -1) {
-                        Log.d("movement", "Move left");
-                    } else {
-                        Log.d("movement", "Unexpected" + String.valueOf(dx));
-                    }
-                } else {
-                    Log.d("movement", "Unexpected State");
-                }
-            } else {
-
-                if (dx == 1 && dy == 1) {
-                    Log.d("movement", "Move bottom-right");
-                } else if (dx == 1 && dy == -1) {
-                    Log.d("movement", "Move top-right");
-                } else if (dx == -1 && dy == 1) {
-                    Log.d("movement", "Move bottom-left");
-                } else if (dx == -1 && dy == -1) {
-                    Log.d("movement", "Move top-left");
-                } else {
-                    Log.d("movement", "unexpected State");
-                }
-
-            }
-
-            start = end;
-        }
+    public void executePath(String speed) {
+        PathInstructionSet pathInstructionSet = new PathInstructionSet(pointQueue, mqttController, pathScale, speed);
+        mqttController.executeInstructionSet(pathInstructionSet);
     }
 
     //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-    // TODO: 2022-05-10 might need to rewrite the while true
-
     private void gridDrawLine(int x0, int y0, int x1, int y1) {
-        System.out.println("GRIDLINE !!!!!!!!!!!!!!");
+
         //Delta X, Y
         int dx = Math.abs(x1 - x0);
         int dy = -Math.abs(y1 - y0);
@@ -308,12 +256,10 @@ public class CanvasGrid extends View {
         int sy = (y0 < y1) ? 1 : -1;
 
         int error = dx + dy;
-        int i = 0;
 
-        while (i < 100) {
+        while (true) {
             cellChecked[x0][y0] = true;
 
-            System.out.println("LOOP " + x0 + "  " + y0);
             if (x0 == x1 && y0 == y1) {
                 break;
             }
@@ -336,4 +282,3 @@ public class CanvasGrid extends View {
         }
     }
 }
-
