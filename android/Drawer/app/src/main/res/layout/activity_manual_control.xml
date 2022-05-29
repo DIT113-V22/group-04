@@ -9,7 +9,7 @@
 
 
     <Button
-        android:id="@+id/ManualScreen"
+        android:id="@+id/ManualNavbarManual"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#8685EF"
@@ -22,7 +22,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/DrawScreen"
+        android:id="@+id/ManualNavbarDraw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#8685EF"
@@ -35,7 +35,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/ReadMEScreen"
+        android:id="@+id/ManualNavbarMain"
         android:layout_width="93dp"
         android:layout_height="48dp"
         android:backgroundTint="#8685EF"

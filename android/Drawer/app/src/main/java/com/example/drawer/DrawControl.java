@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -15,8 +14,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,8 +22,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,9 +33,9 @@ import java.util.ArrayList;
 
 public class DrawControl extends AppCompatActivity {
 
-    private Button readMeScreen;
-    private Button manualControlScreen;
-    private Button drawControlScreen;
+    private Button mainScreenButton;
+    private Button manualControlScreenButton;
+    private Button drawControlScreenButton;
     ImageView uploadedImage;
     Button runBtn;
     ImageButton uploadBtn;
@@ -61,9 +56,9 @@ public class DrawControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/obstacle", "0");
         mqttController.publish("/smartcar/control/auto", "1");
 
-        readMeScreen = findViewById(R.id.ReadMEScreen);
-        manualControlScreen = findViewById(R.id.ManualScreen);
-        drawControlScreen = findViewById(R.id.DrawScreen);
+        mainScreenButton = findViewById(R.id.DrawNavbarMain);
+        manualControlScreenButton = findViewById(R.id.DrawNavbarManual);
+        drawControlScreenButton = findViewById(R.id.DrawNavbarDraw);
 
         runBtn = findViewById(R.id.runButton);
         uploadBtn = findViewById(R.id.uploadBttn);
@@ -82,9 +77,9 @@ public class DrawControl extends AppCompatActivity {
         distanceTraveledView = findViewById(R.id.textViewDistanceTraveled);
         mqttController.updateTextView(distanceTraveledView, "/smartcar/report/odometer");
 
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
+        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreenButton.setOnClickListener(view -> openManualScreen());
+        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
         //mqttController.publish("/smartcar/control/throttle", "5");
         mqttController.publish("/smartcar/control/draw", "true");
 

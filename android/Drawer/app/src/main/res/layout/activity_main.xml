@@ -55,22 +55,32 @@
         app:layout_constraintVertical_bias="0.568" />
 
     <Button
-        android:id="@+id/ManualScreen"
+        android:id="@+id/MainNavbarManual"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Manual Control"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ReadMeScreen"
+        app:layout_constraintEnd_toStartOf="@+id/MainNavbarMain"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/DrawScreen"
+        android:id="@+id/MainNavbarDraw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Draw Control"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ReadMeScreen" />
+        app:layout_constraintStart_toEndOf="@+id/MainNavbarMain" />
+
+    <Button
+        android:id="@+id/MainNavbarMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="INTRO"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.53"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView3"
@@ -84,15 +94,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.20" />
-
-    <Button
-        android:id="@+id/ReadMeScreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="INTRO"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.53"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,9 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
 public class ManualControl extends AppCompatActivity {
-    private Button readMeScreen;
-    private Button manualControlScreen;
-    private Button drawControlScreen;
+
+    private Button mainScreenButton;
+    private Button manualControlScreenButton;
+    private Button drawControlScreenButton;
     private View innerCircle;
     private View outerCircle;
     private int outerRadius = 0;
@@ -40,9 +41,9 @@ public class ManualControl extends AppCompatActivity {
         status = findViewById(R.id.statusText);
         mqttController.updateTextView(status, "/smartcar/report/odometer");
 
-        readMeScreen = findViewById(R.id.ReadMEScreen);
-        manualControlScreen = findViewById(R.id.ManualScreen);
-        drawControlScreen = findViewById(R.id.DrawScreen);
+        mainScreenButton = findViewById(R.id.ManualNavbarMain);
+        manualControlScreenButton = findViewById(R.id.ManualNavbarManual);
+        drawControlScreenButton = findViewById(R.id.ManualNavbarDraw);
         speedStat = findViewById(R.id.speedStat);
         angleStat = findViewById(R.id.angleSTat);
         innerCircle = findViewById(R.id.innerCircle);
@@ -52,11 +53,11 @@ public class ManualControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/draw", "false");
 
 
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
+        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
 
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
+        manualControlScreenButton.setOnClickListener(view -> openManualScreen());
 
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
+        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
 
         innerCircle.setOnTouchListener(new View.OnTouchListener() {
             @Override

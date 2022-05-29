@@ -11,9 +11,9 @@ public class MainActivity extends AppCompatActivity {
     private Button disBtn;
     private Button conBtn;
     private Button subBtn;
-    private Button introScreenBtn;
-    private Button manualControlScreenBtn;
-    private Button drawControlScreenBtn;
+    private Button mainScreenButton;
+    private Button manualControlScreenButton;
+    private Button drawControlScreenButton;
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -44,13 +44,13 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/odometer/destinationbool");
         });
 
-        introScreenBtn = findViewById(R.id.ReadMeScreen);
-        manualControlScreenBtn = findViewById(R.id.ManualScreen);
-        drawControlScreenBtn = findViewById(R.id.DrawScreen);
+        mainScreenButton = findViewById(R.id.MainNavbarMain);
+        manualControlScreenButton = findViewById(R.id.MainNavbarManual);
+        drawControlScreenButton = findViewById(R.id.MainNavbarDraw);
 
-        introScreenBtn.setOnClickListener(view -> openReadMEScreen());
-        manualControlScreenBtn.setOnClickListener(view -> openManualScreen());
-        drawControlScreenBtn.setOnClickListener(view -> openDrawScreen());
+        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreenButton.setOnClickListener(view -> openManualScreen());
+        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
     }
 
     public void openReadMEScreen() {
