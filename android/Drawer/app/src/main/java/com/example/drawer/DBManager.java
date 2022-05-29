@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Point;
-
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -245,7 +244,8 @@ public class DBManager extends SQLiteOpenHelper {
     public ArrayList<Integer> getPointDetails(String pointName) {
         ArrayList<Integer> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        try (Cursor res = db.rawQuery("select pointsQueue from mySavedPoints where savedNamePoints = '" + pointName + "' ", null)) {
+        try (Cursor res = db.rawQuery("select pointsQueue from mySavedPoints where savedNamePoints = '" + pointName + "' ",
+                null)) {
             res.moveToFirst();
             String result = res.getString(res.getColumnIndex(POINTS_QUEUE_COL));
             result = result.replace(" ", "").replace("[", "").replace("]", "");
@@ -268,7 +268,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         int pointQueueSize = pointQueue.size();
 
-        for(int i = 0; i < pointQueueSize; i++){
+        for (int i = 0; i < pointQueueSize; i++) {
 
             Point tempPoint = pointQueue.poll();
 
@@ -279,9 +279,7 @@ public class DBManager extends SQLiteOpenHelper {
             stringBuilder.append(",");
             stringBuilder.append(pointY);
 
-            if(i == (pointQueueSize-1)){
-
-            }else {
+            if (!(i == (pointQueueSize - 1))) {
                 stringBuilder.append(":");
             }
 

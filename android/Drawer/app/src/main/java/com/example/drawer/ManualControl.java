@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -225,25 +224,9 @@ public class ManualControl extends AppCompatActivity {
         deletePath = popUpView.findViewById(R.id.deletePath); //stops the play and closes the window
         playPath = popUpView.findViewById(R.id.playPath);
 
-
         builderReplays.setView(popUpView);
         replays = builderReplays.create();
         replays.show();
-
-        playRecordings = new AlertDialog.Builder(this);
-        //final View popUpView2 = getLayoutInflater().inflate(R.layout.activity_play_recording, null);
-        //playRecordings.setView(popUpView2);
-        playRec = playRecordings.create();
-
-
-        //Deletes that recording
-        /*deletePath.setOnClickListener(view -> {
-            if (myItem.equals("")) {
-                //toast
-            } else {
-                delete(view);
-            }
-        });*/
 
         deletePath.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,14 +235,6 @@ public class ManualControl extends AppCompatActivity {
             }
         });
 
-
-        //playPath.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View view) {
-        //        delete(view);
-        //    }
-        //});
-
         //Gets the all the path information and path names stored in the database
         ArrayList<String> finalOutputList = dbManager.getAllPaths();
 
@@ -267,7 +242,7 @@ public class ManualControl extends AppCompatActivity {
         //in order to contain the array list of all the save paths
         pathView = popUpView.findViewById(R.id.pathList);
         pathView.setBackgroundColor(Color.parseColor("#111111"));
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, finalOutputList){
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, finalOutputList) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -288,12 +263,10 @@ public class ManualControl extends AppCompatActivity {
         pathView.setOnItemClickListener((adapterView, view, i, l) -> {
             //Execution of selected save with previously saved time and command. All in separate thread.
             //playRecordings.show();
-            for (int j = 0; j < pathView.getChildCount(); j++ ){
+            for (int j = 0; j < pathView.getChildCount(); j++ ) {
                 pathView.getChildAt(j).setBackgroundColor(Color.parseColor("#222222"));
             }
             pathView.getChildAt(i).setBackgroundColor(Color.parseColor("#8685ef"));
-
-
 
             if (dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))) {
                 myItem = arrayAdapter.getItem(i);
@@ -311,28 +284,20 @@ public class ManualControl extends AppCompatActivity {
                         new Thread(executeRecording).start();
                     }
                 });
-
             }
-
-
-
 
             //delete the selected item
             deletePath.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(!(myItem.equals(" "))){
+                    if (!(myItem.equals(" "))) {
 
                     }
                     dbManager.deleteSpecific(myItem);
                     replays.dismiss();
                 }
             });
-
-
         });
-
-
     }
 
     public <E> void delete(View v) {
@@ -342,7 +307,6 @@ public class ManualControl extends AppCompatActivity {
         final int position = listview1.getPositionForView((View) v.getParent());
         datalist.remove(position);
         arrayAdapter.notifyDataSetChanged();
-
     }
 
     /**
@@ -551,6 +515,7 @@ public class ManualControl extends AppCompatActivity {
 
 
         String pointQueueString = dbManager.pointToString(pointQueue);
+        System.out.println(pointQueueString);
         Queue<Point> pointQueueNew = new LinkedList<>();
         pointQueueNew = dbManager.stringToPoint(pointQueueString);
         System.out.println(pointQueueNew);
