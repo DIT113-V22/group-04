@@ -17,8 +17,13 @@ const char pass[] = "";
 const unsigned long PULSES_PER_METER = 40;
 
 //flags for controlling obstacle detection
-auto auto_drive = 0;
-auto obstacle_detection = 0;
+int auto_drive = 0;
+int obstacle_detection = 0;
+
+//String drawMode = "false";
+int distanceToTravel = 9999999;
+int distanceTraveled;
+double angleTurned;
 
 const auto mqttInterval = 200UL;
 
@@ -44,10 +49,7 @@ DirectionalOdometer odometer(arduinoRuntime, smartcarlib::pins::v2::leftOdometer
 GY50 gyroscope(arduinoRuntime, OFFSET);
 SR04 ultrasonic(arduinoRuntime, triggerPin, echoPin, maxDistance);
 SmartCar car(arduinoRuntime, control, gyroscope, odometer);
-String drawMode = "false";
-int traveledMessage = 9999999;
-unsigned long distanceTraveled;
-double angleTurned;
+
 
 void setup() {
   Serial.begin(9600);
@@ -84,64 +86,57 @@ void setup() {
   mqtt.publish("/smartcar/report/startup", "MQTT subscriptions setup complete.");
 
   mqtt.onMessage([](String topic, String message) {
-      //Allow setting flags regardless of current detection flag
-      if (topic == "/smartcar/control/auto") {
-        auto_drive = message.toInt();
-        if (message.toInt() == 1) {
-          mqtt.publish("/smartcar/report/status", "Auto drive enabled.");
-        } else {
-          mqtt.publish("/smartcar/report/status", "Manual drive enabled.");
-        }
+    //Allow setting flags regardless of current detection flag
+    if (topic == "/smartcar/control/auto") {
+      auto_drive = message.toInt();
+      if (message.toInt() == 1) {
+        mqtt.publish("/smartcar/report/status", "Auto drive enabled.");
+      } else {
+        mqtt.publish("/smartcar/report/status", "Manual drive enabled.");
       }
-      if (topic == "/smartcar/control/obstacle") {
-        obstacle_detection = message.toInt();
-        if (message.toInt() == 1) {
-          mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to true.");
-        } else {
-          mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to false.");
-        }
+    }
+    
+    if (topic == "/smartcar/control/obstacle") {
+      obstacle_detection = message.toInt();
+      if (message.toInt() == 1) {
+        mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to true.");
+      } else {
+        mqtt.publish("/smartcar/report/status", "Flagged obstacle detection to false.");
       }
-
-      //Block further instructions unless flags above have been reset.
-      if (obstacle_detection == 1) {
-        return;
-      }
-
-
-    if (topic == "/smartcar/control/draw") {
-      drawMode = message;
     }
 
-    if(drawMode == "true"){
-
+    //Block further instructions unless flags above have been reset.
+    if (obstacle_detection == 1) {
+      return;
+    }
+    
+    //if (topic == "/smartcar/control/draw") {
+    //  drawMode = message;
+    //}
+    
+    if (auto_drive == 1) {
       if (topic == "/smartcar/control/distance") {
-        car.setSpeed(25);
-        traveledMessage = message.toInt();
-
+        //car.setSpeed(25);
+        distanceToTravel = message.toInt();
+        mqtt.publish("/smartcar/report/status", "Received new distance: " + message);
       } else if (topic == "/smartcar/control/steering") {
        // while(message.toInt()){
        //   car.setAngle(message.toInt());
        //}
-
       } else if (topic == "/smartcar/control/throttle") {
+        mqtt.publish("/smartcar/report/status", "Received new throttle: " + message);
         car.setSpeed(message.toInt());
-
-      }else {
+      } else {
         Serial.println(topic + " " + message);
-
       }
-
-      if (topic == "/smartcar/control/throttle") {
-        car.setSpeed(message.toInt());
-      }
-
-    }else{
+    } else {
       if (topic == "/smartcar/control/throttle") {
         car.setSpeed(message.toInt());
       } else if (topic == "/smartcar/control/steering") {
         car.setAngle(message.toInt());
       } else {
         Serial.println(topic + " " + message);
+        mqtt.publish("/smartcar/report/status", "Unexpected: " + message);
       }
     }
   });
@@ -154,11 +149,7 @@ void loop() {
   distanceTraveled = odometer.getDistance();
   angleTurned = gyroscope.getHeading();
   Serial.println(distanceTraveled);
-  Serial.println(traveledMessage);
-
-  if(traveledMessage <= (int)distanceTraveled+5){
-    mqtt.publish("/smartcar/odometer/destinationbool", "true");
-  }
+  Serial.println(distanceToTravel);
 
   //Main MQTT loop
   if (mqtt.connected()) {
@@ -174,12 +165,17 @@ void loop() {
         mqtt.publish("/smartcar/report/obstacle", "1");
       }
     }
-     if (currentTime - previousTransmission >= mqttInterval) {
-          mqtt.publish("/smartcar/report/odometer", String(distanceTraveled));
-          mqtt.publish("/smartcar/report/ultrasound", obstacle_distance);
-        }
-   
 
+    if (((distanceTraveled + 5) >= distanceToTravel) && auto_drive == 1) {
+      mqtt.publish("/smartcar/report/destinationReached", "true");
+    }
+    
+    if (currentTime - previousTransmission >= mqttInterval) {
+      mqtt.publish("/smartcar/report/gyroscope", String(angleTurned));
+      mqtt.publish("/smartcar/report/odometer", String(distanceTraveled));
+      mqtt.publish("/smartcar/report/ultrasound", obstacle_distance);
+    }
+    
     //camera
     #ifdef __SMCE__
       static auto previousCameraTransmission = 0UL;

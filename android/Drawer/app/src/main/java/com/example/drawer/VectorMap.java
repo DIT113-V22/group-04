@@ -44,7 +44,7 @@ public class VectorMap {
             double angle = getVectorAngle(vectorList.get(i), vectorList.get(i + 1));
             instructions.add(new Instruction(distance, angle));
         }
-        instructions.add(new Instruction(vectorList.get(vectorList.size() - 1).getMagnitude(), 0.0));
+        instructions.add(new Instruction((vectorList.get(vectorList.size() - 1).getMagnitude() * scale), 0.0));
 
         return instructions;
     }

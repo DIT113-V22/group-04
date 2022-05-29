@@ -174,7 +174,6 @@ public class CanvasGrid extends View {
             }
         }
 
-
         for (int i = 1; i < numColumns; i++) {
             canvas.drawLine(i * cellLength, 0,
                     i * cellLength, numRows * cellLength, blackPaint);
@@ -250,10 +249,8 @@ public class CanvasGrid extends View {
     // to another cell in one of the 8 possible directions.
     // The implementation is currently incompatible with the Bresenham's drawing algorithm.
     public void executePath() {
-        double diagonalDistance = Math.sqrt(pathScale*2);
-        double adjacentDistance = (double) pathScale;
-        DrawControlRun drawControlRun = new DrawControlRun(diagonalDistance, adjacentDistance, pointQueue, mqttController);
-        new Thread(drawControlRun).start();
+        DrawControlRun drawControlRun = new DrawControlRun(pathScale, pointQueue, mqttController);
+        mqttController.executeInstructionSet(drawControlRun);
     }
 
     //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm

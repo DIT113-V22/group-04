@@ -45,6 +45,7 @@ public class MQTTController {
     public String finishDistance = "false";
     public String finishAngle;
     public int obstacleFlag = 0; // 0 == OFF | 1 == ON
+    private DrawControlRun drawControlRun;
 
     /**
      * Constructs the MQTT controller, limited to one instance by Singleton pattern.
@@ -118,9 +119,11 @@ public class MQTTController {
                 @Override
                 public void messageArrived(String topic, MqttMessage mqttMessage) {
                     String message = new String(mqttMessage.getPayload());
-                    if (topic.equals("/smartcar/odometer/destinationbool")) {
+                    if (topic.equals("/smartcar/report/destinationReached")) {
+                        if (message.equals("true")) {
+                            executedInstruction();
+                        }
                         finishDistance = message;
-                        System.out.println(message + " aahhhhhhhhhh");
                         Log.d(SUBTAG, message);
                     }
 
@@ -289,5 +292,22 @@ public class MQTTController {
             Log.d(ETAG, "Could not disconnect from broker");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Initialises the instruction set to be followed by the car.
+     *
+     * @param drawControlRunToExecute Generated instruction set from canvas grid
+     */
+    public void executeInstructionSet(DrawControlRun drawControlRunToExecute) {
+        this.drawControlRun = drawControlRunToExecute;
+        drawControlRun.start();
+    }
+
+    /**
+     *
+     */
+    public void executedInstruction() {
+        drawControlRun.continueExecution();
     }
 }

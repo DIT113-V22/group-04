@@ -50,7 +50,6 @@ public class Vector {
     }
 
     public double getMagnitude() {
-        System.out.println(Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2)));
         return Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2));
     }
 }
