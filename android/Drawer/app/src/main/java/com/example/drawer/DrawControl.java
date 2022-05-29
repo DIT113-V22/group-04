@@ -1,11 +1,13 @@
 package com.example.drawer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -15,21 +17,28 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DrawControl extends AppCompatActivity {
 
@@ -48,6 +57,11 @@ public class DrawControl extends AppCompatActivity {
     TextView distanceTraveledView;
     CanvasGrid pixelGrid;
     MQTTController mqttController = MQTTController.getInstance();
+
+    private Button viewPoints;
+    private AlertDialog.Builder builder;
+    private AlertDialog alertDialog;
+    private ListView pathList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +96,7 @@ public class DrawControl extends AppCompatActivity {
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
         //mqttController.publish("/smartcar/control/throttle", "5");
         mqttController.publish("/smartcar/control/draw", "true");
+        viewPoints = findViewById(R.id.viewPointsSaved);
 
         downloadBtn.setOnClickListener(view -> {
             Bitmap bitmap = viewToBitmap(pixelGrid);
@@ -205,6 +220,39 @@ public class DrawControl extends AppCompatActivity {
             updatePathLength();
             return false;
         });
+
+        viewPoints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //open the pop up window
+                createViewContactDialogue();
+            }
+        });
+    }
+
+    public void createViewContactDialogue() {
+        builder = new AlertDialog.Builder(this);
+        final View popUpView = getLayoutInflater().inflate(R.layout.activity_draw_saves, null);
+        builder.setView(popUpView);
+        alertDialog = builder.create();
+        alertDialog.show();
+
+       pathList = (ListView) popUpView.findViewById(R.id.pathListDraw);
+       List savedPathList = new ArrayList();
+
+       ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
+       pathList.setAdapter(arrayAdapter);
+       onListItemClick(pathList, popUpView, 1, 1000027);
+    }
+
+    public void onListItemClick(ListView pathList, View v, int position, long id){
+
+        //Set background of all items to white
+        for (int i=0;i<pathList.getChildCount();i++){
+            pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
+        }
+
+        v.setBackgroundColor(Color.WHITE);
     }
 
     private void updatePathLength() {
