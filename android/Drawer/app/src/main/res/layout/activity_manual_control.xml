@@ -202,7 +202,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.264"
-        app:srcCompat="@drawable/inner_circle" />
+        app:srcCompat="@android:drawable/screen_background_light" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
