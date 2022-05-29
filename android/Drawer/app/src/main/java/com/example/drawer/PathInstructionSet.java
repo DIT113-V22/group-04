@@ -4,38 +4,37 @@ import android.graphics.Point;
 import android.util.Log;
 import java.util.Queue;
 
-public class DrawControlRun {
-    int moveIndex = 1;
-    int totalMoves;
-    Queue<Point> pointQueue;
-    MQTTController mqttController;
-    final String STILL = "0";
-    final String FORWARD_SPEED = "25";
-    final String TURN_SPEED = "5";
+public class PathInstructionSet {
+    private int moveIndex = 1;
+    private final int totalMoves;
+    private final Queue<Point> pointQueue;
+    private final MQTTController mqttController;
+    private final String STILL = "0";
+    private final String forwardSpeed;
+    private final String TURN_SPEED = "5";
     private final String TAG = "PathExecutor";
-    final int FORWARD_ANGLE = 0;
-    final int RIGHT_ANGLE = 90;
-    final int LEFT_ANGLE = -90;
-    final int TOP_RIGHT_ANGLE = 45;
-    final int TOP_LEFT_ANGLE = -45;
-    final int BOTTOM_LEFT_ANGLE = -135;
-    final int BOTTOM_RIGHT_ANGLE = 135;
-    final int BACKWARD_ANGLE = 180;
-    int totalDistance = 0;
-    int lastTurn = 0;
-    //int thisTurn = 0;
-    //double thisDistance = 0;
-    int diagonalDistance;
-    int adjacentDistance;
-    Point previous;
-    Point current;
+    private final int FORWARD_ANGLE = 180;
+    private final int RIGHT_ANGLE = 90;
+    private final int LEFT_ANGLE = 270;
+    private final int TOP_RIGHT_ANGLE = 135;
+    private final int TOP_LEFT_ANGLE = 225;
+    private final int BOTTOM_LEFT_ANGLE = 315;
+    private final int BOTTOM_RIGHT_ANGLE = 45;
+    private final int BACKWARD_ANGLE = 0;
+    private int totalDistance = 0;
+    private int lastTurn = 0;
+    private final int diagonalDistance;
+    private final int adjacentDistance;
+    private Point previous;
+    private Point current;
 
-    public DrawControlRun(float pathScale, Queue<Point> pointQueue, MQTTController mqttController) {
+    public PathInstructionSet(Queue<Point> pointQueue, MQTTController mqttController, float pathScale, String speed) {
         this.pointQueue = pointQueue;
         this.mqttController = mqttController;
-        this.diagonalDistance = (int) Math.sqrt(pathScale * 2);
+        this.diagonalDistance = (int) Math.sqrt(Math.pow(pathScale, 2) + Math.pow(pathScale, 2));
         this.adjacentDistance = (int) pathScale;
         this.totalMoves = pointQueue.size();
+        this.forwardSpeed = speed;
     }
 
     public void start() {
@@ -69,7 +68,7 @@ public class DrawControlRun {
     public void moveBetween(Point previous, Point current) {
         Log.d(TAG, previous.toString());
         Log.d(TAG, current.toString());
-        Log.d(TAG, "total distance: " + totalDistance);
+        Log.d(TAG, "total distance so far: " + totalDistance);
         int thisDistance;
         int thisTurn;
         int dx = current.x - previous.x;
@@ -150,18 +149,16 @@ public class DrawControlRun {
     }
 
     public void executeMove(int distance, int turn) {
-        String traveledDistance = "false";
-        String traveledAngle = "false";
-        totalDistance = distance + totalDistance;
+        //totalDistance = distance + totalDistance;
 
-        System.out.println("Move " + distance + "cm and turn " + (turn - lastTurn));
+        System.out.println("Move " + distance + "cm and turn to heading: " + turn);
 
         //Continue going forward if same direction
         if (lastTurn == turn) {
-            mqttController.publish("/smartcar/control/throttle", FORWARD_SPEED);
+            mqttController.publish("/smartcar/control/throttle", forwardSpeed);
             mqttController.publish("/smartcar/control/steering", STILL);
-            if (totalDistance != 0) {
-                mqttController.publish("/smartcar/control/distance", String.valueOf(totalDistance));
+            if (distance != 0) {
+                mqttController.publish("/smartcar/control/distance", String.valueOf(distance));
             }
         } else {
             //Stops car for certain amount of time before next move.
@@ -173,19 +170,23 @@ public class DrawControlRun {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (totalDistance != 0) {
-                mqttController.publish("/smartcar/control/distance", String.valueOf(totalDistance));
-                //mqttController.publish("/smartcar/control/throttle", FORWARD_SPEED);
-                //mqttController.publish("/smartcar/control/steering", STILL);
+
+            if (distance != 0) {
+                mqttController.publish("/smartcar/control/distance", String.valueOf(distance));
+                mqttController.publish("/smartcar/control/turn", String.valueOf(turn));
+                mqttController.publish("/smartcar/control/throttle", forwardSpeed);
+                mqttController.publish("/smartcar/control/steering", STILL);
             }
-            System.out.println(totalDistance);
+
             //Turn until car says it has turned the said amount.
-            //mqttController.publish("/smartcar/control/throttle", TURN_SPEED);
-            //mqttController.publish("/smartcar/control/steering", String.valueOf(turn - lastTurn));
 
             //Go forward until the car says it has reached its destination.
             //mqttController.publish("/smartcar/control/throttle", FORWARD_SPEED);
             //mqttController.publish("/smartcar/control/steering", STILL);
         }
+    }
+
+    public void executeTurn() {
+
     }
 }

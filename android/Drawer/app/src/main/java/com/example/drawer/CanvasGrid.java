@@ -4,14 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -248,9 +246,9 @@ public class CanvasGrid extends View {
     // The current implementation assumes slow drawing (i.e. each cell will be adjacent
     // to another cell in one of the 8 possible directions.
     // The implementation is currently incompatible with the Bresenham's drawing algorithm.
-    public void executePath() {
-        DrawControlRun drawControlRun = new DrawControlRun(pathScale, pointQueue, mqttController);
-        mqttController.executeInstructionSet(drawControlRun);
+    public void executePath(String speed) {
+        PathInstructionSet pathInstructionSet = new PathInstructionSet(pointQueue, mqttController, pathScale, speed);
+        mqttController.executeInstructionSet(pathInstructionSet);
     }
 
     //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm

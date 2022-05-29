@@ -16,16 +16,18 @@ const char pass[] = "";
 
 const unsigned long PULSES_PER_METER = 40;
 
-//flags for controlling obstacle detection
-int auto_drive = 0;
+//flags for controlling the car via drawn path
+int autoDrive = 0;
+int confirmationSent = 0;
 int obstacle_detection = 0;
+int distanceToTravel = 100;
+int distanceTraveled = 0;
+int reachedLocation = 0;
+int angleToTurn = 180;
+int currentAngle = 180;
+int turnSpeed = 25;
 
-//String drawMode = "false";
-int distanceToTravel = 9999999;
-int distanceTraveled;
-double angleTurned;
-
-const auto mqttInterval = 200UL;
+const auto mqttInterval = 1000UL;
 
 #ifdef __SMCE__
   const auto triggerPin = 6;
@@ -88,7 +90,7 @@ void setup() {
   mqtt.onMessage([](String topic, String message) {
     //Allow setting flags regardless of current detection flag
     if (topic == "/smartcar/control/auto") {
-      auto_drive = message.toInt();
+      autoDrive = message.toInt();
       if (message.toInt() == 1) {
         mqtt.publish("/smartcar/report/status", "Auto drive enabled.");
       } else {
@@ -110,19 +112,16 @@ void setup() {
       return;
     }
     
-    //if (topic == "/smartcar/control/draw") {
-    //  drawMode = message;
-    //}
-    
-    if (auto_drive == 1) {
+    if (autoDrive == 1) {
       if (topic == "/smartcar/control/distance") {
-        //car.setSpeed(25);
-        distanceToTravel = message.toInt();
-        mqtt.publish("/smartcar/report/status", "Received new distance: " + message);
-      } else if (topic == "/smartcar/control/steering") {
-       // while(message.toInt()){
-       //   car.setAngle(message.toInt());
-       //}
+        distanceToTravel += message.toInt();
+        confirmationSent = 0;
+        reachedLocation = 0;
+        mqtt.publish("/smartcar/report/status", "Received new distance: " + distanceToTravel);
+      } else if (topic == "/smartcar/control/turn") {
+        angleToTurn = message.toInt();
+        confirmationSent = 0;
+        mqtt.publish("/smartcar/report/status", "Received new steering: " + message);
       } else if (topic == "/smartcar/control/throttle") {
         mqtt.publish("/smartcar/report/status", "Received new throttle: " + message);
         car.setSpeed(message.toInt());
@@ -145,11 +144,10 @@ void setup() {
 auto currentTime = millis();
 
 void loop() {
+  gyroscope.update();
   unsigned int distance = ultrasonic.getDistance();
   distanceTraveled = odometer.getDistance();
-  angleTurned = gyroscope.getHeading();
-  Serial.println(distanceTraveled);
-  Serial.println(distanceToTravel);
+  currentAngle = (int) gyroscope.getHeading();
 
   //Main MQTT loop
   if (mqtt.connected()) {
@@ -158,22 +156,49 @@ void loop() {
     const auto obstacle_distance = String(distance);
     static auto previousTransmission = 0UL;
 
-    if (distance <= 100 && distance > 0) {
-      if ((auto_drive == 1) && (obstacle_detection == 0)) {
+    if (autoDrive == 1) {
+      if ((distance <= 100 && distance > 0) && obstacle_detection == 0) {
         car.setSpeed(0);
         obstacle_detection = 1;
         mqtt.publish("/smartcar/report/obstacle", "1");
       }
-    }
-
-    if (((distanceTraveled + 5) >= distanceToTravel) && auto_drive == 1) {
-      mqtt.publish("/smartcar/report/destinationReached", "true");
+      
+      if (confirmationSent == 0) {
+        if ((distanceTraveled >= distanceToTravel)) {
+          if (reachedLocation == 0) {
+            car.setSpeed(0);
+            reachedLocation = 1;
+            delay(50);
+          }
+          Serial.println(String(angleToTurn) + "/" + String(currentAngle));
+          Serial.println("Angle difference: " + (String(abs(angleToTurn - currentAngle))));
+          if (abs(angleToTurn - currentAngle) <= 2) {
+            car.setSpeed(0);
+            delay(50);
+            mqtt.publish("/smartcar/report/instructionComplete", "true");
+            confirmationSent = 1;
+            reachedLocation = 0;
+          } else {
+            if (angleToTurn > currentAngle) {
+              car.overrideMotorSpeed(-turnSpeed, turnSpeed);
+            } else if (angleToTurn < currentAngle) {
+              car.overrideMotorSpeed(turnSpeed, -turnSpeed);
+            }
+          }
+        }
+      }
     }
     
     if (currentTime - previousTransmission >= mqttInterval) {
-      mqtt.publish("/smartcar/report/gyroscope", String(angleTurned));
+      if (autoDrive == 1) {
+        mqtt.publish("/smartcar/report/status", ("distance: " + String(distanceTraveled) + "/" + String(distanceToTravel)));
+        mqtt.publish("/smartcar/report/status", ("angle: " + String(currentAngle) + "/" + String(angleToTurn)));
+      }
+      
+      //mqtt.publish("/smartcar/report/gyroscope", String(currentAngle));
       mqtt.publish("/smartcar/report/odometer", String(distanceTraveled));
       mqtt.publish("/smartcar/report/ultrasound", obstacle_distance);
+      previousTransmission = currentTime;
     }
     
     //camera

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/report/ultrasound");
             mqttController.subscribe("/smartcar/report/odometer");
             mqttController.subscribe("/smartcar/report/gyroscope");
-            mqttController.subscribe("/smartcar/report/destinationReached");
+            mqttController.subscribe("/smartcar/report/instructionComplete");
         });
 
         mainScreenButton = findViewById(R.id.MainNavbarMain);

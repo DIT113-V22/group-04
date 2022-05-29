@@ -1,6 +1,7 @@
 package com.example.drawer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,18 +16,16 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,12 +34,13 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DrawControl extends AppCompatActivity {
 
-    private Button readMeScreen;
-    private Button manualControlScreen;
-    private Button drawControlScreen;
+    private Button mainScreenButton;
+    private Button manualControlScreenButton;
+    private Button drawControlScreenButton;
     ImageView uploadedImage;
     Button runBtn;
     ImageButton uploadBtn;
@@ -54,6 +54,11 @@ public class DrawControl extends AppCompatActivity {
     CanvasGrid pixelGrid;
     MQTTController mqttController = MQTTController.getInstance();
 
+    private Button viewPoints;
+    private AlertDialog.Builder builder;
+    private AlertDialog alertDialog;
+    private ListView pathList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,9 +66,9 @@ public class DrawControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/obstacle", "0");
         mqttController.publish("/smartcar/control/auto", "1");
 
-        readMeScreen = findViewById(R.id.DrawNavbarMain);
-        manualControlScreen = findViewById(R.id.DrawNavbarManual);
-        drawControlScreen = findViewById(R.id.DrawNavbarDraw);
+        mainScreenButton = findViewById(R.id.DrawNavbarMain);
+        manualControlScreenButton = findViewById(R.id.DrawNavbarManual);
+        drawControlScreenButton = findViewById(R.id.DrawNavbarDraw);
 
         runBtn = findViewById(R.id.runButton);
         uploadBtn = findViewById(R.id.uploadBttn);
@@ -82,11 +87,10 @@ public class DrawControl extends AppCompatActivity {
         distanceTraveledView = findViewById(R.id.textViewDistanceTraveled);
         mqttController.updateTextView(distanceTraveledView, "/smartcar/report/odometer");
 
-        readMeScreen.setOnClickListener(view -> openReadMEScreen());
-        manualControlScreen.setOnClickListener(view -> openManualScreen());
-        drawControlScreen.setOnClickListener(view -> openDrawScreen());
-        //mqttController.publish("/smartcar/control/throttle", "5");
-        mqttController.publish("/smartcar/control/draw", "true");
+        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
+        manualControlScreenButton.setOnClickListener(view -> openManualScreen());
+        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
+        viewPoints = findViewById(R.id.viewPointsSaved);
 
         downloadBtn.setOnClickListener(view -> {
             Bitmap bitmap = viewToBitmap(pixelGrid);
@@ -144,19 +148,14 @@ public class DrawControl extends AppCompatActivity {
 
         clearBtn.setOnClickListener(v -> pixelGrid.clear());
         runBtn.setOnClickListener(view -> {
-            String speed =  numberViewSpeed.getText().toString();
-            ArrayList<Instruction> instructions = pixelGrid.getVectorMap().generateInstructions(pixelGrid.getPathScale());
+            mqttController.publish("/smartcar/control/auto", "1");
+            String speed = numberViewSpeed.getText().toString();
 
             if (speed.isEmpty()) {
                 return;
             }
 
-            for (Instruction instruction: instructions) {
-                System.out.println("[ " + instruction.getDistance() + " ] centimeters then turn [ " + instruction.getAngle() + " ] degrees");
-            }
-
-            pixelGrid.executePath();
-            mqttController.publish("/smartcar/control/throttle", speed);
+            pixelGrid.executePath(speed);
         });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -199,23 +198,55 @@ public class DrawControl extends AppCompatActivity {
                 try {
                     float value = Float.parseFloat(numberViewCellLength.getText().toString());
 
-                    pixelGrid.setPathScale(value/100);
+                    pixelGrid.setPathScale(value);
                     updatePathLength();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+
         pixelGrid.setOnTouchListener((view, motionEvent) -> {
+            view.performClick();
             updatePathLength();
             return false;
         });
+
+        viewPoints.setOnClickListener(view -> {
+            //open the pop up window
+            createViewContactDialogue();
+        });
+    }
+
+    public void createViewContactDialogue() {
+        builder = new AlertDialog.Builder(this);
+        final View popUpView = getLayoutInflater().inflate(R.layout.activity_draw_saves, null);
+        builder.setView(popUpView);
+        alertDialog = builder.create();
+        alertDialog.show();
+
+       pathList = (ListView) popUpView.findViewById(R.id.pathListDraw);
+       List savedPathList = new ArrayList();
+
+       ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
+       pathList.setAdapter(arrayAdapter);
+       onListItemClick(pathList, popUpView, 1, 1000027);
+    }
+
+    public void onListItemClick(ListView pathList, View v, int position, long id){
+
+        //Set background of all items to white
+        for (int i=0;i<pathList.getChildCount();i++){
+            pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
+        }
+
+        v.setBackgroundColor(Color.WHITE);
     }
 
     private void updatePathLength() {
         double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
         pathLength = Math.floor(pathLength * 100) / 100;
-        pathLengthView.setText("Path length: " + pathLength + " m");
+        pathLengthView.setText("Path length: " + pathLength);
     }
 
     public void openReadMEScreen() {

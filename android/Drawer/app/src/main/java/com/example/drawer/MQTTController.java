@@ -45,7 +45,7 @@ public class MQTTController {
     public String finishDistance = "false";
     public String finishAngle;
     public int obstacleFlag = 0; // 0 == OFF | 1 == ON
-    private DrawControlRun drawControlRun;
+    private PathInstructionSet pathInstructionSet;
 
     /**
      * Constructs the MQTT controller, limited to one instance by Singleton pattern.
@@ -119,7 +119,7 @@ public class MQTTController {
                 @Override
                 public void messageArrived(String topic, MqttMessage mqttMessage) {
                     String message = new String(mqttMessage.getPayload());
-                    if (topic.equals("/smartcar/report/destinationReached")) {
+                    if (topic.equals("/smartcar/report/instructionComplete")) {
                         if (message.equals("true")) {
                             executedInstruction();
                         }
@@ -131,9 +131,13 @@ public class MQTTController {
                         Log.d(STARTTAG, message);
                     }
 
+                    if (topic.equals("/smartcar/report/gyroscope")) {
+                        Log.d(SUBTAG, "Gyro: " + message);
+                    }
+
                     if (topic.equals("/smartcar/report/obstacle")) {
                         obstacleFlag = Integer.parseInt(message);
-                        Log.d(SUBTAG, message);
+                        Log.d(SUBTAG, "Obstacle detected, deferring to manual control.");
                     }
 
                     if (topic.equals("/smartcar/report/camera")) {
@@ -297,17 +301,17 @@ public class MQTTController {
     /**
      * Initialises the instruction set to be followed by the car.
      *
-     * @param drawControlRunToExecute Generated instruction set from canvas grid
+     * @param pathInstructionSetToExecute Generated instruction set from canvas grid
      */
-    public void executeInstructionSet(DrawControlRun drawControlRunToExecute) {
-        this.drawControlRun = drawControlRunToExecute;
-        drawControlRun.start();
+    public void executeInstructionSet(PathInstructionSet pathInstructionSetToExecute) {
+        this.pathInstructionSet = pathInstructionSetToExecute;
+        pathInstructionSet.start();
     }
 
     /**
      *
      */
     public void executedInstruction() {
-        drawControlRun.continueExecution();
+        pathInstructionSet.continueExecution();
     }
 }
