@@ -198,7 +198,7 @@ public class DrawControl extends AppCompatActivity {
                 try {
                     if (!numberViewCellLength.getText().toString().isEmpty()) {
                         float value = Float.parseFloat(numberViewCellLength.getText().toString());
-                        pixelGrid.setPathScale(value/100);
+                        pixelGrid.setPathScale(value / 100);
                         updatePathLength();
                     }
                 } catch (Exception e) {
@@ -215,7 +215,7 @@ public class DrawControl extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                distanceTraveledView.setText( distanceTraveledView.getText() + " m");
+                distanceTraveledView.setText(distanceTraveledView.getText() + " m");
             }
 
             @Override
