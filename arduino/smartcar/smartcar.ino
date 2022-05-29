@@ -81,7 +81,6 @@ void setup() {
     delay(1000);
   }
   mqtt.publish("/smartcar/report/startup", "Connected to MQTT broker.");
-  Serial.println("Connected");
 
   //MQTT subscription
   mqtt.subscribe("/smartcar/control/#", 1);
@@ -114,7 +113,7 @@ void setup() {
     
     if (autoDrive == 1) {
       if (topic == "/smartcar/control/distance") {
-        distanceToTravel += message.toInt();
+        distanceToTravel = message.toInt();
         confirmationSent = 0;
         reachedLocation = 0;
         mqtt.publish("/smartcar/report/status", "Received new distance: " + distanceToTravel);
@@ -194,8 +193,7 @@ void loop() {
         mqtt.publish("/smartcar/report/status", ("distance: " + String(distanceTraveled) + "/" + String(distanceToTravel)));
         mqtt.publish("/smartcar/report/status", ("angle: " + String(currentAngle) + "/" + String(angleToTurn)));
       }
-      
-      //mqtt.publish("/smartcar/report/gyroscope", String(currentAngle));
+
       mqtt.publish("/smartcar/report/odometer", String(distanceTraveled));
       mqtt.publish("/smartcar/report/ultrasound", obstacle_distance);
       previousTransmission = currentTime;

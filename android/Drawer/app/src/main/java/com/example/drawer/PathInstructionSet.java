@@ -31,7 +31,7 @@ public class PathInstructionSet {
     public PathInstructionSet(Queue<Point> pointQueue, MQTTController mqttController, float pathScale, String speed) {
         this.pointQueue = pointQueue;
         this.mqttController = mqttController;
-        this.diagonalDistance = (int) Math.sqrt(Math.pow(pathScale, 2) + Math.pow(pathScale, 2));
+        this.diagonalDistance = (int) Math.sqrt(Math.pow(pathScale, 2) * 2);
         this.adjacentDistance = (int) pathScale;
         this.totalMoves = pointQueue.size();
         this.forwardSpeed = speed;
@@ -149,7 +149,7 @@ public class PathInstructionSet {
     }
 
     public void executeMove(int distance, int turn) {
-        //totalDistance = distance + totalDistance;
+        totalDistance = distance + totalDistance;
 
         System.out.println("Move " + distance + "cm and turn to heading: " + turn);
 
@@ -157,8 +157,8 @@ public class PathInstructionSet {
         if (lastTurn == turn) {
             mqttController.publish("/smartcar/control/throttle", forwardSpeed);
             mqttController.publish("/smartcar/control/steering", STILL);
-            if (distance != 0) {
-                mqttController.publish("/smartcar/control/distance", String.valueOf(distance));
+            if (totalDistance != 0) {
+                mqttController.publish("/smartcar/control/distance", String.valueOf(totalDistance));
             }
         } else {
             //Stops car for certain amount of time before next move.
@@ -171,8 +171,8 @@ public class PathInstructionSet {
                 e.printStackTrace();
             }
 
-            if (distance != 0) {
-                mqttController.publish("/smartcar/control/distance", String.valueOf(distance));
+            if (totalDistance != 0) {
+                mqttController.publish("/smartcar/control/distance", String.valueOf(totalDistance));
                 mqttController.publish("/smartcar/control/turn", String.valueOf(turn));
                 mqttController.publish("/smartcar/control/throttle", forwardSpeed);
                 mqttController.publish("/smartcar/control/steering", STILL);

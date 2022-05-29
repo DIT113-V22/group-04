@@ -100,7 +100,7 @@
         android:id="@+id/textViewDistanceTraveled"
         android:layout_width="151dp"
         android:layout_height="19dp"
-        android:text="Distance: 0"
+        android:text="Current: 0"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

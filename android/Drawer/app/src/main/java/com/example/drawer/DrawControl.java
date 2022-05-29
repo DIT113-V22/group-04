@@ -146,15 +146,16 @@ public class DrawControl extends AppCompatActivity {
             someActivityResultLauncher.launch(imagePickerIntent);
         });
 
-        clearBtn.setOnClickListener(v -> pixelGrid.clear());
+        clearBtn.setOnClickListener(view -> {
+            pixelGrid.clear();
+
+        });
         runBtn.setOnClickListener(view -> {
             mqttController.publish("/smartcar/control/auto", "1");
             String speed = numberViewSpeed.getText().toString();
-
             if (speed.isEmpty()) {
                 return;
             }
-
             pixelGrid.executePath(speed);
         });
 
@@ -196,10 +197,11 @@ public class DrawControl extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 try {
-                    float value = Float.parseFloat(numberViewCellLength.getText().toString());
-
-                    pixelGrid.setPathScale(value);
-                    updatePathLength();
+                    if (!numberViewCellLength.getText().toString().isEmpty()) {
+                        float value = Float.parseFloat(numberViewCellLength.getText().toString());
+                        pixelGrid.setPathScale(value);
+                        updatePathLength();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -230,13 +232,12 @@ public class DrawControl extends AppCompatActivity {
 
        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
        pathList.setAdapter(arrayAdapter);
-       onListItemClick(pathList, popUpView, 1, 1000027);
+       onListItemClick(pathList, popUpView);
     }
 
-    public void onListItemClick(ListView pathList, View v, int position, long id){
-
+    public void onListItemClick(ListView pathList, View v) {
         //Set background of all items to white
-        for (int i=0;i<pathList.getChildCount();i++){
+        for (int i = 0; i < pathList.getChildCount(); i++) {
             pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
         }
 

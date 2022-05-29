@@ -42,8 +42,6 @@ public class MQTTController {
     private static MQTTController mqttController_instance = null;
     private String previousTopic;
     private String previousMessage;
-    public String finishDistance = "false";
-    public String finishAngle;
     public int obstacleFlag = 0; // 0 == OFF | 1 == ON
     private PathInstructionSet pathInstructionSet;
 
@@ -123,7 +121,6 @@ public class MQTTController {
                         if (message.equals("true")) {
                             executedInstruction();
                         }
-                        finishDistance = message;
                         Log.d(SUBTAG, message);
                     }
 
