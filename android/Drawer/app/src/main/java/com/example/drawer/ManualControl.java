@@ -53,7 +53,6 @@ public class ManualControl extends AppCompatActivity {
     private View outerCircle;
     private TextView speedStat;
     private TextView angleStat;
-    private TextView status;
     private Button viewPaths;
 
     private DBManager dbManager;
@@ -93,8 +92,6 @@ public class ManualControl extends AppCompatActivity {
         innerCircle = findViewById(R.id.innerCircle);
         mqttController.publish("/smartcar/control/obstacle", "0");
         mqttController.publish("/smartcar/control/auto", "0");
-        status = findViewById(R.id.statusText);
-        mqttController.updateTextView(status, "/smartcar/report/odometer");
 
         mainScreenButton = findViewById(R.id.ManualNavbarMain);
         manualControlScreenButton = findViewById(R.id.ManualNavbarManual);
@@ -108,7 +105,7 @@ public class ManualControl extends AppCompatActivity {
         outerCircle = findViewById(R.id.outerCircle);
 
         mainScreenButton.setOnClickListener(view -> openReadMEScreen());
-        manualControlScreenButton.setOnClickListener(view -> openManualScreen());
+
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
       
         viewPaths = findViewById(R.id.viewPathsScreen);
