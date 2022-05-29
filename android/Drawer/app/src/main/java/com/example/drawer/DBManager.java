@@ -244,7 +244,8 @@ public class DBManager extends SQLiteOpenHelper {
     public ArrayList<Integer> getPointDetails(String pointName) {
         ArrayList<Integer> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        try (Cursor res = db.rawQuery("select pointsQueue from mySavedPoints where savedNamePoints = '" + pointName + "' ",
+        try (Cursor res = db.rawQuery(
+                "select pointsQueue from mySavedPoints where savedNamePoints = '" + pointName + "' ",
                 null)) {
             res.moveToFirst();
             String result = res.getString(res.getColumnIndex(POINTS_QUEUE_COL));

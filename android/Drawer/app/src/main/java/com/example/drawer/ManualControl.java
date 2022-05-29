@@ -263,7 +263,7 @@ public class ManualControl extends AppCompatActivity {
         pathView.setOnItemClickListener((adapterView, view, i, l) -> {
             //Execution of selected save with previously saved time and command. All in separate thread.
             //playRecordings.show();
-            for (int j = 0; j < pathView.getChildCount(); j++ ) {
+            for (int j = 0; j < pathView.getChildCount(); j++) {
                 pathView.getChildAt(j).setBackgroundColor(Color.parseColor("#222222"));
             }
             pathView.getChildAt(i).setBackgroundColor(Color.parseColor("#8685ef"));
@@ -290,9 +290,6 @@ public class ManualControl extends AppCompatActivity {
             deletePath.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!(myItem.equals(" "))) {
-
-                    }
                     dbManager.deleteSpecific(myItem);
                     replays.dismiss();
                 }
