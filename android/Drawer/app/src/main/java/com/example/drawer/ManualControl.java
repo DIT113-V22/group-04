@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -25,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class ManualControl extends AppCompatActivity {
 
@@ -109,6 +111,8 @@ public class ManualControl extends AppCompatActivity {
         playPath = findViewById(R.id.playPath);
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
+
+        testPoints();
 
         mqttController.updateCamera(camera);
 
@@ -352,6 +356,7 @@ public class ManualControl extends AppCompatActivity {
         Resources res = getResources();
         oc = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
 
+
         //Retrieves the starting position of the Drawable Views.
         if (!saved) {
             centerX = (int) innerCircle.getX();
@@ -516,5 +521,21 @@ public class ManualControl extends AppCompatActivity {
     public void openDrawScreen() {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
+    }
+
+    public void testPoints() {
+        Queue<Point> pointQueue = new LinkedList<>();
+        pointQueue.add(new Point(4,3));
+        pointQueue.add(new Point(2,8));
+        pointQueue.add(new Point(6,0));
+        pointQueue.add(new Point(7,2));
+        pointQueue.add(new Point(9,5));
+        pointQueue.add(new Point(1,2));
+
+
+        String pointQueueString = dbManager.pointToString(pointQueue);
+        Queue<Point> pointQueueNew = new LinkedList<>();
+        pointQueueNew = dbManager.stringToPoint(pointQueueString);
+        System.out.println(pointQueueNew);
     }
 }
