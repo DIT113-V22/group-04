@@ -115,10 +115,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="264dp"
+        android:layout_marginBottom="32dp"
         android:backgroundTint="#006A6A6A"
+        app:layout_constraintBottom_toTopOf="@+id/conBtn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo_animated_vector"
         app:tint="#838383" />
 
@@ -135,14 +135,26 @@
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="192dp"
-        android:layout_height="176dp"
+        android:layout_width="235dp"
+        android:layout_height="213dp"
         android:layout_marginTop="60dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/icon"
         tools:srcCompat="@drawable/icon" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="316dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.673"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/drawbot" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
