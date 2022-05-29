@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -95,7 +94,7 @@ public class CanvasGrid extends View {
         this.pathScale = pathScale;
     }
 
-    public void setVectorSmoothnes(double smoothnes){
+    public void setVectorSmoothnes(double smoothnes) {
         vectorSmoothnes = smoothnes;
     }
 
@@ -158,9 +157,6 @@ public class CanvasGrid extends View {
                     canvas.drawRect(i * cellLength, j * cellLength,
                             (i + 1) * cellLength, (j + 1) * cellLength,
                             blackPaint);
-//                    if (!pointQueue.contains(new Point(i, j))) {
-//                        pointQueue.add(new Point(i, j));
-//                    }
                 }
                 //again why disable going over the same point twice
                 //also your making a path drawing between each point in a Z pattern
@@ -209,7 +205,7 @@ public class CanvasGrid extends View {
                 lastx = column;
                 lasty = row;
 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             invalidate();
@@ -219,11 +215,11 @@ public class CanvasGrid extends View {
             int row = (int)(event.getY() / cellLength);
 
             try {
-                if (Math.hypot( column - lastx, row - lasty) > vectorSmoothnes) {
+                if (Math.hypot(column - lastx, row - lasty) > vectorSmoothnes) {
                     cellChecked[column][row] = true;
                     pureCellChecked[column][row] = true;
                     // if the difference between current x, y and new x, y is bigger than 1 draw a line in between
-                    if (Math.abs(row - lastx) > .5 || Math.abs(column - lasty) > .5 ) {
+                    if (Math.abs(row - lastx) > .5 || Math.abs(column - lasty) > .5) {
                         gridDrawLine(lastx, lasty, column, row);
                     }
                     if (column != lastx && row != lasty) {
@@ -232,14 +228,11 @@ public class CanvasGrid extends View {
                     lastx = column;
                     lasty = row;
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             invalidate();
         }
-        //System.out.println("-----------Total------------: "+ vectorMap.calculateSize());
-        //System.out.println(vectorMap.toString());
-
         return true;
     }
 
@@ -252,8 +245,6 @@ public class CanvasGrid extends View {
     }
 
     //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-        // TODO: 2022-05-10 might need to rewrite the while true    -no
-        // while true is fine
     private void gridDrawLine(int x0, int y0, int x1, int y1) {
 
         //Delta X, Y
@@ -261,8 +252,8 @@ public class CanvasGrid extends View {
         int dy = -Math.abs(y1 - y0);
 
         //incrementations variable using ternary operator
-        int sx = (x0 < x1)? 1: -1;
-        int sy = (y0 < y1)? 1: -1;
+        int sx = (x0 < x1) ? 1 : -1;
+        int sy = (y0 < y1) ? 1 : -1;
 
         int error = dx + dy;
 
@@ -291,4 +282,3 @@ public class CanvasGrid extends View {
         }
     }
 }
-

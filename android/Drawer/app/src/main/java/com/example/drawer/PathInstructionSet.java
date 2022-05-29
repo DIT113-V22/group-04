@@ -9,18 +9,18 @@ public class PathInstructionSet {
     private final int totalMoves;
     private final Queue<Point> pointQueue;
     private final MQTTController mqttController;
-    private final String STILL = "0";
+    private final String still = "0";
     private final String forwardSpeed;
-    private final String TURN_SPEED = "5";
-    private final String TAG = "PathExecutor";
-    private final int FORWARD_ANGLE = 180;
-    private final int RIGHT_ANGLE = 90;
-    private final int LEFT_ANGLE = 270;
-    private final int TOP_RIGHT_ANGLE = 135;
-    private final int TOP_LEFT_ANGLE = 225;
-    private final int BOTTOM_LEFT_ANGLE = 315;
-    private final int BOTTOM_RIGHT_ANGLE = 45;
-    private final int BACKWARD_ANGLE = 0;
+    private final String turnSpeed = "5";
+    private final String tag = "PathExecutor";
+    private final int forwardAngle = 180;
+    private final int rightAngle = 90;
+    private final int leftAngle = 270;
+    private final int topRightAngle = 135;
+    private final int topLeftAngle = 225;
+    private final int bottomLeftAngle = 315;
+    private final int bottomRightAngle = 45;
+    private final int backwardAngle = 0;
     private int totalDistance = 0;
     private int lastTurn = 0;
     private final int diagonalDistance;
@@ -38,8 +38,8 @@ public class PathInstructionSet {
     }
 
     public void start() {
-        Log.d(TAG, "moveIndex: " + moveIndex);
-        Log.d(TAG, "totalMoves: " + totalMoves);
+        Log.d(tag, "moveIndex: " + moveIndex);
+        Log.d(tag, "totalMoves: " + totalMoves);
         previous = pointQueue.poll();
         current = pointQueue.poll();
         if (previous != null && current != null) {
@@ -48,9 +48,9 @@ public class PathInstructionSet {
     }
 
     public void continueExecution() {
-        Log.d(TAG, "Previous instruction executed, continuing:");
-        Log.d(TAG, "moveIndex: " + moveIndex);
-        Log.d(TAG, "totalMoves: " + totalMoves);
+        Log.d(tag, "Previous instruction executed, continuing:");
+        Log.d(tag, "moveIndex: " + moveIndex);
+        Log.d(tag, "totalMoves: " + totalMoves);
         if (moveIndex < totalMoves) {
             // Continue
             current = pointQueue.poll();
@@ -59,16 +59,16 @@ public class PathInstructionSet {
             }
         } else {
             System.out.println("Instruction set complete");
-            mqttController.publish("/smartcar/control/throttle", STILL);
-            mqttController.publish("/smartcar/control/steering", STILL);
+            mqttController.publish("/smartcar/control/throttle", still);
+            mqttController.publish("/smartcar/control/steering", still);
             mqttController.publish("/smartcar/control/auto", "0");
         }
     }
 
     public void moveBetween(Point previous, Point current) {
-        Log.d(TAG, previous.toString());
-        Log.d(TAG, current.toString());
-        Log.d(TAG, "total distance so far: " + totalDistance);
+        Log.d(tag, previous.toString());
+        Log.d(tag, current.toString());
+        Log.d(tag, "total distance so far: " + totalDistance);
         int thisDistance;
         int thisTurn;
         int dx = current.x - previous.x;
@@ -82,17 +82,17 @@ public class PathInstructionSet {
                     Log.d("movement", "Move backward");
                     if (lastTurn < 0) {
                         thisDistance = adjacentDistance;
-                        thisTurn = BACKWARD_ANGLE * -1;
+                        thisTurn = backwardAngle * -1;
                     } else {
                         thisDistance = adjacentDistance;
-                        thisTurn = BACKWARD_ANGLE;
+                        thisTurn = backwardAngle;
                     }
                     executeMove(thisDistance, thisTurn);
                     lastTurn = thisTurn;
                 } else if (dy == -1) {
                     Log.d("movement", "Move forward");
                     thisDistance = adjacentDistance;
-                    thisTurn = FORWARD_ANGLE;
+                    thisTurn = forwardAngle;
                     executeMove(thisDistance, thisTurn);
                     lastTurn = thisTurn;
                 } else {
@@ -102,13 +102,13 @@ public class PathInstructionSet {
                 if (dx == 1) {
                     Log.d("movement", "Move right");
                     thisDistance = adjacentDistance;
-                    thisTurn = RIGHT_ANGLE;
+                    thisTurn = rightAngle;
                     executeMove(thisDistance, thisTurn);
                     lastTurn = thisTurn;
                 } else if (dx == -1) {
                     Log.d("movement", "Move left");
                     thisDistance = adjacentDistance;
-                    thisTurn = LEFT_ANGLE;
+                    thisTurn = leftAngle;
                     executeMove(thisDistance, thisTurn);
                     lastTurn = thisTurn;
                 } else {
@@ -119,25 +119,25 @@ public class PathInstructionSet {
             if (dx == 1 && dy == 1) {
                 Log.d("movement", "Move bottom-right");
                 thisDistance = diagonalDistance;
-                thisTurn = BOTTOM_RIGHT_ANGLE;
+                thisTurn = bottomRightAngle;
                 executeMove(thisDistance, thisTurn);
                 lastTurn = thisTurn;
             } else if (dx == 1 && dy == -1) {
                 Log.d("movement", "Move top-right");
                 thisDistance = diagonalDistance;
-                thisTurn = TOP_RIGHT_ANGLE;
+                thisTurn = topRightAngle;
                 executeMove(thisDistance, thisTurn);
                 lastTurn = thisTurn;
             } else if (dx == -1 && dy == 1) {
                 Log.d("movement", "Move bottom-left");
                 thisDistance = diagonalDistance;
-                thisTurn = BOTTOM_LEFT_ANGLE;
+                thisTurn = bottomLeftAngle;
                 executeMove(thisDistance, thisTurn);
                 lastTurn = thisTurn;
             } else if (dx == -1 && dy == -1) {
                 Log.d("movement", "Move top-left");
                 thisDistance = diagonalDistance;
-                thisTurn = TOP_LEFT_ANGLE;
+                thisTurn = topLeftAngle;
                 executeMove(thisDistance, thisTurn);
                 lastTurn = thisTurn;
             } else {
@@ -156,14 +156,14 @@ public class PathInstructionSet {
         //Continue going forward if same direction
         if (lastTurn == turn) {
             mqttController.publish("/smartcar/control/throttle", forwardSpeed);
-            mqttController.publish("/smartcar/control/steering", STILL);
+            mqttController.publish("/smartcar/control/steering", still);
             if (totalDistance != 0) {
                 mqttController.publish("/smartcar/control/distance", String.valueOf(totalDistance));
             }
         } else {
             //Stops car for certain amount of time before next move.
-            mqttController.publish("/smartcar/control/throttle", STILL);
-            mqttController.publish("/smartcar/control/steering", STILL);
+            mqttController.publish("/smartcar/control/throttle", still);
+            mqttController.publish("/smartcar/control/steering", still);
 
             try {
                 Thread.sleep(50);
@@ -175,14 +175,8 @@ public class PathInstructionSet {
                 mqttController.publish("/smartcar/control/distance", String.valueOf(totalDistance));
                 mqttController.publish("/smartcar/control/turn", String.valueOf(turn));
                 mqttController.publish("/smartcar/control/throttle", forwardSpeed);
-                mqttController.publish("/smartcar/control/steering", STILL);
+                mqttController.publish("/smartcar/control/steering", still);
             }
-
-            //Turn until car says it has turned the said amount.
-
-            //Go forward until the car says it has reached its destination.
-            //mqttController.publish("/smartcar/control/throttle", FORWARD_SPEED);
-            //mqttController.publish("/smartcar/control/steering", STILL);
         }
     }
 

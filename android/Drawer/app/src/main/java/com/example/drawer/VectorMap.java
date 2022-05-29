@@ -77,12 +77,9 @@ public class VectorMap {
         dotProductVec.multiply(vector2);
         double dotProduct = dotProductVec.posX + dotProductVec.posY;
 
-        angle = (dotProduct / (vector1.getMagnitude() * vector2.getMagnitude())) ;
-        //System.out.println("Mag" + vector1.getMagnitude());
+        angle = (dotProduct / (vector1.getMagnitude() * vector2.getMagnitude()));
 
         angle = (Math.acos(angle) * (180 / Math.PI));
-
-        //left right??
 
         Vector newPoint = new Vector(vector1);
         newPoint.add(vector2);
@@ -100,11 +97,11 @@ public class VectorMap {
                 }
             }
 
-        } else if (newPoint.posY > 0 ) {// if downward
+        } else if (newPoint.posY > 0) { // if downward
             if (newPoint.posX < 0) {
                 angle *= -1;
             }
-        } else if(newPoint.posY < 0) {//if upward
+        } else if (newPoint.posY < 0) { //if upward
             if (newPoint.posX > 0) {
                 angle *= -1;
             }

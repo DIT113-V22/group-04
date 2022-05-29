@@ -244,12 +244,12 @@ public class DrawControl extends AppCompatActivity {
         alertDialog = builder.create();
         alertDialog.show();
 
-       pathList = (ListView) popUpView.findViewById(R.id.pathListDraw);
-       List savedPathList = new ArrayList();
+        pathList = (ListView) popUpView.findViewById(R.id.pathListDraw);
+        List savedPathList = new ArrayList();
 
-       ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
-       pathList.setAdapter(arrayAdapter);
-       onListItemClick(pathList, popUpView);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
+        pathList.setAdapter(arrayAdapter);
+        onListItemClick(pathList, popUpView);
     }
 
     public void onListItemClick(ListView pathList, View v) {

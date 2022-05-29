@@ -305,9 +305,6 @@ public class MQTTController {
         pathInstructionSet.start();
     }
 
-    /**
-     *
-     */
     public void executedInstruction() {
         pathInstructionSet.continueExecution();
     }
