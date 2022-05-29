@@ -32,7 +32,7 @@ public class CanvasGrid extends View {
     private int numColumns = 4;
     private int numRows = 4;
     private int cellLength = 50;
-    private float pathScale = 1;
+    private float pathScale = 0.01f;
     private Paint blackPaint = new Paint();
     private boolean[][] cellChecked = new boolean[50][100];
     private int lastx;
