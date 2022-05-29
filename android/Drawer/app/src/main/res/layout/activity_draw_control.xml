@@ -98,16 +98,29 @@
 
     <TextView
         android:id="@+id/textViewDistanceTraveled"
-        android:layout_width="151dp"
-        android:layout_height="19dp"
-        android:text="Current: 0"
+        android:layout_width="103dp"
+        android:layout_height="21dp"
+        android:text="0"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.053"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textViewDistanceTraveled2"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPathLength"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textViewDistanceTraveled2"
+        android:layout_width="wrap_content"
+        android:layout_height="21dp"
+        android:text="Current: "
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.038"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewPathLength"
-        app:layout_constraintVertical_bias="0.002" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/DrawNavbarManual"
