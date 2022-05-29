@@ -8,51 +8,66 @@
 
     <Button
         android:id="@+id/conBtn"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
+        android:layout_width="480dp"
+        android:layout_height="60sp"
+        android:layout_marginStart="76dp"
+        android:background="@drawable/menu_item_vector"
+        android:paddingLeft="128dp"
         android:text="CONNECT"
+        android:textAlignment="viewStart"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.333" />
+        app:layout_constraintVertical_bias="0.499" />
 
     <Button
         android:id="@+id/disBtn"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
+        android:layout_width="480dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/menu_item_vector"
+        android:paddingLeft="128dp"
         android:text="DISCONNECT"
+        android:textAlignment="viewStart"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.695" />
+        app:layout_constraintTop_toBottomOf="@+id/subBtn"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/pubBtn"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
+        android:layout_width="480dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/menu_item_vector"
+        android:paddingLeft="128dp"
         android:text="PUBLISH"
+        android:textAlignment="viewStart"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.44" />
+        app:layout_constraintTop_toBottomOf="@+id/disBtn"
+        app:layout_constraintVertical_bias="0.01" />
 
     <Button
         android:id="@+id/subBtn"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
+        android:layout_width="480sp"
+        android:layout_height="60dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/menu_item_vector"
+        android:paddingLeft="128dp"
         android:text="SUBSCRIBE"
+        android:textAlignment="viewStart"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.568" />
+        app:layout_constraintTop_toBottomOf="@+id/conBtn"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/MainNavbarManual"
@@ -86,13 +101,70 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to Drawing Car!"
-        android:textColor="@color/black"
+        android:text="Drawing Car V1.0.0"
+        android:textColor="#B8B8B8"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.013"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.20" />
+        app:layout_constraintVertical_bias="0.932" />
+
+    <Button
+        android:id="@+id/ReadMeScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="INTRO"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.53"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewCarAndPen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="#006A6A6A"
+        app:layout_constraintBottom_toTopOf="@+id/conBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/logo_animated_vector"
+        app:tint="#838383" />
+
+    <ImageView
+        android:id="@+id/imageViewSmokeParticle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintStart_toStartOf="@+id/imageViewCarAndPen"
+        app:layout_constraintTop_toTopOf="@+id/imageViewCarAndPen"
+        app:srcCompat="@drawable/smoke_vector"
+        app:tint="#7A7A7A" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="235dp"
+        android:layout_height="213dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.517"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon"
+        tools:srcCompat="@drawable/icon" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="316dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.673"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/drawbot" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

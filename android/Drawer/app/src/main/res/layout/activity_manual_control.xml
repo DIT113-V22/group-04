@@ -47,7 +47,64 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <View
+
+    <Switch
+        android:id="@+id/recordToggle"
+        android:layout_width="63dp"
+        android:layout_height="45dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ReadMEScreen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.882"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.578" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Record"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.884"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.535" />
+        app:layout_constraintVertical_bias="0.602"
+        android:textColor="@color/black"/>
+
+
+    <Chronometer
+        android:id="@+id/stopWatch"
+        android:layout_width="68dp"
+        android:layout_height="34dp"
+        android:textSize="20sp"
+        android:textColor="#a0a0a0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.924"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recordToggle"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Chronometer
+        android:id="@+id/executeWatch"
+        android:layout_width="68dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="256dp"
+        android:textSize="20sp"
+        android:textColor="#a0a0a0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.192"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewPathsScreen"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
         android:id="@+id/outerCircle"
 
         android:layout_width="200dp"
@@ -64,36 +121,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.89" />
 
-    <View
+
+    <TextView
         android:id="@+id/innerCircle"
 
         android:layout_width="50dp"
         android:layout_height="50dp"
-
-
         android:background="@drawable/inner_circle"
-        android:longClickable="true"
-        android:orientation="vertical"
-        android:rotationX="0"
-        app:layout_constraintBottom_toBottomOf="@+id/outerCircle"
-        app:layout_constraintEnd_toEndOf="@+id/outerCircle"
-        app:layout_constraintStart_toStartOf="@+id/outerCircle"
-        app:layout_constraintTop_toTopOf="@+id/outerCircle"
-        app:layout_constraintVertical_bias="0.506" />
-
-    <TextView
-        android:id="@+id/speedStat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Speed percentage of the Car"
-        android:textColor="@color/black"
-        android:textSize="24sp"
+        android:text="                                               car"
+        android:textColor="@android:color/transparent"
+        android:textSize="5sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.23" />
+        app:layout_constraintVertical_bias="0.807" />
 
     <TextView
         android:id="@+id/angleSTat"
@@ -104,10 +147,24 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintHorizontal_bias="0.457"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/speedStat"
-        app:layout_constraintVertical_bias="0.088" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.094" />
+
+    <TextView
+        android:id="@+id/speedStat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speed percentage of the Car"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.035" />
 
     <TextView
         android:id="@+id/statusText"
@@ -121,6 +178,31 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.146" />
+        app:layout_constraintVertical_bias="0.502" />
+
+    <Button
+        android:id="@+id/viewPathsScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Recordings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.036"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.575" />
+
+    <ImageView
+        android:id="@+id/camera"
+        android:layout_width="328dp"
+        android:layout_height="201dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.264"
+        app:srcCompat="@android:drawable/screen_background_light" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

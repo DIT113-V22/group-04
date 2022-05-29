@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
+        jcenter()
         mavenCentral()
     }
 }
@@ -9,11 +10,13 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
+        jcenter()
         mavenCentral()
         maven {
             url "https://repo.eclipse.org/content/repositories/paho-releases/"
         }
     }
 }
+
 rootProject.name = "Drawer"
 include ':app'
