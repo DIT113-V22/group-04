@@ -1,8 +1,12 @@
 package com.example.drawer;
 
+import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -14,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     private Button introScreenBtn;
     private Button manualControlScreenBtn;
     private Button drawControlScreenBtn;
+    private ImageView carImg;
+    private ImageView smokeImg;
 
     MQTTController mqttController = MQTTController.getInstance();
 
@@ -34,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         subBtn = findViewById(R.id.subBtn);
         subBtn.setOnClickListener(view -> {
+            System.out.println("SUB");
             mqttController.subscribe("/smartcar/report/startup");
             mqttController.subscribe("/smartcar/report/status");
             mqttController.subscribe("/smartcar/report/camera");
@@ -41,6 +48,13 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/report/ultrasound");
             mqttController.subscribe("/smartcar/control/throttle");
         });
+
+        carImg = findViewById(R.id.imageViewCarAndPen);
+        smokeImg = findViewById(R.id.imageViewSmokeParticle);
+
+        Animation fadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
+
+        smokeImg.startAnimation(fadeOut);
 
         introScreenBtn = findViewById(R.id.ReadMeScreen);
         manualControlScreenBtn = findViewById(R.id.ManualScreen);
