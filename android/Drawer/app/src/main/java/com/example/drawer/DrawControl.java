@@ -198,7 +198,7 @@ public class DrawControl extends AppCompatActivity {
                 try {
                     if (!numberViewCellLength.getText().toString().isEmpty()) {
                         float value = Float.parseFloat(numberViewCellLength.getText().toString());
-                        pixelGrid.setPathScale(value);
+                        pixelGrid.setPathScale(value/100);
                         updatePathLength();
                     }
                 } catch (Exception e) {
@@ -206,6 +206,24 @@ public class DrawControl extends AppCompatActivity {
                 }
             }
         });
+
+        distanceTraveledView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                distanceTraveledView.setText( distanceTraveledView.getText() + " m");
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
 
         pixelGrid.setOnTouchListener((view, motionEvent) -> {
             view.performClick();
@@ -246,7 +264,7 @@ public class DrawControl extends AppCompatActivity {
     private void updatePathLength() {
         double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
         pathLength = Math.floor(pathLength * 100) / 100;
-        pathLengthView.setText("Path length: " + pathLength);
+        pathLengthView.setText("Path length: " + pathLength + " m");
     }
 
     public void openReadMEScreen() {
