@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -17,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.ArrayList;
@@ -103,7 +107,6 @@ public class ManualControl extends AppCompatActivity {
         saveReplay = findViewById(R.id.saveRecording);
         camera = findViewById(R.id.camera);
         playPath = findViewById(R.id.playPath);
-        deletePath = findViewById(R.id.deletePath);
         readMeScreen.setOnClickListener(view -> openReadMEScreen());
         drawControlScreen.setOnClickListener(view -> openDrawScreen());
 
@@ -154,7 +157,6 @@ public class ManualControl extends AppCompatActivity {
 
             currentSaveTime = System.currentTimeMillis();
 
-            //Adding car speed and angle to the list respectively.
             carSpeedQueue.add(speed);
             carAngleQueue.add(angle);
 
@@ -216,6 +218,7 @@ public class ManualControl extends AppCompatActivity {
         builderReplays = new AlertDialog.Builder(this);
         final View popUpView = getLayoutInflater().inflate(R.layout.activity_view_saved_paths, null);
         deletePath = popUpView.findViewById(R.id.deletePath); //stops the play and closes the window
+
         builderReplays.setView(popUpView);
         replays = builderReplays.create();
         replays.show();
@@ -227,11 +230,18 @@ public class ManualControl extends AppCompatActivity {
 
 
         //Deletes that recording
-        deletePath.setOnClickListener(view -> {
+        /*deletePath.setOnClickListener(view -> {
             if (myItem.equals("")) {
                 //toast
             } else {
                 delete(view);
+            }
+        });*/
+
+        deletePath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -248,22 +258,37 @@ public class ManualControl extends AppCompatActivity {
         //creates a pop up window which has a list view
         //in order to contain the array list of all the save paths
         pathView = popUpView.findViewById(R.id.pathList);
-        pathView.setBackgroundColor(Color.parseColor("#c8c8c8"));
-        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, finalOutputList);
+        pathView.setBackgroundColor(Color.parseColor("#111111"));
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, finalOutputList){
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+
+                TextView tv = (TextView) view.findViewById(android.R.id.text1);
+
+                tv.setTextColor(Color.WHITE);
+                tv.setBackgroundColor(Color.parseColor("#222222"));
+
+                return view;
+            }
+        };
 
         pathView.setAdapter(arrayAdapter);
 
         //When any list item is click, the respective saved recording is played.
         pathView.setOnItemClickListener((adapterView, view, i, l) -> {
             //Execution of selected save with previously saved time and command. All in separate thread.
+            //playRecordings.show();
+            for (int j = 0; j < pathView.getChildCount(); j++ ){
+                pathView.getChildAt(j).setBackgroundColor(Color.parseColor("#222222"));
+            }
+            pathView.getChildAt(i).setBackgroundColor(Color.parseColor("#8685ef"));
 
             if (dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))) {
                 myItem = arrayAdapter.getItem(i);
 
                 //System.out.println(dbManager.getPathDetails(myItem));
-                itemCarSpeed = dbManager.getPathDetails(myItem);
-                itemCarAngle = dbManager.getAngleDetails(myItem);
-                itemCarTimer = dbManager.getTimeDetails(myItem);
                 ArrayList<Integer> itemCarSpeed = dbManager.getPathDetails(myItem);
                 ArrayList<Integer> itemCarAngle = dbManager.getAngleDetails(myItem);
                 ArrayList<Long> itemCarTimer = dbManager.getTimeDetails(myItem);
@@ -285,6 +310,8 @@ public class ManualControl extends AppCompatActivity {
                 }
             });
         });
+
+
     }
 
     public <E> void delete(View v) {
