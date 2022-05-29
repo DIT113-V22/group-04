@@ -205,9 +205,9 @@ public class DBManager extends SQLiteOpenHelper {
 
     public void deleteSpecific(String pathName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME,null,null);
         db.execSQL("delete from mySavedPath where savedName = '" + pathName + "' ");
         db.close();
+
     }
 
     @SuppressLint("Range")

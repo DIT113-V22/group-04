@@ -75,6 +75,7 @@ public class ManualControl extends AppCompatActivity {
     private Button saveReplay;
     private Button discardReplay;
     private Button deletePath;
+
     private Button playPath;
     private ImageView camera;
     private ArrayAdapter<String> arrayAdapter;
@@ -93,7 +94,7 @@ public class ManualControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/obstacle", "0");
         mqttController.publish("/smartcar/control/auto", "0");
         status = findViewById(R.id.statusText);
-        mqttController.updateTextView(status, "/smartcar/control/throttle");
+        //mqttController.updateTextView(status, "/smartcar/control/throttle");
         time = findViewById(R.id.stopWatch);
         executeTimer = findViewById(R.id.executeWatch);
         readMeScreen = findViewById(R.id.ReadMEScreen);
@@ -222,6 +223,8 @@ public class ManualControl extends AppCompatActivity {
         builderReplays = new AlertDialog.Builder(this);
         final View popUpView = getLayoutInflater().inflate(R.layout.activity_view_saved_paths, null);
         deletePath = popUpView.findViewById(R.id.deletePath); //stops the play and closes the window
+        playPath = popUpView.findViewById(R.id.playPath);
+
 
         builderReplays.setView(popUpView);
         replays = builderReplays.create();
@@ -248,6 +251,7 @@ public class ManualControl extends AppCompatActivity {
 
             }
         });
+
 
         //playPath.setOnClickListener(new View.OnClickListener() {
         //    @Override
@@ -289,6 +293,8 @@ public class ManualControl extends AppCompatActivity {
             }
             pathView.getChildAt(i).setBackgroundColor(Color.parseColor("#8685ef"));
 
+
+
             if (dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))) {
                 myItem = arrayAdapter.getItem(i);
 
@@ -299,8 +305,17 @@ public class ManualControl extends AppCompatActivity {
 
                 ManualRecordingRun executeRecording = new ManualRecordingRun(itemCarTimer, itemCarAngle,
                         itemCarSpeed, mqttController, executeTimer);
-                new Thread(executeRecording).start();
+                playPath.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new Thread(executeRecording).start();
+                    }
+                });
+
             }
+
+
+
 
             //delete the selected item
             deletePath.setOnClickListener(new View.OnClickListener() {
@@ -313,6 +328,8 @@ public class ManualControl extends AppCompatActivity {
                     replays.dismiss();
                 }
             });
+
+
         });
 
 
