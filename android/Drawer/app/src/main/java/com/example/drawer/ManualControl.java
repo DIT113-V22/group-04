@@ -102,7 +102,6 @@ public class ManualControl extends AppCompatActivity {
         time = findViewById(R.id.stopWatch);
         executeTimer = findViewById(R.id.executeWatch);
         speedStat = findViewById(R.id.speedStat);
-        angleStat = findViewById(R.id.angleStat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
 

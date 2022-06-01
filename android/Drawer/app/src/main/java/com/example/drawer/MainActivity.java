@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
         smokeImg.startAnimation(fadeOut);
 
-        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
     }

@@ -89,7 +89,6 @@ public class DrawControl extends AppCompatActivity {
 
         mainScreenButton.setOnClickListener(view -> openReadMEScreen());
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
-        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
         viewPoints = findViewById(R.id.viewPointsSaved);
 
         downloadBtn.setOnClickListener(view -> {
