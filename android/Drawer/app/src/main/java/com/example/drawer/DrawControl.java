@@ -87,6 +87,7 @@ public class DrawControl extends AppCompatActivity {
         distanceTraveledView = findViewById(R.id.textViewDistanceTraveled);
         mqttController.updateTextView(distanceTraveledView, "/smartcar/report/odometer");
 
+        // Navbar
         mainScreenButton.setOnClickListener(view -> openReadMEScreen());
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
         viewPoints = findViewById(R.id.viewPointsSaved);

@@ -88,11 +88,10 @@ jobs:
        
       - name: Run instrumented tests
         uses: ReactiveCircus/android-emulator-runner@v2.24.0
-
         with:
-          profile: Nexus 6
+          profile: Pixel 4
           api-level: 29
-          arch: x86_64
+          arch: x86
           working-directory: ./android/Drawer
           script: ./gradlew connectedAndroidTest
           
@@ -104,3 +103,4 @@ jobs:
           name: Instrumented test reports
           path: |
             android/Drawer/app/build/reports/androidTests/connected
+            
