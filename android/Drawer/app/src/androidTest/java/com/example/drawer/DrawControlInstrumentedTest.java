@@ -14,25 +14,17 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.view.View;
 import android.widget.SeekBar;
-
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.action.GeneralClickAction;
-import androidx.test.espresso.action.GeneralLocation;
-import androidx.test.espresso.action.Press;
-import androidx.test.espresso.action.Tap;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -67,10 +59,12 @@ public class DrawControlInstrumentedTest {
                 SeekBar seekBar = (SeekBar) view;
                 seekBar.setProgress(progress);
             }
+
             @Override
             public String getDescription() {
                 return "Set a progress on a SeekBar";
             }
+
             @Override
             public Matcher<View> getConstraints() {
                 return ViewMatchers.isAssignableFrom(SeekBar.class);
@@ -90,8 +84,9 @@ public class DrawControlInstrumentedTest {
         onView(withId(R.id.pixelGridA)).check(matches(isDisplayed()));
         onView(withId(R.id.runButton)).check(matches(isDisplayed()));
         onView(withId(R.id.numberViewCellLength)).check(matches(isDisplayed()));
-        onView(withId(R.id.numberViewCellSize)).check(matches(isDisplayed()));
-        onView(withId(R.id.textViewSpeed)).check(matches(isDisplayed()));
+        onView(withId(R.id.numberViewSpeed)).check(matches(isDisplayed()));
+        onView(withId(R.id.textViewCurrentDistance)).check(matches(isDisplayed()));
+        onView(withId(R.id.textViewDistanceTraveled)).check(matches(isDisplayed()));
         onView(withId(R.id.seekbar)).check(matches(isCompletelyDisplayed()));
     }
 
@@ -100,9 +95,9 @@ public class DrawControlInstrumentedTest {
      */
     @Test
     public void isNavBarVisible() {
-        onView(withId(R.id.ManualScreen)).check(matches(isDisplayed()));
-        onView(withId(R.id.ReadMeScreen)).check(matches(isDisplayed()));
-        onView(withId(R.id.DrawScreen)).check(matches(isDisplayed()));
+        onView(withId(R.id.DrawNavbarManual)).check(matches(isDisplayed()));
+        onView(withId(R.id.DrawNavbarMain)).check(matches(isDisplayed()));
+        onView(withId(R.id.DrawNavbarMain)).check(matches(isDisplayed()));
     }
 
     /**
@@ -111,8 +106,8 @@ public class DrawControlInstrumentedTest {
      */
     @Test
     public void doesIntroButtonCreateIntentToIntroScreen() {
-        onView(withId(R.id.ReadMeScreen)).check(matches(withText("Intro")));
-        onView(withId(R.id.ReadMeScreen)).perform(click());
+        onView(withId(R.id.DrawNavbarMain)).check(matches(withText("Intro")));
+        onView(withId(R.id.DrawNavbarMain)).perform(click());
         intended(hasComponent(MainActivity.class.getName()));
     }
 
@@ -122,8 +117,8 @@ public class DrawControlInstrumentedTest {
      */
     @Test
     public void doesManualControlButtonCreateIntentToManualControlScreen() {
-        onView(withId(R.id.ManualScreen)).check(matches(withText("Manual Control")));
-        onView(withId(R.id.ManualScreen)).perform(click());
+        onView(withId(R.id.DrawNavbarManual)).check(matches(withText("Manual Control")));
+        onView(withId(R.id.DrawNavbarManual)).perform(click());
         intended(hasComponent(ManualControl.class.getName()));
     }
 
@@ -136,9 +131,9 @@ public class DrawControlInstrumentedTest {
         onView(withId(R.id.uploadBttn)).check(matches(isClickable()));
         onView(withId(R.id.downloadBttn)).check(matches(isClickable()));
         onView(withId(R.id.runButton)).check(matches(isClickable()));
-        onView(withId(R.id.ManualScreen)).check(matches(isClickable()));
-        onView(withId(R.id.ReadMeScreen)).check(matches(isClickable()));
-        onView(withId(R.id.DrawScreen)).check(matches(isClickable()));
+        onView(withId(R.id.DrawNavbarManual)).check(matches(isClickable()));
+        onView(withId(R.id.DrawNavbarMain)).check(matches(isClickable()));
+        onView(withId(R.id.DrawNavbarDraw)).check(matches(isClickable()));
     }
 
     /**
@@ -176,11 +171,11 @@ public class DrawControlInstrumentedTest {
 
         onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.runButton)));
         onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.numberViewCellLength)));
-        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.numberViewCellSize)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.numberViewSpeed)));
 
-        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.ReadMeScreen)));
-        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.ManualScreen)));
-        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.DrawScreen)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.DrawNavbarMain)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.DrawNavbarDraw)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.DrawNavbarManual)));
     }
 
     /**
@@ -193,27 +188,12 @@ public class DrawControlInstrumentedTest {
 
         onView(withId(R.id.runButton)).check(isCompletelyBelow(withId(R.id.pixelGridA)));
 
-        onView(withId(R.id.runButton)).check(isCompletelyRightOf(withId(R.id.numberViewCellSize)));
+        onView(withId(R.id.runButton)).check(isCompletelyRightOf(withId(R.id.numberViewSpeed)));
         onView(withId(R.id.runButton)).check(isCompletelyRightOf(withId(R.id.numberViewCellLength)));
 
-        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.ReadMeScreen)));
-        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.ManualScreen)));
-        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.DrawScreen)));
-    }
-
-    /**
-     * Test progress of seekbar
-     */
-    @Test
-    public void testSeekBar() {
-        onView(withId(R.id.seekbar)).perform(setProgress(0));
-        onView(withId(R.id.textViewSpeed)).check(matches(withText("Current speed:0")));
-
-        onView(withId(R.id.seekbar)).perform(setProgress(50));
-        onView(withId(R.id.textViewSpeed)).check(matches(withText("Current speed:50")));
-
-        onView(withId(R.id.seekbar)).perform(setProgress(100));
-        onView(withId(R.id.textViewSpeed)).check(matches(withText("Current speed:100")));
+        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.DrawNavbarMain)));
+        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.DrawNavbarManual)));
+        onView(withId(R.id.runButton)).check(isCompletelyAbove(withId(R.id.DrawNavbarDraw)));
     }
 
     /**
@@ -222,7 +202,7 @@ public class DrawControlInstrumentedTest {
     @Test
     public void testEditTexts() {
         onView(withId(R.id.numberViewCellLength)).perform(typeText("3"), closeSoftKeyboard()).check(matches(withText("3")));
-        onView(withId(R.id.numberViewCellSize)).perform(typeText("2"), closeSoftKeyboard()).check(matches(withText("2")));
+        onView(withId(R.id.numberViewSpeed)).perform(typeText("2"), closeSoftKeyboard()).check(matches(withText("2")));
     }
 
 }

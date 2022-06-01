@@ -110,16 +110,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.932" />
 
-    <Button
-        android:id="@+id/ReadMeScreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Intro"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.53"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ImageView
         android:id="@+id/imageViewCarAndPen"
         android:layout_width="wrap_content"

@@ -56,9 +56,9 @@ public class MainActivityInstrumentedTest {
      */
     @Test
     public void isNavBarVisible() {
-        onView(withId(R.id.ManualScreen)).check(matches(isDisplayed()));
-        onView(withId(R.id.ReadMeScreen)).check(matches(isDisplayed()));
-        onView(withId(R.id.DrawScreen)).check(matches(isDisplayed()));
+        onView(withId(R.id.MainNavbarManual)).check(matches(isDisplayed()));
+        onView(withId(R.id.MainNavbarMain)).check(matches(isDisplayed()));
+        onView(withId(R.id.MainNavbarDraw)).check(matches(isDisplayed()));
     }
 
     /**
@@ -67,8 +67,8 @@ public class MainActivityInstrumentedTest {
      */
     @Test
     public void doesDrawControlButtonCreateIntentToDrawControlScreen() {
-        onView(withId(R.id.DrawScreen)).check(matches(withText("Draw Control")));
-        onView(withId(R.id.DrawScreen)).perform(click());
+        onView(withId(R.id.MainNavbarDraw)).check(matches(withText("Draw Control")));
+        onView(withId(R.id.MainNavbarDraw)).perform(click());
         intended(hasComponent(DrawControl.class.getName()));
     }
 
@@ -78,8 +78,8 @@ public class MainActivityInstrumentedTest {
      */
     @Test
     public void doesManualControlButtonCreateIntentToManualControlScreen() {
-        onView(withId(R.id.ManualScreen)).check(matches(withText("Manual Control")));
-        onView(withId(R.id.ManualScreen)).perform(click());
+        onView(withId(R.id.MainNavbarManual)).check(matches(withText("Manual Control")));
+        onView(withId(R.id.MainNavbarManual)).perform(click());
         intended(hasComponent(ManualControl.class.getName()));
     }
 

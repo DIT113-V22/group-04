@@ -1,6 +1,5 @@
 package com.example.drawer;
 
-import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.animation.Animation;
