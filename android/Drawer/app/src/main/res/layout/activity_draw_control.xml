@@ -150,7 +150,6 @@
         app:layout_constraintHorizontal_bias="0.53"
         app:layout_constraintStart_toStartOf="parent" />
 
-
     <EditText
         android:id="@+id/numberViewSpeed"
         android:layout_width="144dp"

@@ -101,7 +101,6 @@ public class ManualControl extends AppCompatActivity {
         drawControlScreenButton = findViewById(R.id.ManualNavbarDraw);
         time = findViewById(R.id.stopWatch);
         executeTimer = findViewById(R.id.executeWatch);
-        
         speedStat = findViewById(R.id.speedStat);
         angleStat = findViewById(R.id.angleStat);
         innerCircle = findViewById(R.id.innerCircle);

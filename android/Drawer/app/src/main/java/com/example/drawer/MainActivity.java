@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
     }
-
+    
     public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
         startActivity(intent);
