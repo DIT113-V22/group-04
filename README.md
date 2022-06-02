@@ -10,33 +10,31 @@
 
 ### What are we going to make?
 
-A car that is able to follow a path that is drawn by the user. Also, a previously saved path can be used by the car to traverse. 
-The car can also move at an assigned speed (for e.g. the speed can be set to 50%). Furthermore, the 
-car can also be controlled using a gyroscope and the path taken can be recorded. For the manual driving of the car, point of view
-of car shall be in the manual screen to assist the driver.
+We will make an Android application that will command a car to follow a certain path, either by drawing that path on the app
+or by manually controlling the car using a joystick. On both modes (manual control and draw control), the user is able to
+control the car such that it moves at a certain speed (for e.g. the speed can be set to 50%). Driven paths can also be saved
+and by extension, a previously saved path can be converted to movement instructions that is sent to the car. There will also
+be a camera that shows the car's point of view to assist the user when they are using the manual driving mode.
 
 ### Why will we make it?
 
-The car will be able to follow a given path. So this functionality can be used in factories or warehouses where the floor plan is seldom standard.
-Thus, this program can be utilised to draw paths for automation purposes which will work with any layout.
+The car will be able to follow a given path. This functionality can be used in factories or warehouses where the floor plan is 
+seldom standard. Thus, this program can be utilised to draw paths for automation purposes which will work with any layout.
 
-
-Being able to control the car would be beneficial to, for example, Roombas (cleaning robot) as the user can manually drive a path once and 
+Another use case would be to use this app for "robots" like Roombas (cleaning robot); as the user can manually drive a path once and 
 then the roomba can save that path, so it is always able to clean the room/house in that specific order.
 
 ### How are we going to make it?
 
-Communication between the android app and the car will be handled by HiveMQ. A MQTT technology.
+Communication between the android app and the car will be handled using MQTT and specifically, HiveMQ, a MQTT broker.
 
-The mobile app will allow the user to create a grid-based drawing which will be converted into a set of instructions that the car can execute.
-The set of instructions that is pulled from a grid-based drawing will be saved along with the image of the drawing.
-With the use of the sensors and the SmartCar library, the car can follow the path safely and properly.
+The mobile app will allow the user to draw a path on a grid-based canvas and movement instructions will be extracted from it 
+which will then be sent to the so that it can follow the path.  With the use of the sensors and the SmartCar library, 
+the car can follow the path safely and properly.
 
-The joystick will be made from scratch. To make the joystick custom circle drawables, Math library and OnTouch functionality of views will be used.
-The joystick will publish speed and angle to the car via a broker. Arduino codebase will recieve and execute these instructions.
-Saving of instructions will done with GSON by transforming necessary instructions into JSON.
-For the camera, a premade template will be used. 
-
+The joystick will be made from scratch. To make the joystick custom circle drawables, Math library and OnTouch functionality of
+views will be used. The joystick will publish speed and angle to the car via a broker. The Arduino sketch will receive and 
+execute these instructions. The saving of instructions will be done using an SQLite database.
 
 Technologies used:
 
@@ -47,6 +45,11 @@ Technologies used:
 - SMCE Emulator
 - Android API
 
+## System Architecture
+
+### Component Diagram
+
+![ComponenetDiagram](https://user-images.githubusercontent.com/90007777/170896586-bcf16160-a54e-4915-88e8-8f987ab8e4d6.png)
 
 ## Getting started
 
@@ -97,6 +100,9 @@ Technologies used:
 7. Connect to the MQTT broker
 8. Have fun!
 
+## Project Demo
+
+[Demo Video](https://www.youtube.com/watch?v=mE4N443-brs)
 
 ## Contributors
 
