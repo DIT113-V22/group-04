@@ -52,7 +52,7 @@ public class MainActivityInstrumentedTest {
     }
 
     /**
-     * Test visibility of navbar elements on screen
+     * Test visibility of navbar elements on screen.
      */
     @Test
     public void isNavBarVisible() {
