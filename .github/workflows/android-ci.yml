@@ -56,6 +56,8 @@ jobs:
         run: |
           cd android/Drawer
           ./gradlew test --info
+        with:
+          timeout-minutes: 15
           
       # Upload artifacts
       - name: Archive test artifacts

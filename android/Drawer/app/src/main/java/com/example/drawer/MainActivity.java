@@ -14,7 +14,6 @@ public class MainActivity extends AppCompatActivity {
     private Button disBtn;
     private Button conBtn;
     private Button subBtn;
-    private Button mainScreenButton;
     private Button manualControlScreenButton;
     private Button drawControlScreenButton;
     private ImageView carImg;
@@ -54,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/report/instructionComplete");
         });
 
-        mainScreenButton = findViewById(R.id.MainNavbarMain);
         manualControlScreenButton = findViewById(R.id.MainNavbarManual);
         drawControlScreenButton = findViewById(R.id.MainNavbarDraw);
         carImg = findViewById(R.id.imageViewCarAndPen);

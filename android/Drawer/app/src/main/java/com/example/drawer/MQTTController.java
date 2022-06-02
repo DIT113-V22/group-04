@@ -306,6 +306,9 @@ public class MQTTController {
         pathInstructionSet.start();
     }
 
+    /**
+     * Handshake method triggered by response from car once its current instruction has completed.
+     */
     public void executedInstruction() {
         pathInstructionSet.continueExecution();
     }

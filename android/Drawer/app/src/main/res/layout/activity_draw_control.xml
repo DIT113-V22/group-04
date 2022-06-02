@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEEEEE"><![CDATA[
-    tools:context=".DrawControl">
-    ]]>
+    android:background="#EEEEEE">
 
     <ImageButton
         android:id="@+id/uploadBttn"
@@ -175,7 +173,6 @@
         android:ems="10"
         android:hint="Cell Length(Cm)"
         android:inputType="numberDecimal"
-        android:numeric="decimal"
         android:textColor="@color/black"
         android:textColorHint="#d1d1d1"
         app:layout_constraintBottom_toTopOf="@+id/DrawNavbarMain"
