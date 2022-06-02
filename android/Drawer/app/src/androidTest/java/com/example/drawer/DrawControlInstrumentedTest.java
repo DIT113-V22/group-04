@@ -37,7 +37,7 @@ public class DrawControlInstrumentedTest {
             new ActivityScenarioRule<>(DrawControl.class);
 
     /**
-     * Initialise Espresso Intents capturing before each test
+     * Initialise Espresso Intents capturing before each test.
      */
     @Before
     public void intentsInit() {
