@@ -13,6 +13,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * This class serves purpose to mainly create and manage a SQLite database.
+ * The methods are various queries to get values from the database.
+ */
 public class DBManager extends SQLiteOpenHelper {
     //Name of the database
     public static final String DB_NAME = "savedPaths";
@@ -32,10 +36,19 @@ public class DBManager extends SQLiteOpenHelper {
     private static String POINTS_TITLE_COL = "savedNamePoints";
     private static final String POINTS_QUEUE_COL = "pointsQueue";
 
+    /**
+     * Constructor for DBManager.
+     * @param context
+     */
     public DBManager(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
+    /**
+     * This method creates new sqLiteDatabase object.
+     * Creates a new table with columns.
+     * @param sqLiteDatabase
+     */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // on below line we are creating
@@ -64,6 +77,14 @@ public class DBManager extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(queryPoints);
     }
 
+    /**
+     * This method is used to add new path, where a new path mean adding a new row to the table.
+     * Every new path consists of all parameters.
+     * @param savedName
+     * @param speedList
+     * @param angleList
+     * @param timerList
+     */
     public void addNewPath(String savedName, String speedList, String angleList, String timerList) {
 
         // creating a variable for content values.
@@ -107,14 +128,24 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * This method is called to check if the table exists already.
+     * @param sqLiteDatabase
+     * @param i
+     * @param i1
+     */
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        // this method is called to check if the table exists already.
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_POINTS);
         onCreate(sqLiteDatabase);
     }
 
+    /**
+     * This method runs a query which returns all the paths,
+     * where each path stands for an entire row in the table.
+     * @return
+     */
     @SuppressLint("Range")
     public ArrayList<String> getAllPaths() {
         ArrayList<String> arrayList = new ArrayList<String>();
@@ -131,6 +162,10 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
 
+    /**
+     * This method run a query with returns all the names of paths.
+     * @return
+     */
     @SuppressLint("Range")
     public ArrayList<String> getAllPathNames() {
         ArrayList<String> arrayList = new ArrayList<>();
@@ -147,6 +182,12 @@ public class DBManager extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    /**
+     * This method runs a query which returns all the details of a specific path,
+     * This methods takes in a path name to identify the details.
+     * @param pathName
+     * @return
+     */
     @SuppressLint("Range")
     public ArrayList<Integer> getPathDetails(String pathName) {
         ArrayList<Integer> arrayList = new ArrayList<>();
@@ -162,6 +203,11 @@ public class DBManager extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    /**
+     * This methods runs a query which returns the angles column value which matches with the given path name.
+     * @param pathName
+     * @return
+     */
     @SuppressLint("Range")
     public ArrayList<Integer> getAngleDetails(String pathName) {
         ArrayList<Integer> arrayList = new ArrayList<>();
@@ -178,6 +224,11 @@ public class DBManager extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    /**
+     * This methods runs a query which returns the time column value which matches with the given path name.
+     * @param pathName
+     * @return
+     */
     @SuppressLint("Range")
     public ArrayList<Long> getTimeDetails(String pathName) {
         ArrayList<Long> arrayList = new ArrayList<>();
@@ -194,6 +245,9 @@ public class DBManager extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    /**
+     * This method deletes the entire table from the database.
+     */
     public void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME,null,null);
@@ -202,6 +256,10 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * This method deletes a specific row from the database, by matching it with the given path name.
+     * @param pathName
+     */
     public void deleteSpecific(String pathName) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from mySavedPath where savedName = '" + pathName + "' ");

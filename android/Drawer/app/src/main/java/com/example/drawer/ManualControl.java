@@ -133,7 +133,7 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * On the end of recording stop timer and activate save pop-up.
+     * This method stops the times on the end of recording and activates save pop-up screen.
      *
      * @param buttonToggle toggled on or off.
      */
@@ -152,7 +152,8 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Records commands by inserting movement instructions along with recording time into arraylists.
+     * This method records speed and angle of joystick when the record toggle is on
+     * by inserting movement instructions along with recording time into arraylists.
      *
      * @param speed individual speed command extracted from joystick.
      * @param angle individual angle command extracted from joystick.
@@ -192,7 +193,6 @@ public class ManualControl extends AppCompatActivity {
 
         playRecordings = new AlertDialog.Builder(this);
 
-
         //Saves replay with the name.
         //stores the name of the reply and the respective array list to the database.
         saveReplay.setOnClickListener(view -> {
@@ -213,8 +213,8 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Pop-up of recordings which can be selected and played.
-     * Selected played in separate thread.
+     * This method creates pop-up to view saved recordings which can be selected, played and deleted.
+     * Selected path is played in a separate thread.
      */
     public void createViewContactDialogueReplays() {
 
@@ -295,30 +295,6 @@ public class ManualControl extends AppCompatActivity {
                 }
             });
         });
-    }
-
-    public <E> void delete(View v) {
-        ListView listview1 = new ListView(this);
-        ArrayList<E> datalist = new ArrayList<>();
-
-        final int position = listview1.getPositionForView((View) v.getParent());
-        datalist.remove(position);
-        arrayAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * The method sets a background color to all the list items.
-     *
-     * @param pathList Overarching listview for all recordings
-     * @param v Pop up view that shows all the saved recordings
-     * @author Sejal Kanaskar
-     */
-    public void onListItemClick(ListView pathList, View v) { //delete
-        //Set background of all items to white
-        for (int i = 0; i < pathList.getChildCount(); i++) {
-            pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
-        }
-        v.setBackgroundColor(Color.BLACK);
     }
 
     /**
@@ -457,7 +433,7 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Calculate angle based on joystick position.
+     * Calculates the car angle based on joystick position.
      *
      * @param event User touch/drag.
      * @return calculated angle.
