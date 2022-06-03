@@ -8,10 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button pubBtn;
-    private Button disBtn;
-    private Button conBtn;
-    private Button subBtn;
+    private Button connectButton;
+    private Button subscribeButton;
+    private Button publishButton;
+    private Button disconnectButton;
     private Button manualControlScreenButton;
     private Button drawControlScreenButton;
     private ImageView carImg;
@@ -26,21 +26,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Connection button
-        conBtn = findViewById(R.id.conBtn);
-        conBtn.setOnClickListener(view -> mqttController.connect());
+        connectButton = findViewById(R.id.connectButton);
+        connectButton.setOnClickListener(view -> mqttController.connect());
 
         // Publish button
-        pubBtn = findViewById(R.id.pubBtn);
-        pubBtn.setOnClickListener(view ->
+        publishButton = findViewById(R.id.publishButton);
+        publishButton.setOnClickListener(view ->
                 mqttController.publish("/smartcar/control/throttle", "50"));
 
         // Disconnect button
-        disBtn = findViewById(R.id.disBtn);
-        disBtn.setOnClickListener(view -> mqttController.disconnect());
+        disconnectButton = findViewById(R.id.disconnectButton);
+        disconnectButton.setOnClickListener(view -> mqttController.disconnect());
 
         // Subscription button
-        subBtn = findViewById(R.id.subBtn);
-        subBtn.setOnClickListener(view -> {
+        subscribeButton = findViewById(R.id.subscribeButton);
+        subscribeButton.setOnClickListener(view -> {
             System.out.println("SUB");
             mqttController.subscribe("/smartcar/report/startup");
             mqttController.subscribe("/smartcar/report/status");

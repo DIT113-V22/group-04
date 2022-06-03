@@ -46,10 +46,10 @@ public class MainActivityInstrumentedTest {
      */
     @Test
     public void testVisibility() {
-        onView(withId(R.id.conBtn)).check(matches(isDisplayed()));
-        onView(withId(R.id.subBtn)).check(matches(isDisplayed()));
-        onView(withId(R.id.pubBtn)).check(matches(isDisplayed()));
-        onView(withId(R.id.disBtn)).check(matches(isDisplayed()));
+        onView(withId(R.id.connectButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.subscribeButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.publishButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.disconnectButton)).check(matches(isDisplayed()));
     }
 
     /**
@@ -86,8 +86,8 @@ public class MainActivityInstrumentedTest {
 
     @Test
     public void testMqttButtonClicks() {
-        onView(withId(R.id.subBtn)).perform(click());
-        onView(withId(R.id.pubBtn)).perform(click());
-        onView(withId(R.id.disBtn)).perform(click());
+        onView(withId(R.id.subscribeButton)).perform(click());
+        onView(withId(R.id.publishButton)).perform(click());
+        onView(withId(R.id.disconnectButton)).perform(click());
     }
 }

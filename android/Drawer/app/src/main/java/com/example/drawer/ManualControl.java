@@ -96,6 +96,7 @@ public class ManualControl extends AppCompatActivity {
         time = findViewById(R.id.stopWatch);
         executeTimer = findViewById(R.id.executeWatch);
         speedStat = findViewById(R.id.speedStat);
+        angleStat = findViewById(R.id.angleStat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
 
@@ -411,7 +412,7 @@ public class ManualControl extends AppCompatActivity {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             speedProc = 0;
         }
-        String speedText = "The speed percentage: " + speedProc;
+        String speedText = "The speed is: " + speedProc;
 
         speedStat.setText(speedText);
 

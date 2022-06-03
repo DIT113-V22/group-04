@@ -40,9 +40,9 @@ public class DrawControl extends AppCompatActivity {
     private Button mainScreenButton;
     private Button manualControlScreenButton;
     Button runBtn;
-    ImageButton uploadBtn;
-    ImageButton downloadBtn;
-    ImageButton clearBtn;
+    ImageButton uploadButton;
+    ImageButton downloadButton;
+    ImageButton clearButton;
     EditText numberViewSpeed;
     EditText numberViewCellLength;
     SeekBar seekBar;
@@ -67,9 +67,9 @@ public class DrawControl extends AppCompatActivity {
         manualControlScreenButton = findViewById(R.id.DrawNavbarManual);
 
         runBtn = findViewById(R.id.runButton);
-        uploadBtn = findViewById(R.id.uploadBttn);
-        downloadBtn = findViewById(R.id.downloadBttn);
-        clearBtn = findViewById(R.id.clearBttn);
+        uploadButton = findViewById(R.id.uploadButton);
+        downloadButton = findViewById(R.id.downloadButton);
+        clearButton = findViewById(R.id.clearButton);
 
         numberViewSpeed = findViewById(R.id.numberViewSpeed);
         numberViewCellLength = findViewById(R.id.numberViewCellLength);
@@ -88,7 +88,7 @@ public class DrawControl extends AppCompatActivity {
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
         viewPoints = findViewById(R.id.viewPointsSaved);
 
-        downloadBtn.setOnClickListener(view -> {
+        downloadButton.setOnClickListener(view -> {
             Bitmap bitmap = viewToBitmap(pixelGrid);
             OutputStream imageOutStream;
 
@@ -133,7 +133,7 @@ public class DrawControl extends AppCompatActivity {
                 }
             });
 
-        uploadBtn.setOnClickListener(view -> {
+        uploadButton.setOnClickListener(view -> {
             Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
             File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             String imageDirectoryPath = imageDirectory.getPath();
@@ -142,7 +142,7 @@ public class DrawControl extends AppCompatActivity {
             someActivityResultLauncher.launch(imagePickerIntent);
         });
 
-        clearBtn.setOnClickListener(view -> pixelGrid.clear());
+        clearButton.setOnClickListener(view -> pixelGrid.clear());
         runBtn.setOnClickListener(view -> {
             mqttController.publish("/smartcar/control/obstacle", "0");
             mqttController.publish("/smartcar/control/auto", "1");

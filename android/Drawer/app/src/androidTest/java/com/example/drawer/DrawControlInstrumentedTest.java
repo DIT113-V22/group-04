@@ -78,9 +78,9 @@ public class DrawControlInstrumentedTest {
     @Test
     public void testVisibility() {
         onView(withId(R.id.textViewPathLength)).check(matches(isDisplayed()));
-        onView(withId(R.id.clearBttn)).check(matches(isDisplayed()));
-        onView(withId(R.id.downloadBttn)).check(matches(isDisplayed()));
-        onView(withId(R.id.uploadBttn)).check(matches(isDisplayed()));
+        onView(withId(R.id.clearButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.downloadButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.uploadButton)).check(matches(isDisplayed()));
         onView(withId(R.id.pixelGridA)).check(matches(isDisplayed()));
         onView(withId(R.id.runButton)).check(matches(isDisplayed()));
         onView(withId(R.id.numberViewCellLength)).check(matches(isDisplayed()));
@@ -127,9 +127,9 @@ public class DrawControlInstrumentedTest {
      */
     @Test
     public void testButtons() {
-        onView(withId(R.id.clearBttn)).check(matches(isClickable()));
-        onView(withId(R.id.uploadBttn)).check(matches(isClickable()));
-        onView(withId(R.id.downloadBttn)).check(matches(isClickable()));
+        onView(withId(R.id.clearButton)).check(matches(isClickable()));
+        onView(withId(R.id.uploadButton)).check(matches(isClickable()));
+        onView(withId(R.id.downloadButton)).check(matches(isClickable()));
         onView(withId(R.id.runButton)).check(matches(isClickable()));
         onView(withId(R.id.DrawNavbarManual)).check(matches(isClickable()));
         onView(withId(R.id.DrawNavbarMain)).check(matches(isClickable()));
@@ -142,9 +142,9 @@ public class DrawControlInstrumentedTest {
      */
     @Test
     public void isClearCanvasButtonPositionedAppropriately() {
-        onView(withId(R.id.clearBttn)).check(matches(isDisplayed()));
-        onView(withId(R.id.clearBttn)).check(isCompletelyLeftOf(withId(R.id.downloadBttn)));
-        onView(withId(R.id.clearBttn)).check(isCompletelyAbove(withId(R.id.pixelGridA)));
+        onView(withId(R.id.clearButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.clearButton)).check(isCompletelyLeftOf(withId(R.id.uploadButton)));
+        onView(withId(R.id.clearButton)).check(isCompletelyAbove(withId(R.id.pixelGridA)));
     }
 
     /**
@@ -153,9 +153,9 @@ public class DrawControlInstrumentedTest {
      */
     @Test
     public void isDownloadButtonBetweenClearCanvasButtonAndUploadButton() {
-        onView(withId(R.id.downloadBttn)).check(matches(isDisplayed()));
-        onView(withId(R.id.downloadBttn)).check(isCompletelyRightOf(withId(R.id.clearBttn)));
-        onView(withId(R.id.downloadBttn)).check(isCompletelyLeftOf(withId(R.id.uploadBttn)));
+        onView(withId(R.id.downloadButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.downloadButton)).check(isCompletelyRightOf(withId(R.id.clearButton)));
+        onView(withId(R.id.downloadButton)).check(isCompletelyRightOf(withId(R.id.uploadButton)));
     }
 
     /**
@@ -165,9 +165,9 @@ public class DrawControlInstrumentedTest {
     public void isCanvasPositionedAppropriately() {
         onView(withId(R.id.pixelGridA)).check(matches(isDisplayed()));
 
-        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.clearBttn)));
-        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.downloadBttn)));
-        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.clearBttn)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.clearButton)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.downloadButton)));
+        onView(withId(R.id.pixelGridA)).check(isCompletelyBelow(withId(R.id.uploadButton)));
 
         onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.runButton)));
         onView(withId(R.id.pixelGridA)).check(isCompletelyAbove(withId(R.id.numberViewCellLength)));
