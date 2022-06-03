@@ -28,7 +28,7 @@ public class ManualControlInstrumentedTest {
             new ActivityScenarioRule<>(ManualControl.class);
 
     /**
-     * Initialise Espresso Intents capturing before each test
+     * Initialise Espresso Intents capturing before each test.
      */
     @Before
     public void intentsInit() {
@@ -36,7 +36,7 @@ public class ManualControlInstrumentedTest {
     }
 
     /**
-     * Release Espresso Intents capturing after each test
+     * Release Espresso Intents capturing after each test.
      */
     @After
     public void intentsTeardown() {
@@ -44,8 +44,7 @@ public class ManualControlInstrumentedTest {
     }
 
     /**
-     * Tests if the text that displays the speed is positioned above
-     * the text that displays the angle the joystick is pointed at
+     * Tests if the text that displays the speed is positioned above the text that displays the angle.
      */
     @Test
     public void isSpeedTextDisplayedAboveAngleText() {
@@ -54,8 +53,7 @@ public class ManualControlInstrumentedTest {
     }
 
     /**
-     * Tests if the Joystick is placed below both text boxes in order
-     * to ensure that the intended GUI positioning is maintained
+     * Tests if the Joystick is placed below both text boxes.
      */
     @Test
     public void isJoystickDisplayedBelowSpeedAndAngle() {
@@ -69,7 +67,7 @@ public class ManualControlInstrumentedTest {
     }
 
     /**
-     * Test visibility of navbar elements on screen
+     * Test visibility of navbar elements on screen.
      */
     @Test
     public void isNavBarVisible() {
@@ -79,8 +77,7 @@ public class ManualControlInstrumentedTest {
     }
 
     /**
-     * Tests whether clicking the Draw Control Button creates an intent
-     * to the Draw Control Activity
+     * Tests whether clicking the Draw Control Button creates an intent to the Draw Control Activity.
      */
     @Test
     public void doesDrawControlButtonCreateIntentToDrawControlScreen() {
@@ -90,8 +87,7 @@ public class ManualControlInstrumentedTest {
     }
 
     /**
-     * Tests whether clicking the Intro Button creates an intent
-     * to the Intro Activity
+     * Tests whether clicking the Intro Button creates an intent to the Intro Activity.
      */
     @Test
     public void doesIntroButtonCreateIntentToIntroScreen() {

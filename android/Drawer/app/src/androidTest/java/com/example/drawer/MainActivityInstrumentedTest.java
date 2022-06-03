@@ -26,7 +26,7 @@ public class MainActivityInstrumentedTest {
             new ActivityScenarioRule<>(MainActivity.class);
 
     /**
-     * Initialise Espresso Intents capturing before each test
+     * Initialise Espresso Intents capturing before each test.
      */
     @Before
     public void intentsInit() {
@@ -34,7 +34,7 @@ public class MainActivityInstrumentedTest {
     }
 
     /**
-     * Release Espresso Intents capturing after each test
+     * Release Espresso Intents capturing after each test.
      */
     @After
     public void intentsTeardown() {
@@ -42,7 +42,7 @@ public class MainActivityInstrumentedTest {
     }
 
     /**
-     * Test visibility of all elements on screen
+     * Test visibility of all elements on screen.
      */
     @Test
     public void testVisibility() {
@@ -63,8 +63,7 @@ public class MainActivityInstrumentedTest {
     }
 
     /**
-     * Tests whether clicking the Draw Control Button creates an intent
-     * to the Draw Control Activity
+     * Tests whether clicking the Draw Control Button creates an intent to the Draw Control Activity.
      */
     @Test
     public void doesDrawControlButtonCreateIntentToDrawControlScreen() {
@@ -74,8 +73,7 @@ public class MainActivityInstrumentedTest {
     }
 
     /**
-     * Tests whether clicking the Manual Control Button creates an intent
-     * to the Manual Control Activity
+     * Tests whether clicking the Manual Control Button creates an intent to the Manual Control Activity.
      */
     @Test
     public void doesManualControlButtonCreateIntentToManualControlScreen() {
@@ -84,6 +82,9 @@ public class MainActivityInstrumentedTest {
         intended(hasComponent(ManualControl.class.getName()));
     }
 
+    /**
+     * Tests basic clicking functionality of mqtt buttons.
+     */
     @Test
     public void testMqttButtonClicks() {
         onView(withId(R.id.subscribeButton)).perform(click());

@@ -117,7 +117,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     @SuppressLint("Range")
     public ArrayList<String> getAllPaths() {
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<String> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor res = db.rawQuery("select * from mySavedPath", null)) {
             res.moveToFirst();
@@ -280,7 +280,7 @@ public class DBManager extends SQLiteOpenHelper {
                 pointY = tempPoint.y;
             }
 
-                    stringBuilder.append(pointX);
+            stringBuilder.append(pointX);
             stringBuilder.append(",");
             stringBuilder.append(pointY);
 

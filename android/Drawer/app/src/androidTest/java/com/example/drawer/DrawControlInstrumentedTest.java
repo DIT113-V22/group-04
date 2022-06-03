@@ -45,7 +45,7 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Release Espresso Intents capturing after each test
+     * Release Espresso Intents capturing after each test.
      */
     @After
     public void intentsTeardown() {
@@ -73,7 +73,7 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Test visibility of all elements on screen
+     * Test visibility of all elements on screen.
      */
     @Test
     public void testVisibility() {
@@ -90,7 +90,7 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Test visibility of navbar elements on screen
+     * Test visibility of navbar elements on screen.
      */
     @Test
     public void isNavBarVisible() {
@@ -100,8 +100,7 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Tests whether clicking the Intro Button creates an intent
-     * to the Intro Activity
+     * Tests whether clicking the Intro Button creates an intent to the Intro Activity.
      */
     @Test
     public void doesIntroButtonCreateIntentToIntroScreen() {
@@ -111,8 +110,7 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Tests whether clicking the Manual Control Button creates an intent
-     * to the Manual Control Activity
+     * Tests whether clicking the Manual Control Button creates an intent to the Manual Control Activity.
      */
     @Test
     public void doesManualControlButtonCreateIntentToManualControlScreen() {
@@ -122,7 +120,7 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Test if the buttons are clickable
+     * Test if the buttons are clickable.
      */
     @Test
     public void testButtons() {
@@ -136,8 +134,8 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Tests if the clear canvas button is position to the left of the download button
-     * and above the canvas
+     * Tests if the clear canvas button is position to the left of the download button.
+     * And above the canvas.
      */
     @Test
     public void isClearCanvasButtonPositionedAppropriately() {
@@ -147,8 +145,8 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Tests if the download button is position to the right of the clear canvas button
-     * and to the left of the upload button
+     * Tests if the download button is position to the right of the clear canvas button.
+     * And to the left of the upload button.
      */
     @Test
     public void isDownloadButtonBetweenClearCanvasButtonAndUploadButton() {
@@ -158,7 +156,7 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Tests if Canvas is positioned as intended in comparison to the above and below elements
+     * Tests if Canvas is positioned as intended in comparison to the above and below elements.
      */
     @Test
     public void isCanvasPositionedAppropriately() {
@@ -178,8 +176,7 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Tests if the Run button is position to the appropriately in comparison to its
-     * surrounding elements
+     * Tests if the Run button is position to the appropriately in comparison to its surrounding elements.
      */
     @Test
     public void isRunButtonPositionedAppropriately() {
@@ -196,12 +193,16 @@ public class DrawControlInstrumentedTest {
     }
 
     /**
-     * Test editing text fields
+     * Test editing text fields.
      */
     @Test
     public void testEditTexts() {
-        onView(withId(R.id.numberViewCellLength)).perform(typeText("3"), closeSoftKeyboard()).check(matches(withText("3")));
-        onView(withId(R.id.numberViewSpeed)).perform(typeText("2"), closeSoftKeyboard()).check(matches(withText("2")));
+        onView(withId(R.id.numberViewCellLength))
+                .perform(typeText("3"),
+                closeSoftKeyboard()).check(matches(withText("3")));
+        onView(withId(R.id.numberViewSpeed))
+                .perform(typeText("2"),
+                closeSoftKeyboard()).check(matches(withText("2")));
     }
 
 }
