@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller for managing MQTT connections, subscriptions, and publishing of messages.
+ * VectorMap implementation based on canvasgrid solution.
  *
  * @author YukiMina14
  */

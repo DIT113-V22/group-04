@@ -33,41 +33,6 @@ jobs:
           ./gradlew build --stacktrace
           
           
-  run-unit-tests:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Clone Repo
-        uses: actions/checkout@v3
-    
-      - name: set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: gradle
-          
-      - name: Change wrapper permissions
-        run: |
-          cd android/Drawer
-          chmod +x gradlew    
-          
-      - name: Run unit tests
-        timeout-minutes: 15
-        run: |
-          cd android/Drawer
-          ./gradlew test --info
-          
-      # Upload artifacts
-      - name: Archive test artifacts
-        if: ${{ success() }} || ${{ failure() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: Unit test reports
-          path: |
-            android/Drawer/app/build/reports/tests/testReleaseUnitTest
-          
-          
   run-instrumented-tests:
     runs-on: macos-latest
     
