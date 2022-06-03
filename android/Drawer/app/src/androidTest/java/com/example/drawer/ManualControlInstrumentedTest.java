@@ -69,14 +69,6 @@ public class ManualControlInstrumentedTest {
     }
 
     /**
-     * Test visibility of all elements on screen
-     */
-    @Test
-    public void testVisibility() {
-
-    }
-
-    /**
      * Test visibility of navbar elements on screen
      */
     @Test
