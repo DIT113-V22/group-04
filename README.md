@@ -1,9 +1,9 @@
 # group-04
 
 ![MegaLinter](https://github.com/DIT113-V22/group-04/actions/workflows/mega-linter.yml/badge.svg)
-![Android CI](https://github.com/DIT113-V22/group-04/actions/workflows/android-build.yml/badge.svg)
-![Arduino CI](https://github.com/DIT113-V22/group-04/actions/workflows/arduino-build.yml/badge.svg)
-![Java CI](https://github.com/DIT113-V22/group-04/actions/workflows/java-build.yml/badge.svg)
+![Android CI](https://github.com/DIT113-V22/group-04/actions/workflows/android-ci.yml/badge.svg)
+![Arduino CI](https://github.com/DIT113-V22/group-04/actions/workflows/arduino-ci.yml/badge.svg)
+![Java CI](https://github.com/DIT113-V22/group-04/actions/workflows/java-ci.yml/badge.svg)
 
 
 ## About the project

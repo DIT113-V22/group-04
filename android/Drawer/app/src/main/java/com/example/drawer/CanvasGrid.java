@@ -17,6 +17,12 @@ import java.util.Queue;
     thread: https://stackoverflow.com/questions/24842550/2d-array-grid-on-drawing-canvas
  */
 
+/**
+ * The CanvasGrid class serves as the foundation for the grid-based canvas used in DrawControl.
+ *
+ * @author Kev049
+ * @author YukiMina14
+ */
 public class CanvasGrid extends View {
 
     public enum ResizeMode {
@@ -39,7 +45,7 @@ public class CanvasGrid extends View {
 
     private boolean[][] pureCellChecked = new boolean[50][100];
     private VectorMap vectorMap = new VectorMap();
-    private double vectorSmoothnes = 3.0;
+    private double vectorSmoothness = 3.0;
     private boolean firstTouch = true;
 
     Queue<Point> pointQueue = new LinkedList<>();
@@ -75,8 +81,8 @@ public class CanvasGrid extends View {
         return pathScale;
     }
 
-    public double getVectorSmoothnes() {
-        return  vectorSmoothnes;
+    public double getVectorSmoothness() {
+        return vectorSmoothness;
     }
 
 
@@ -95,8 +101,11 @@ public class CanvasGrid extends View {
         this.pathScale = pathScale;
     }
 
-    public void setVectorSmoothnes(double smoothnes) {
-        vectorSmoothnes = smoothnes;
+    /**
+     * Sets smoothness before next vector is drawn.
+     */
+    public void setVectorSmoothness(double smoothness) {
+        vectorSmoothness = smoothness;
     }
 
     //public functions
@@ -117,6 +126,9 @@ public class CanvasGrid extends View {
         calculateDimensions();
     }
 
+    /**
+     * Resizes canvas grid to fit content.
+     */
     private void calculateDimensions() {
         if (numColumns < 1 || numRows < 1) {
             Log.d("tag4", "Number of rows or columns are less than 1");
@@ -146,6 +158,11 @@ public class CanvasGrid extends View {
         invalidate();
     }
 
+    /**
+     * Draws a grid on canvas, and fills in spaces that has been drawn on.
+     *
+     * @param canvas to draw on.
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         if (numColumns == 0 || numRows == 0) {
@@ -181,6 +198,12 @@ public class CanvasGrid extends View {
         }
     }
 
+    /**
+     * Handles touch input on canvas.
+     *
+     * @param event motion touch event
+     * @return true
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         performClick();
@@ -218,7 +241,7 @@ public class CanvasGrid extends View {
             int row = (int)(event.getY() / cellLength);
 
             try {
-                if (Math.hypot(column - lastx, row - lasty) > vectorSmoothnes) {
+                if (Math.hypot(column - lastx, row - lasty) > vectorSmoothness) {
                     cellChecked[column][row] = true;
                     pureCellChecked[column][row] = true;
                     // if the difference between current x, y and new x, y is bigger than 1 draw a line in between
@@ -253,6 +276,16 @@ public class CanvasGrid extends View {
     }
 
     //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+
+    /**
+     * draws a line between 2 points using Bresenham's line Algorithm
+     * Src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+     *
+     * @param x0 line start x
+     * @param y0 line start y
+     * @param x1 line end x
+     * @param y1 line end y
+     */
     private void gridDrawLine(int x0, int y0, int x1, int y1) {
 
         //Delta X, Y

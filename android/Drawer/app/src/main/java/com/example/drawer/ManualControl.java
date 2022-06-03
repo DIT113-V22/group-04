@@ -111,8 +111,6 @@ public class ManualControl extends AppCompatActivity {
         mqttController.updateCamera(camera);
         playPath = findViewById(R.id.playPath);
 
-        testPoints();
-
         viewPaths.setOnClickListener(view -> {
             //open the pop up window
             createViewContactDialogueReplays();
@@ -128,7 +126,7 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * On the end of recording stop timer and activate save pop-up.
+     * This method stops the times on the end of recording and activates save pop-up screen.
      *
      * @param buttonToggle toggled on or off.
      */
@@ -147,7 +145,8 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Records commands by inserting movement instructions along with recording time into arraylists.
+     * This method records speed and angle of joystick when the record toggle is on
+     * by inserting movement instructions along with recording time into arraylists.
      *
      * @param speed individual speed command extracted from joystick.
      * @param angle individual angle command extracted from joystick.
@@ -187,7 +186,6 @@ public class ManualControl extends AppCompatActivity {
 
         playRecordings = new AlertDialog.Builder(this);
 
-
         //Saves replay with the name.
         //stores the name of the reply and the respective array list to the database.
         saveReplay.setOnClickListener(view -> {
@@ -208,8 +206,8 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Pop-up of recordings which can be selected and played.
-     * Selected played in separate thread.
+     * This method creates pop-up to view saved recordings which can be selected, played and deleted.
+     * Selected path is played in a separate thread.
      */
     public void createViewContactDialogueReplays() {
 
@@ -264,7 +262,7 @@ public class ManualControl extends AppCompatActivity {
                 myItem = arrayAdapter.getItem(i);
 
                 //System.out.println(dbManager.getPathDetails(myItem));
-                ArrayList<Integer> itemCarSpeed = dbManager.getPathDetails(myItem);
+                ArrayList<Integer> itemCarSpeed = dbManager.getSpeedDetails(myItem);
                 ArrayList<Integer> itemCarAngle = dbManager.getAngleDetails(myItem);
                 ArrayList<Long> itemCarTimer = dbManager.getTimeDetails(myItem);
 
@@ -420,7 +418,7 @@ public class ManualControl extends AppCompatActivity {
     }
 
     /**
-     * Calculate angle based on joystick position.
+     * Calculates the car angle based on joystick position.
      *
      * @param event User touch/drag.
      * @return calculated angle.
@@ -464,21 +462,5 @@ public class ManualControl extends AppCompatActivity {
     public void openDrawScreen() {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
-    }
-
-    public void testPoints() {
-        Queue<Point> pointQueue = new LinkedList<>();
-        pointQueue.add(new Point(4,3));
-        pointQueue.add(new Point(2,8));
-        pointQueue.add(new Point(6,0));
-        pointQueue.add(new Point(7,2));
-        pointQueue.add(new Point(9,5));
-        pointQueue.add(new Point(1,2));
-
-
-        String pointQueueString = dbManager.pointToString(pointQueue);
-        System.out.println(pointQueueString);
-        Queue<Point> pointQueueNew = dbManager.stringToPoint(pointQueueString);
-        System.out.println(pointQueueNew);
     }
 }
