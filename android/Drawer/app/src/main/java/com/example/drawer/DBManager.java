@@ -77,6 +77,7 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * This method is used to add new path, where a new path mean adding a new row to the table.
      * Every new path consists of all parameters.
+     *
      * @param savedName name of recording
      * @param speedList list of speed instructions
      * @param angleList list of angle instructions
@@ -106,6 +107,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * This method is called to check if the table exists already.
+     *
      * @param sqLiteDatabase the database we use
      */
     @Override
@@ -118,6 +120,7 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * This method runs a query which returns all the paths,
      * where each path stands for an entire row in the table.
+     *
      * @return arraylist of recordings
      */
     @SuppressLint("Range")
@@ -138,6 +141,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * This method run a query with returns all the names of paths.
+     *
      * @return arraylist of names of recordings
      */
     @SuppressLint("Range")
@@ -159,7 +163,9 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * This method runs a query which returns all the speed details of a specific path,
      * This methods takes in a path name to identify the details.
+     *
      * @param pathName name of a recording
+     *
      * @return array list of speed values
      */
     @SuppressLint("Range")
@@ -179,7 +185,9 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * This methods runs a query which returns the angles column value which matches with the given path name.
+     *
      * @param pathName name of a recording
+     *
      * @return array list of angle values
      */
     @SuppressLint("Range")
@@ -200,7 +208,9 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * This methods runs a query which returns the time column value which matches with the given path name.
+     *
      * @param pathName name of a recording
+     *
      * @return array list of time values
      */
     @SuppressLint("Range")
@@ -221,6 +231,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * This method deletes a specific row from the database, by matching it with the given path name.
+     *
      * @param pathName name of a recording
      */
     public void deleteSpecific(String pathName) {

@@ -173,7 +173,7 @@ public class DrawControl extends AppCompatActivity {
 
         /**
          * This method acts as a listener to the seekbar, and  updates the grids every time
-         * the progress of the seekbar is changed
+         * the progress of the seekbar is changed.
          */
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -282,9 +282,10 @@ public class DrawControl extends AppCompatActivity {
     }
 
     /**
-     * Converts the current drawing to a bitmap
+     * Converts the current drawing to a bitmap.
      *
      * @param view the view where the drawing is
+     *
      * @return bitmap of drawing
      */
     public Bitmap viewToBitmap(View view) {
