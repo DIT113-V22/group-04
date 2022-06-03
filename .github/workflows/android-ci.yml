@@ -88,9 +88,10 @@ jobs:
           chmod +x gradlew
        
       - name: Run instrumented tests
-        uses: ReactiveCircus/android-emulator-runner@v2.24.0
+        uses: ReactiveCircus/android-emulator-runner@v2
         timeout-minutes: 15
         with:
+          profile: Nexus 6
           api-level: 31
           arch: x86_64
           working-directory: ./android/Drawer

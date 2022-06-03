@@ -136,8 +136,8 @@ public class CanvasGrid extends View {
             int width = layoutParams.width;
             int height = layoutParams.height;
 
-            numColumns = (int) Math.floor((width / cellLength));
-            numRows = (int) Math.floor((height / cellLength));
+            numColumns = (int) Math.floor(width / cellLength);
+            numRows = (int) Math.floor(height / cellLength);
         }
 
         cellChecked = new boolean[numColumns][numRows];
