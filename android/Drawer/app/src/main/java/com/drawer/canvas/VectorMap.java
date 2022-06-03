@@ -55,13 +55,6 @@ public class VectorMap {
     }
 
     /**
-     * Erases the vector map.
-     */
-    public void clear() {
-        vectorList.clear();
-    }
-
-    /**
      * Calculates the size of the vector Path.
      *
      * @return Size of the path
@@ -92,83 +85,5 @@ public class VectorMap {
     }
 
 
-    /**
-     * gets the angle between 2 vectors.
-     *
-     * @param vector1 Base vector
-     * @param vector2 2nd vector
-     *
-     * @return angle between vectors
-     */
-    public double getVectorAngle(Vector vector1, Vector vector2) {
-        double angle;
-        Vector dotProductVec = new Vector(vector1);
-        dotProductVec.multiply(vector2);
-        double dotProduct = dotProductVec.posX + dotProductVec.posY;
 
-        angle = (dotProduct / (vector1.getMagnitude() * vector2.getMagnitude()));
-
-        angle = (Math.acos(angle) * (180 / Math.PI));
-
-        Vector newPoint = new Vector(vector1);
-        newPoint.add(vector2);
-
-        if (vector1.posX != 0) { //if not vertical
-            double h = (double) vector1.posY / (double) vector1.posX;
-
-            if (vector1.posX > 0) { // car pointing to the right
-                if (newPoint.posY > (newPoint.posX * h)) {
-                    angle *= -1;
-                }
-            } else { // car pointing left
-                if (newPoint.posY < (newPoint.posX * h)) {
-                    angle *= -1;
-                }
-            }
-
-        } else if (newPoint.posY > 0) { // if downward
-            if (newPoint.posX < 0) {
-                angle *= -1;
-            }
-        } else if (newPoint.posY < 0) { //if upward
-            if (newPoint.posX > 0) {
-                angle *= -1;
-            }
-        }
-
-        return angle;
-    }
-
-    /**
-     * Multiplies All the vectors with another vector.
-     *
-     * @param vector Vector to multiply with the current one
-     */
-    public void multiply(Vector vector) {
-        for (Vector v : vectorList) {
-            v.multiply(vector);
-        }
-    }
-
-    /**
-     * Multiplies all vectors with integer.
-     *
-     * @param factor multiplication factor
-     */
-    public void multiply(int factor) {
-        for (Vector v : vectorList) {
-            v.multiply(factor);
-        }
-    }
-
-    /**
-     * Multiplies all vectors with float.
-     *
-     * @param factor multiplication factor
-     */
-    public void multiply(float factor) {
-        for (Vector v : vectorList) {
-            v.multiply(factor);
-        }
-    }
 }
