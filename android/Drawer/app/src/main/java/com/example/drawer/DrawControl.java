@@ -92,6 +92,10 @@ public class DrawControl extends AppCompatActivity {
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
         viewPoints = findViewById(R.id.viewPointsSaved);
 
+        /**
+         * This method converts the current view (drawing) to a bitmap
+         * by calling another method. Then saves the bitmap to the image gallery.
+         */
         downloadBtn.setOnClickListener(view -> {
             Bitmap bitmap = viewToBitmap(pixelGrid);
             OutputStream imageOutStream;
@@ -113,7 +117,10 @@ public class DrawControl extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
-
+        /**
+         * This method converts the image to a drawable and sets it as
+         * a background image.
+         */
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -137,6 +144,11 @@ public class DrawControl extends AppCompatActivity {
                 }
             });
 
+        /**
+         * This method displays the gallery upon clicking the button
+         * And lets the user choose an image to upload as a background picture.
+         * The image is then launched to be set as a background.
+         */
         uploadBtn.setOnClickListener(view -> {
             Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
             File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
@@ -159,6 +171,10 @@ public class DrawControl extends AppCompatActivity {
             pixelGrid.executePath(speed);
         });
 
+        /**
+         * This method acts as a listener to the seekbar, and  updates the grids every time
+         * the progress of the seekbar is changed
+         */
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -265,6 +281,12 @@ public class DrawControl extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Converts the current drawing to a bitmap
+     *
+     * @param view the view where the drawing is
+     * @return bitmap of drawing
+     */
     public Bitmap viewToBitmap(View view) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
