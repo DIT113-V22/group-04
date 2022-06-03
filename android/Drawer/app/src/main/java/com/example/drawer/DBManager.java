@@ -120,8 +120,6 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * This method runs a query which returns all the paths,
      * where each path stands for an entire row in the table.
-     *
-     * @return arraylist of recordings
      */
     @SuppressLint("Range")
     public ArrayList<String> getAllPaths() {

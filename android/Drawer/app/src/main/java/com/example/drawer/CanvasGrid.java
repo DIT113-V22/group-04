@@ -19,6 +19,7 @@ import java.util.Queue;
 
 /**
  * The CanvasGrid class serves as the foundation for the grid-based canvas used in DrawControl.
+ *
  * @author Kev049
  * @author YukiMina14
  */
