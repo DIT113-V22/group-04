@@ -14,7 +14,7 @@
         android:src="@android:drawable/stat_sys_download"
         android:text="Upload"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.755"
+        app:layout_constraintHorizontal_bias="0.79"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,7 +26,7 @@
         android:src="@android:drawable/ic_menu_upload"
         android:text="Upload"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.613"
+        app:layout_constraintHorizontal_bias="0.632"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,7 +38,7 @@
         android:src="@android:drawable/ic_menu_delete"
         android:text="Upload"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.472"
+        app:layout_constraintHorizontal_bias="0.477"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -96,7 +96,7 @@
 
     <TextView
         android:id="@+id/textViewDistanceTraveled"
-        android:layout_width="103dp"
+        android:layout_width="100dp"
         android:layout_height="21dp"
         android:text="0"
         android:textColor="@color/black"

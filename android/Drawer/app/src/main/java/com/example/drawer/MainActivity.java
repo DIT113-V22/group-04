@@ -2,8 +2,6 @@ package com.example.drawer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Animation fadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -57,10 +56,7 @@ public class MainActivity extends AppCompatActivity {
         drawControlScreenButton = findViewById(R.id.MainNavbarDraw);
         carImg = findViewById(R.id.imageViewCarAndPen);
         smokeImg = findViewById(R.id.imageViewSmokeParticle);
-
-        Animation fadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
-
-        smokeImg.startAnimation(fadeOut);
+        //smokeImg.startAnimation(fadeOut);
 
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());

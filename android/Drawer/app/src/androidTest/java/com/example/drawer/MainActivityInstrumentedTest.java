@@ -21,7 +21,8 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
 
-    @Rule public ActivityScenarioRule<MainActivity> activityScenarioRule =
+    @Rule
+    public ActivityScenarioRule<MainActivity> activityScenarioRule =
             new ActivityScenarioRule<>(MainActivity.class);
 
     /**
@@ -85,7 +86,6 @@ public class MainActivityInstrumentedTest {
 
     @Test
     public void testMqttButtonClicks() {
-        onView(withId(R.id.conBtn)).perform(click());
         onView(withId(R.id.subBtn)).perform(click());
         onView(withId(R.id.pubBtn)).perform(click());
         onView(withId(R.id.disBtn)).perform(click());

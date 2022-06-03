@@ -8,24 +8,22 @@
 
     <Button
         android:id="@+id/conBtn"
-        android:layout_width="480dp"
-        android:layout_height="60sp"
-        android:layout_marginStart="76dp"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
         android:background="@drawable/menu_item_vector"
         android:paddingLeft="128dp"
         android:text="CONNECT"
         android:textAlignment="viewStart"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/subBtn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.499" />
 
     <Button
         android:id="@+id/disBtn"
-        android:layout_width="480dp"
+        android:layout_width="340dp"
         android:layout_height="60dp"
-        android:layout_marginStart="76dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/menu_item_vector"
         android:paddingLeft="128dp"
@@ -33,15 +31,14 @@
         android:textAlignment="viewStart"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/pubBtn"
         app:layout_constraintTop_toBottomOf="@+id/subBtn"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/pubBtn"
-        android:layout_width="480dp"
+        android:layout_width="340dp"
         android:layout_height="60dp"
-        android:layout_marginStart="76dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/menu_item_vector"
         android:paddingLeft="128dp"
@@ -49,15 +46,16 @@
         android:textAlignment="viewStart"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/disBtn"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/subBtn"
-        android:layout_width="480sp"
+        android:layout_width="340dp"
         android:layout_height="60dp"
-        android:layout_marginStart="76dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/menu_item_vector"
         android:paddingLeft="128dp"
@@ -65,7 +63,7 @@
         android:textAlignment="viewStart"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/disBtn"
         app:layout_constraintTop_toBottomOf="@+id/conBtn"
         app:layout_constraintVertical_bias="0.0" />
 

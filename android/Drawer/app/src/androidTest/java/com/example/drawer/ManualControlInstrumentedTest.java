@@ -50,7 +50,7 @@ public class ManualControlInstrumentedTest {
     @Test
     public void isSpeedTextDisplayedAboveAngleText() {
         onView(withId(R.id.speedStat)).check(matches(isDisplayed()));
-        onView(withId(R.id.speedStat)).check(isCompletelyAbove(withId(R.id.speedStat)));
+        onView(withId(R.id.speedStat)).check(isCompletelyAbove(withId(R.id.angleStat)));
     }
 
     /**
