@@ -6,13 +6,12 @@ import java.util.ArrayList;
 
 public class ManualRecordingRun implements Runnable {
     private final Chronometer executeTimer;
-    private int executeTimerInt;
     private boolean executeTimerBool;
     private final ArrayList<Long> carTimerQueue;
     private final MQTTController mqttController;
     private final ArrayList<Integer> carSpeedQueue;
     private final ArrayList<Integer> carAngleQueue;
-    private boolean obstacle = false;
+    private final boolean obstacle = false;
     private long executeCheckingTime = 0;
     private long executeCheckingTimeBeninging = 0;
 

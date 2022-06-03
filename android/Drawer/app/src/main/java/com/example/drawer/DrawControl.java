@@ -21,7 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -40,12 +39,10 @@ public class DrawControl extends AppCompatActivity {
 
     private Button mainScreenButton;
     private Button manualControlScreenButton;
-    private Button drawControlScreenButton;
-    ImageView uploadedImage;
     Button runBtn;
-    ImageButton uploadBtn;
-    ImageButton downloadBtn;
-    ImageButton clearBtn;
+    ImageButton uploadButton;
+    ImageButton downloadButton;
+    ImageButton clearButton;
     EditText numberViewSpeed;
     EditText numberViewCellLength;
     SeekBar seekBar;
@@ -68,12 +65,11 @@ public class DrawControl extends AppCompatActivity {
 
         mainScreenButton = findViewById(R.id.DrawNavbarMain);
         manualControlScreenButton = findViewById(R.id.DrawNavbarManual);
-        drawControlScreenButton = findViewById(R.id.DrawNavbarDraw);
 
         runBtn = findViewById(R.id.runButton);
-        uploadBtn = findViewById(R.id.uploadBttn);
-        downloadBtn = findViewById(R.id.downloadBttn);
-        clearBtn = findViewById(R.id.clearBttn);
+        uploadButton = findViewById(R.id.uploadButton);
+        downloadButton = findViewById(R.id.downloadButton);
+        clearButton = findViewById(R.id.clearButton);
 
         numberViewSpeed = findViewById(R.id.numberViewSpeed);
         numberViewCellLength = findViewById(R.id.numberViewCellLength);
@@ -87,12 +83,12 @@ public class DrawControl extends AppCompatActivity {
         distanceTraveledView = findViewById(R.id.textViewDistanceTraveled);
         mqttController.updateTextView(distanceTraveledView, "/smartcar/report/odometer");
 
-        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
+        // Navbar
+        mainScreenButton.setOnClickListener(view -> openMainScreen());
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
-        drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
         viewPoints = findViewById(R.id.viewPointsSaved);
 
-        downloadBtn.setOnClickListener(view -> {
+        downloadButton.setOnClickListener(view -> {
             Bitmap bitmap = viewToBitmap(pixelGrid);
             OutputStream imageOutStream;
 
@@ -137,7 +133,7 @@ public class DrawControl extends AppCompatActivity {
                 }
             });
 
-        uploadBtn.setOnClickListener(view -> {
+        uploadButton.setOnClickListener(view -> {
             Intent imagePickerIntent = new Intent(Intent.ACTION_PICK);
             File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             String imageDirectoryPath = imageDirectory.getPath();
@@ -146,11 +142,9 @@ public class DrawControl extends AppCompatActivity {
             someActivityResultLauncher.launch(imagePickerIntent);
         });
 
-        clearBtn.setOnClickListener(view -> {
-            pixelGrid.clear();
-
-        });
+        clearButton.setOnClickListener(view -> pixelGrid.clear());
         runBtn.setOnClickListener(view -> {
+            mqttController.publish("/smartcar/control/obstacle", "0");
             mqttController.publish("/smartcar/control/auto", "1");
             String speed = numberViewSpeed.getText().toString();
             if (speed.isEmpty()) {
@@ -227,10 +221,11 @@ public class DrawControl extends AppCompatActivity {
         alertDialog = builder.create();
         alertDialog.show();
 
-        pathList = (ListView) popUpView.findViewById(R.id.pathListDraw);
-        List savedPathList = new ArrayList();
+        pathList = popUpView.findViewById(R.id.pathListDraw);
+        List<String> savedPathList = new ArrayList<>();
 
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, savedPathList);
+        ArrayAdapter<String> arrayAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, savedPathList);
         pathList.setAdapter(arrayAdapter);
         onListItemClick(pathList, popUpView);
     }
@@ -247,21 +242,17 @@ public class DrawControl extends AppCompatActivity {
     private void updatePathLength() {
         double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
         pathLength = Math.floor(pathLength * 100) / 100;
-        pathLengthView.setText("Path length: " + pathLength + " m");
+        String pathLengthText = "Path length: " + pathLength + " m";
+        pathLengthView.setText(pathLengthText);
     }
 
-    public void openReadMEScreen() {
+    public void openMainScreen() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
-        startActivity(intent);
-    }
-
-    public void openDrawScreen() {
-        Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
     }
 

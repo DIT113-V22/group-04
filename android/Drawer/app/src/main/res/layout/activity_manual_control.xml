@@ -8,76 +8,65 @@
     tools:context=".ManualControl">
 
 
-    <Button
-        android:id="@+id/ManualNavbarManual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#8685EF"
-        android:text="Manual Control"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0">
 
-    <Button
-        android:id="@+id/ManualNavbarDraw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#8685EF"
-        android:text="Draw Control"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        <Button
+            android:id="@+id/ManualNavbarManual"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="#8685EF"
+            android:text="Manual Control" />
 
-    <Button
-        android:id="@+id/ManualNavbarMain"
-        android:layout_width="93dp"
-        android:layout_height="48dp"
-        android:backgroundTint="#8685EF"
-        android:text="INTRO"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.53"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" /><![CDATA[
+        <Button
+            android:id="@+id/ManualNavbarMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="#8685EF"
+            android:text="Intro" />
 
+        <Button
+            android:id="@+id/ManualNavbarDraw"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="#8685EF"
+            android:text="Draw Control" />
 
-
-
-    app:layout_constraintVertical_bias="0.602"
-        android:textColor="@color/black"/>
+    </LinearLayout>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    ]]>
-
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/recordToggle"
-        android:layout_width="63dp"
-        android:layout_height="45dp"
-        android:layout_marginBottom="188dp"
-        app:layout_constraintBottom_toBottomOf="@+id/ManualNavbarDraw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.893"
+        app:layout_constraintHorizontal_bias="0.851"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <Chronometer
+        android:id="@+id/stopWatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="252dp"
+        android:textColor="#a0a0a0"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.845"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recordToggle"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -89,38 +78,10 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.89"
+        app:layout_constraintHorizontal_bias="0.847"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.525" />
-
-    <Chronometer
-        android:id="@+id/stopWatch"
-        android:layout_width="68dp"
-        android:layout_height="34dp"
-        android:textColor="#a0a0a0"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.906"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recordToggle"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Chronometer
-        android:id="@+id/executeWatch"
-        android:layout_width="68dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginBottom="256dp"
-        android:textSize="20sp"
-        android:textColor="#a0a0a0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.192"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewPathsScreen"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.47" />
 
     <ImageView
         android:id="@+id/outerCircle"
@@ -134,11 +95,10 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.89" />
-
+        app:layout_constraintVertical_bias="0.839" />
 
     <TextView
         android:id="@+id/innerCircle"
@@ -151,38 +111,40 @@
         android:textSize="5sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.807" />
-
-    <TextView
-        android:id="@+id/angleSTat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Angular direction of the Car"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.457"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.094" />
+        app:layout_constraintVertical_bias="0.767" />
 
     <TextView
         android:id="@+id/speedStat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Speed percentage of the Car"
+        android:text="The speed is: "
+        android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.352"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.035" />
+        app:layout_constraintVertical_bias="0.022" />
+
+    <TextView
+        android:id="@+id/angleStat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="The angle is: "
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.344"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.08" />
 
     <Button
         android:id="@+id/viewPathsScreen"
@@ -191,21 +153,35 @@
         android:text="My Recordings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.036"
+        app:layout_constraintHorizontal_bias="0.229"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.575" />
+        app:layout_constraintVertical_bias="0.484" />
+
+    <Chronometer
+        android:id="@+id/executeWatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="256dp"
+        android:textColor="#a0a0a0"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.168"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewPathsScreen"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/camera"
-        android:layout_width="328dp"
-        android:layout_height="201dp"
+        android:layout_width="300dp"
+        android:layout_height="220dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.264"
+        app:layout_constraintVertical_bias="0.207"
         app:srcCompat="@android:drawable/screen_background_light" />
 
 

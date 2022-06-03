@@ -14,39 +14,24 @@ public class Vector {
         this.posY = y;
     }
 
-    public Vector(int x, int y) {
-        this.posX = x;
-        this.posY = y;
-    }
-
-    //copy constructor
-    public Vector(Vector vector) {
-        this.posX = vector.posX;
-        this.posY = vector.posY;
-        this.absoluteX = vector.absoluteX;
-        this.absoluteY = vector.absoluteY;
-    }
-
     public Vector add(Vector vector) {
         this.posX += vector.posX;
         this.posY += vector.posY;
         return this;
     }
 
-    public Vector multiply(Vector vector) {
+    public void multiply(Vector vector) {
         this.posX *= vector.posX;
         this.posY *= vector.posY;
-        return this;
     }
 
-    public Vector multiply(int factor) {
-        return multiply(new Vector(factor, factor, 0, 0));
+    public void multiply(int factor) {
+        multiply(new Vector(factor, factor, 0, 0));
     }
 
-    public Vector multiply(float factor) {
+    public void multiply(float factor) {
         this.posX = (int) (this.posX * factor);
         this.posY = (int) (this.posY * factor);
-        return this;
     }
 
     public double getMagnitude() {

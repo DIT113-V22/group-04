@@ -1,21 +1,17 @@
 package com.example.drawer;
 
-import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button pubBtn;
-    private Button disBtn;
-    private Button conBtn;
-    private Button subBtn;
-    private Button mainScreenButton;
+    private Button connectButton;
+    private Button subscribeButton;
+    private Button publishButton;
+    private Button disconnectButton;
     private Button manualControlScreenButton;
     private Button drawControlScreenButton;
     private ImageView carImg;
@@ -25,21 +21,26 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Animation fadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        conBtn = findViewById(R.id.conBtn);
-        conBtn.setOnClickListener(view -> mqttController.connect());
+        // Connection button
+        connectButton = findViewById(R.id.connectButton);
+        connectButton.setOnClickListener(view -> mqttController.connect());
 
-        pubBtn = findViewById(R.id.pubBtn);
-        pubBtn.setOnClickListener(view ->
+        // Publish button
+        publishButton = findViewById(R.id.publishButton);
+        publishButton.setOnClickListener(view ->
                 mqttController.publish("/smartcar/control/throttle", "50"));
 
-        disBtn = findViewById(R.id.disBtn);
-        disBtn.setOnClickListener(view -> mqttController.disconnect());
+        // Disconnect button
+        disconnectButton = findViewById(R.id.disconnectButton);
+        disconnectButton.setOnClickListener(view -> mqttController.disconnect());
 
-        subBtn = findViewById(R.id.subBtn);
-        subBtn.setOnClickListener(view -> {
+        // Subscription button
+        subscribeButton = findViewById(R.id.subscribeButton);
+        subscribeButton.setOnClickListener(view -> {
             System.out.println("SUB");
             mqttController.subscribe("/smartcar/report/startup");
             mqttController.subscribe("/smartcar/report/status");
@@ -51,26 +52,16 @@ public class MainActivity extends AppCompatActivity {
             mqttController.subscribe("/smartcar/report/instructionComplete");
         });
 
-        mainScreenButton = findViewById(R.id.MainNavbarMain);
         manualControlScreenButton = findViewById(R.id.MainNavbarManual);
         drawControlScreenButton = findViewById(R.id.MainNavbarDraw);
         carImg = findViewById(R.id.imageViewCarAndPen);
         smokeImg = findViewById(R.id.imageViewSmokeParticle);
+        //smokeImg.startAnimation(fadeOut);
 
-        Animation fadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
-
-        smokeImg.startAnimation(fadeOut);
-
-        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
     }
-
-    public void openReadMEScreen() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
+    
     public void openManualScreen() {
         Intent intent = new Intent(this, ManualControl.class);
         startActivity(intent);

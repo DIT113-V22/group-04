@@ -4,72 +4,186 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEEEEE"><![CDATA[
-    tools:context=".DrawControl">
-    ]]>
+    android:background="#EEEEEE">
 
-    <ImageButton
-        android:id="@+id/uploadBttn"
-        android:layout_width="49dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:src="@android:drawable/stat_sys_download"
-        android:text="Upload"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.748"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
-    <ImageButton
-        android:id="@+id/downloadBttn"
-        android:layout_width="49dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:src="@android:drawable/ic_menu_upload"
-        android:text="Upload"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.613"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/DrawNavbarManual"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Manual Control" />
 
-    <ImageButton
-        android:id="@+id/clearBttn"
-        android:layout_width="49dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:src="@android:drawable/ic_menu_delete"
-        android:text="Upload"
+        <Button
+            android:id="@+id/DrawNavbarMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"
+            android:text="Intro" />
+
+        <Button
+            android:id="@+id/DrawNavbarDraw"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Draw Control" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.477"
+        app:layout_constraintHorizontal_bias="0.714"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/clearButton"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:contentDescription="clear button"
+            android:src="@android:drawable/ic_menu_delete"
+            android:text="Upload" />
+
+        <ImageButton
+            android:id="@+id/uploadButton"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:contentDescription="download button"
+            android:src="@android:drawable/ic_menu_upload"
+            android:text="Upload" />
+
+        <ImageButton
+            android:id="@+id/downloadButton"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:contentDescription="upload button"
+            android:src="@android:drawable/stat_sys_download"
+            android:text="Upload" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewCurrentDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="Current: "
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.044"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPathLength"
+        app:layout_constraintVertical_bias="0.002" />
+
+    <TextView
+        android:id="@+id/textViewPathLength"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="Path Length: 0"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.019" />
+
+    <TextView
+        android:id="@+id/textViewDistanceTraveled"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="0"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textViewCurrentDistance"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPathLength"
+        app:layout_constraintVertical_bias="0.002" />
+
+    <EditText
+        android:id="@+id/numberViewSpeed"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:hint="Speed"
+        android:inputType="number"
+        android:textColor="@color/black"
+        android:textColorHint="#878787"
+        app:layout_constraintBottom_toTopOf="@+id/numberViewCellLength"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.061"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/numberViewCellLength"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="28dp"
+        android:ems="10"
+        android:hint="Cell Length(Cm)"
+        android:inputType="numberDecimal"
+        android:textColor="@color/black"
+        android:textColorHint="#878787"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/runButton"
-        android:layout_width="87dp"
-        android:layout_height="49dp"
+        android:layout_width="90dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="36dp"
         android:text="RUN"
-        app:layout_constraintBottom_toTopOf="@+id/DrawNavbarMain"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.916"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pixelGridA"
-        app:layout_constraintVertical_bias="0.583" />
+        app:layout_constraintTop_toTopOf="@+id/numberViewSpeed" />
+
+    <Button
+        android:id="@+id/viewPointsSaved"
+        android:layout_width="90dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="36dp"
+        android:text="Saves"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toStartOf="@+id/runButton"
+        app:layout_constraintHorizontal_bias="0.756"
+        app:layout_constraintStart_toEndOf="@+id/numberViewCellLength"
+        app:layout_constraintTop_toTopOf="@+id/numberViewSpeed" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="49dp"
-        android:layout_height="500dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="4dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/pixelGridA"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pixelGridA"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="0.0">
 
         <SeekBar
             android:id="@+id/seekbar"
-            android:layout_width="500dp"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:max="104"
@@ -83,132 +197,20 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/textViewPathLength"
-        android:layout_width="151dp"
-        android:layout_height="19dp"
-        android:text="Path Length: 0"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.054"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.022" />
-
-    <TextView
-        android:id="@+id/textViewDistanceTraveled"
-        android:layout_width="103dp"
-        android:layout_height="21dp"
-        android:text="0"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textViewDistanceTraveled2"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPathLength"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/textViewDistanceTraveled2"
-        android:layout_width="wrap_content"
-        android:layout_height="21dp"
-        android:text="Current: "
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.038"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPathLength"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/DrawNavbarManual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Manual Control"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/DrawNavbarMain"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/DrawNavbarDraw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Draw Control"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/DrawNavbarMain" />
-
-    <Button
-        android:id="@+id/DrawNavbarMain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="INTRO"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.53"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <EditText
-        android:id="@+id/numberViewSpeed"
-        android:layout_width="144dp"
-        android:layout_height="47dp"
-        android:layout_marginBottom="44dp"
-        android:ems="10"
-        android:hint="Speed"
-        android:inputType="number"
-        android:textColor="@color/black"
-        android:textColorHint="#d1d1d1"
-        app:layout_constraintBottom_toTopOf="@+id/DrawNavbarMain"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.101"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pixelGridA"
-        app:layout_constraintVertical_bias="0.333" />
-
-    <EditText
-        android:id="@+id/numberViewCellLength"
-        android:layout_width="144dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="28dp"
-        android:ems="10"
-        android:hint="Cell Length(Cm)"
-        android:inputType="numberDecimal"
-        android:numeric="decimal"
-        android:textColor="@color/black"
-        android:textColorHint="#d1d1d1"
-        app:layout_constraintBottom_toTopOf="@+id/DrawNavbarMain"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/numberViewSpeed"
-        app:layout_constraintVertical_bias="0.526" />
-
     <com.example.drawer.CanvasGrid
         android:id="@+id/pixelGridA"
-        android:layout_width="319dp"
-        android:layout_height="486dp"
+        android:layout_width="300dp"
+        android:layout_height="420dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/DrawNavbarMain"
+        app:layout_constraintBottom_toTopOf="@+id/numberViewSpeed"
         app:layout_constraintEnd_toStartOf="@+id/frameLayout"
-        app:layout_constraintHorizontal_bias="0.347"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.324" />
-
-    <Button
-        android:id="@+id/viewPointsSaved"
-        android:layout_width="87dp"
-        android:layout_height="49dp"
-        android:text="Saves"
-        app:layout_constraintBottom_toTopOf="@+id/DrawNavbarMain"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.617"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pixelGridA"
-        app:layout_constraintVertical_bias="0.583" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,12 +24,12 @@ public class DBManager extends SQLiteOpenHelper {
     private static final String TABLE_NAME = "mySavedPath";
     private static final String ID_COL = "pathID";
     private static final String PATH_ANGLES_COL = "angleList";
-    private static String PATH_TITLE_COL = "savedName";
+    private static final String PATH_TITLE_COL = "savedName";
     private static final String PATH_SPEED_COL = "pathList";
     private static final String TIMER_VALUES_COL = "timerList";
 
     private static final String TABLE_NAME_POINTS = "mySavedPoints";
-    private static String POINTS_TITLE_COL = "savedNamePoints";
+    private static final String POINTS_TITLE_COL = "savedNamePoints";
     private static final String POINTS_QUEUE_COL = "pointsQueue";
 
     public DBManager(@Nullable Context context) {
@@ -117,7 +117,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     @SuppressLint("Range")
     public ArrayList<String> getAllPaths() {
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<String> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor res = db.rawQuery("select * from mySavedPath", null)) {
             res.moveToFirst();
@@ -211,7 +211,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     @SuppressLint("Range")
     public ArrayList<String> getAllPoints() {
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<String> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor res = db.rawQuery("select * from mySavedPoints", null)) {
             res.moveToFirst();
@@ -273,8 +273,12 @@ public class DBManager extends SQLiteOpenHelper {
 
             Point tempPoint = pointQueue.poll();
 
-            int pointX = tempPoint.x;
-            int pointY = tempPoint.y;
+            int pointX = 0;
+            int pointY = 0;
+            if (tempPoint != null) {
+                pointX = tempPoint.x;
+                pointY = tempPoint.y;
+            }
 
             stringBuilder.append(pointX);
             stringBuilder.append(",");
@@ -294,11 +298,11 @@ public class DBManager extends SQLiteOpenHelper {
 
         String[] splitPoints = pointQueueString.split(":");
 
-        for (int i = 0; i < splitPoints.length; i++) {
+        for (String splitPoint : splitPoints) {
             int pointX;
             int pointY;
 
-            String[] splitXY = splitPoints[i].split(",");
+            String[] splitXY = splitPoint.split(",");
 
             pointX = Integer.parseInt(splitXY[0]);
             pointY = Integer.parseInt(splitXY[1]);
