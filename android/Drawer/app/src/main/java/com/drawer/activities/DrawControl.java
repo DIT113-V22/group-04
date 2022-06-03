@@ -1,13 +1,11 @@
 package com.drawer.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -17,11 +15,9 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,9 +31,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * The back-end for the activity_draw_control.
+ * Its main responsibility is to create all the different UI elements and handle
+ * events (commands issued by the user through interaction) related to those elements.
+ * @author Ayaeis
+ * @author Kev049
+ * @author MortBA
+ * @author YukiMina14
+ */
 public class DrawControl extends AppCompatActivity {
 
     private Button mainScreenButton;
@@ -53,10 +56,6 @@ public class DrawControl extends AppCompatActivity {
     private TextView distanceTraveledView;
     private CanvasGrid pixelGrid;
     private MQTTController mqttController = MQTTController.getInstance();
-
-    private AlertDialog.Builder builder;
-    private AlertDialog alertDialog;
-    private ListView pathList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,6 +213,7 @@ public class DrawControl extends AppCompatActivity {
         });
     }
 
+    // TODO JavaDoc Channi
     private void updatePathLength() {
         double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
         pathLength = Math.floor(pathLength * 100) / 100;

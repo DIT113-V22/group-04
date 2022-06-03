@@ -29,6 +29,14 @@ import com.drawer.R;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * The back-end for the activity_manual_control.
+ * This class handles all joystick related logic as well as saves paths, with the
+ * help of DBManager.
+ * @author MortBA
+ * @author sejalkan
+ * @author YukiMina14
+ */
 public class ManualControl extends AppCompatActivity {
 
     private Button mainScreenButton;
