@@ -87,7 +87,6 @@ public class DrawControlInstrumentedTest {
         onView(withId(R.id.numberViewSpeed)).check(matches(isDisplayed()));
         onView(withId(R.id.textViewCurrentDistance)).check(matches(isDisplayed()));
         onView(withId(R.id.textViewDistanceTraveled)).check(matches(isDisplayed()));
-        onView(withId(R.id.seekbar)).check(matches(isCompletelyDisplayed()));
     }
 
     /**
