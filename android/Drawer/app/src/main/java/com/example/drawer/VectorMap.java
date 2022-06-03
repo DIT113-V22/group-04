@@ -1,5 +1,6 @@
 package com.example.drawer;
 
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,11 +81,12 @@ public class VectorMap {
      *
      * @return string of coordinates
      */
+    @NonNull
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Vector vector : vectorList) {
-            stringBuilder.append("-[X," + vector.posX + "; Y," + vector.posY + "] \n");
+            stringBuilder.append("-[X,").append(vector.posX).append("; Y,").append(vector.posY).append("] \n");
         }
         return stringBuilder.toString();
     }

@@ -36,10 +36,11 @@ public class CanvasGrid extends View {
     private int numRows = 4;
     private int cellLength = 50;
     private float pathScale = 1;
-    private Paint blackPaint = new Paint();
+    private final Paint blackPaint = new Paint();
     private boolean[][] cellChecked = new boolean[50][100];
     private int lastx;
     private int lasty;
+    private Point drawPoint = new Point();
     MQTTController mqttController = MQTTController.getInstance();
 
     private boolean[][] pureCellChecked = new boolean[50][100];
@@ -147,8 +148,8 @@ public class CanvasGrid extends View {
             int width = layoutParams.width;
             int height = layoutParams.height;
 
-            numColumns = (int) Math.floor((width / cellLength));
-            numRows = (int) Math.floor((height / cellLength));
+            numColumns = (int) Math.floor(width / cellLength);
+            numRows = (int) Math.floor(height / cellLength);
         }
 
         cellChecked = new boolean[numColumns][numRows];
@@ -170,6 +171,7 @@ public class CanvasGrid extends View {
 
         for (int i = 0; i < numColumns; i++) {
             for (int j = 0; j < numRows; j++) {
+                drawPoint = new Point(i, j);
                 if (cellChecked[i][j]) {
                     canvas.drawRect(i * cellLength, j * cellLength,
                             (i + 1) * cellLength, (j + 1) * cellLength,
@@ -178,8 +180,8 @@ public class CanvasGrid extends View {
                 //again why disable going over the same point twice
                 //also your making a path drawing between each point in a Z pattern
                 if (pureCellChecked[i][j]) {
-                    if (!pointQueue.contains(new Point(i, j))) {
-                        pointQueue.add(new Point(i, j));
+                    if (!pointQueue.contains(drawPoint)) {
+                        pointQueue.add(drawPoint);
                     }
                 }
             }
@@ -204,6 +206,7 @@ public class CanvasGrid extends View {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        performClick();
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int column = (int)(event.getX() / cellLength);
             int row = (int)(event.getY() / cellLength);
@@ -257,6 +260,11 @@ public class CanvasGrid extends View {
             invalidate();
         }
         return true;
+    }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
     }
 
     // The current implementation assumes slow drawing (i.e. each cell will be adjacent

@@ -28,12 +28,12 @@ public class DBManager extends SQLiteOpenHelper {
     private static final String TABLE_NAME = "mySavedPath";
     private static final String ID_COL = "pathID";
     private static final String PATH_ANGLES_COL = "angleList";
-    private static String PATH_TITLE_COL = "savedName";
+    private static final String PATH_TITLE_COL = "savedName";
     private static final String PATH_SPEED_COL = "pathList";
     private static final String TIMER_VALUES_COL = "timerList";
 
     private static final String TABLE_NAME_POINTS = "mySavedPoints";
-    private static String POINTS_TITLE_COL = "savedNamePoints";
+    private static final String POINTS_TITLE_COL = "savedNamePoints";
     private static final String POINTS_QUEUE_COL = "pointsQueue";
 
     /**
@@ -123,7 +123,7 @@ public class DBManager extends SQLiteOpenHelper {
      */
     @SuppressLint("Range")
     public ArrayList<String> getAllPaths() {
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<String> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor res = db.rawQuery("select * from mySavedPath", null)) {
             res.moveToFirst();
@@ -237,5 +237,4 @@ public class DBManager extends SQLiteOpenHelper {
         db.execSQL("delete from mySavedPath where savedName = '" + pathName + "' ");
         db.close();
     }
-
 }

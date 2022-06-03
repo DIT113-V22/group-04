@@ -17,11 +17,11 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,7 +30,6 @@ import java.util.Queue;
 public class ManualControl extends AppCompatActivity {
 
     private Button mainScreenButton;
-    private Button manualControlScreenButton;
     private Button drawControlScreenButton;
   
     //Used global variables
@@ -45,7 +44,7 @@ public class ManualControl extends AppCompatActivity {
     private boolean wasChecked = false;
 
     //UI objects/views
-    private Switch recordToggle; //switch to turn on and off the recordings
+    private SwitchCompat recordToggle; //switch to turn on and off the recordings
     private Chronometer time;
     private Chronometer executeTimer;
     private ListView pathView;
@@ -65,7 +64,6 @@ public class ManualControl extends AppCompatActivity {
     private AlertDialog.Builder builderReplays;
     private AlertDialog.Builder playRecordings;
     private AlertDialog replays;
-    private AlertDialog playRec;
 
     //POP-UP for saving replay and name.
     private AlertDialog.Builder builderSaved;
@@ -94,18 +92,15 @@ public class ManualControl extends AppCompatActivity {
         mqttController.publish("/smartcar/control/auto", "0");
 
         mainScreenButton = findViewById(R.id.ManualNavbarMain);
-        manualControlScreenButton = findViewById(R.id.ManualNavbarManual);
         drawControlScreenButton = findViewById(R.id.ManualNavbarDraw);
         time = findViewById(R.id.stopWatch);
         executeTimer = findViewById(R.id.executeWatch);
-        
         speedStat = findViewById(R.id.speedStat);
-        angleStat = findViewById(R.id.angleSTat);
+        angleStat = findViewById(R.id.angleStat);
         innerCircle = findViewById(R.id.innerCircle);
         outerCircle = findViewById(R.id.outerCircle);
 
-        mainScreenButton.setOnClickListener(view -> openReadMEScreen());
-
+        mainScreenButton.setOnClickListener(view -> openMainScreen());
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());
       
         viewPaths = findViewById(R.id.viewPathsScreen);
@@ -226,11 +221,8 @@ public class ManualControl extends AppCompatActivity {
         replays = builderReplays.create();
         replays.show();
 
-        deletePath.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        deletePath.setOnClickListener(view -> {
 
-            }
         });
 
         //Gets the all the path information and path names stored in the database
@@ -246,7 +238,7 @@ public class ManualControl extends AppCompatActivity {
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
-                TextView tv = (TextView) view.findViewById(android.R.id.text1);
+                TextView tv = view.findViewById(android.R.id.text1);
 
                 tv.setTextColor(Color.WHITE);
                 tv.setBackgroundColor(Color.parseColor("#222222"));
@@ -276,21 +268,13 @@ public class ManualControl extends AppCompatActivity {
 
                 ManualRecordingRun executeRecording = new ManualRecordingRun(itemCarTimer, itemCarAngle,
                         itemCarSpeed, mqttController, executeTimer);
-                playPath.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        new Thread(executeRecording).start();
-                    }
-                });
+                playPath.setOnClickListener(view12 -> new Thread(executeRecording).start());
             }
 
             //delete the selected item
-            deletePath.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dbManager.deleteSpecific(myItem);
-                    replays.dismiss();
-                }
+            deletePath.setOnClickListener(view1 -> {
+                dbManager.deleteSpecific(myItem);
+                replays.dismiss();
             });
         });
     }
@@ -304,9 +288,8 @@ public class ManualControl extends AppCompatActivity {
      * @author Burak Askan
      */
     public void circleOnTouch(MotionEvent event) {
-        Drawable oc;
         Resources res = getResources();
-        oc = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
+        Drawable oc = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
 
 
         //Retrieves the starting position of the Drawable Views.
@@ -316,7 +299,9 @@ public class ManualControl extends AppCompatActivity {
             saved = true;
         }
 
-        outerRadius = oc.getMinimumWidth() / 2;
+        if (oc != null) {
+            outerRadius = oc.getMinimumWidth() / 2;
+        }
 
         //Gets actual position of travers within users touch.
         int traversX = (int) (event.getX() + centerX - 90);
@@ -425,7 +410,9 @@ public class ManualControl extends AppCompatActivity {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             speedProc = 0;
         }
-        speedStat.setText("The speed percentage: " + speedProc);
+        String speedText = "The speed is: " + speedProc;
+
+        speedStat.setText(speedText);
 
         return speedProc;
     }
@@ -454,7 +441,9 @@ public class ManualControl extends AppCompatActivity {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             angle = 0;
         }
-        angleStat.setText("The angle is: " + angle);
+
+        String angleText = "The angle is: " + angle;
+        angleStat.setText(angleText);
 
         return angle;
     }
@@ -462,7 +451,7 @@ public class ManualControl extends AppCompatActivity {
     /**
      * Opens ReadME  screen (home screen).
      */
-    public void openReadMEScreen() {
+    public void openMainScreen() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

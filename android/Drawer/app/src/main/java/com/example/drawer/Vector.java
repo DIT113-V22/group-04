@@ -70,10 +70,9 @@ public class Vector {
      *
      * @return Current Vector
      */
-    public Vector multiply(Vector vector) {
+    public void multiply(Vector vector) {
         this.posX *= vector.posX;
         this.posY *= vector.posY;
-        return this;
     }
 
     /**
@@ -83,8 +82,8 @@ public class Vector {
      *
      * @return Current Vector
      */
-    public Vector multiply(int factor) {
-        return multiply(new Vector(factor, factor, 0, 0));
+    public void multiply(int factor) {
+        multiply(new Vector(factor, factor, 0, 0));
     }
 
     /**
@@ -94,10 +93,9 @@ public class Vector {
      *
      * @return Current Vector
      */
-    public Vector multiply(float factor) {
+    public void multiply(float factor) {
         this.posX = (int) (this.posX * factor);
         this.posY = (int) (this.posY * factor);
-        return this;
     }
 
     /**
