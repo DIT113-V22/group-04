@@ -16,14 +16,11 @@ public class MainActivity extends AppCompatActivity {
     private Button disconnectButton;
     private Button manualControlScreenButton;
     private Button drawControlScreenButton;
-    private ImageView carImg;
-    private ImageView smokeImg;
 
     MQTTController mqttController = MQTTController.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //Animation fadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -56,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         manualControlScreenButton = findViewById(R.id.MainNavbarManual);
         drawControlScreenButton = findViewById(R.id.MainNavbarDraw);
-        carImg = findViewById(R.id.imageViewCarAndPen);
-        smokeImg = findViewById(R.id.imageViewSmokeParticle);
-        //smokeImg.startAnimation(fadeOut);
 
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());

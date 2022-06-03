@@ -60,7 +60,6 @@ public class DBManager extends SQLiteOpenHelper {
         // method to execute above sql query
         sqLiteDatabase.execSQL(query);
 
-
         String queryPoints = "CREATE TABLE " + TABLE_NAME_POINTS + " ("
                 + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + POINTS_TITLE_COL + " TEXT,"
@@ -81,7 +80,6 @@ public class DBManager extends SQLiteOpenHelper {
      * @param timerList list of timer commands
      */
     public void addNewPath(String savedName, String speedList, String angleList, String timerList) {
-
         // creating a variable for content values.
         ContentValues values = new ContentValues();
 

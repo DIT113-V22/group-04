@@ -62,30 +62,14 @@ public class CanvasGrid extends View {
     }
 
     // Getters
-    public int getNumColumns() {
-        return numColumns;
-    }
 
     public VectorMap getVectorMap() {
         return vectorMap;
     }
 
-    public int getNumRows() {
-        return numRows;
-    }
-
-    public ResizeMode getResizeMode() {
-        return resizeMode;
-    }
-
     public float getPathScale() {
         return pathScale;
     }
-
-    public double getVectorSmoothness() {
-        return vectorSmoothness;
-    }
-
 
     // Setters
     public void setCellLength(int cellLength) {
@@ -102,15 +86,6 @@ public class CanvasGrid extends View {
         this.pathScale = pathScale;
     }
 
-    /**
-     * Sets smoothness before next vector is drawn.
-     */
-    public void setVectorSmoothness(double smoothness) {
-        vectorSmoothness = smoothness;
-    }
-
-    //public functions
-
     public void clear() {
         cellChecked = new boolean[numColumns][numRows];
         pureCellChecked = new boolean[numColumns][numRows];
@@ -120,7 +95,6 @@ public class CanvasGrid extends View {
         invalidate();
     }
 
-    //limited access functions
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -276,8 +250,6 @@ public class CanvasGrid extends View {
         mqttController.executeInstructionSet(pathInstructionSet);
     }
 
-    //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-
     /**
      * draws a line between 2 points using Bresenham's line Algorithm
      * Src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
@@ -293,7 +265,7 @@ public class CanvasGrid extends View {
         int dx = Math.abs(x1 - x0);
         int dy = -Math.abs(y1 - y0);
 
-        //incrementations variable using ternary operator
+        //Increments variable using ternary operator
         int sx = (x0 < x1) ? 1 : -1;
         int sy = (y0 < y1) ? 1 : -1;
 

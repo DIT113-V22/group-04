@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * VectorMap implementation based on canvasgrid solution.
+ * VectorMap implementation based on canvas-grid solution.
  *
  * @author YukiMina14
  */
@@ -83,7 +83,4 @@ public class VectorMap {
         }
         return stringBuilder.toString();
     }
-
-
-
 }

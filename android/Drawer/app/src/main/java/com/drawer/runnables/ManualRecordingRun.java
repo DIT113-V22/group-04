@@ -14,7 +14,7 @@ public class ManualRecordingRun implements Runnable {
     private final ArrayList<Integer> carAngleQueue;
     private final boolean obstacle = false;
     private long executeCheckingTime = 0;
-    private long executeCheckingTimeBeninging = 0;
+    private long executeCheckingTimeBeginning = 0;
 
     public ManualRecordingRun(ArrayList<Long> carTimerQueue,
                               ArrayList<Integer> carAngleQueue,
@@ -38,7 +38,7 @@ public class ManualRecordingRun implements Runnable {
             executeTimer.setBase(SystemClock.elapsedRealtime());
             executeTimer.start();
             executeTimerBool = true;
-            executeCheckingTimeBeninging = System.currentTimeMillis();
+            executeCheckingTimeBeginning = System.currentTimeMillis();
         }
         //Go through and publish all commands
         for (int m = 0; m < carSpeedQueue.size(); m++) {
@@ -47,7 +47,7 @@ public class ManualRecordingRun implements Runnable {
             while (timerChecked && !obstacle) {
                 executeCheckingTime = System.currentTimeMillis();
                 //Publish only with correct timing
-                if ((executeCheckingTime - executeCheckingTimeBeninging) >= carTimerQueue.get(m)) {
+                if ((executeCheckingTime - executeCheckingTimeBeginning) >= carTimerQueue.get(m)) {
                     mqttController.publish("/smartcar/control/throttle", String.valueOf(carSpeedQueue.get(m)));
                     mqttController.publish("/smartcar/control/steering", String.valueOf(carAngleQueue.get(m)));
                     timerChecked = false;
