@@ -5,7 +5,6 @@ package com.example.drawer;
  *
  * @author YukiMina14
  */
-
 public class Vector {
     public int absoluteX;
     public int absoluteY;
@@ -54,21 +53,16 @@ public class Vector {
      * Adds 2 vectors together using another vector.
      *
      * @param vector Vector to add to this one
-     *
-     * @return Current Vector
      */
-    public Vector add(Vector vector) {
+    public void add(Vector vector) {
         this.posX += vector.posX;
         this.posY += vector.posY;
-        return this;
     }
 
     /**
      * Multiplies 2 vectors together using another vector.
      *
      * @param vector Vector to multiply with the current one
-     *
-     * @return Current Vector
      */
     public void multiply(Vector vector) {
         this.posX *= vector.posX;
@@ -79,8 +73,6 @@ public class Vector {
      * Multiplies vector with integer.
      *
      * @param factor multiplication factor
-     *
-     * @return Current Vector
      */
     public void multiply(int factor) {
         multiply(new Vector(factor, factor, 0, 0));
@@ -90,8 +82,6 @@ public class Vector {
      * Multiplies vector with float.
      *
      * @param factor multiplication factor
-     *
-     * @return Current Vector
      */
     public void multiply(float factor) {
         this.posX = (int) (this.posX * factor);
