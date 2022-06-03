@@ -5,7 +5,6 @@
 ![Arduino CI](https://github.com/DIT113-V22/group-04/actions/workflows/arduino-ci.yml/badge.svg)
 ![Java CI](https://github.com/DIT113-V22/group-04/actions/workflows/java-ci.yml/badge.svg)
 
-
 ## About the project
 
 ### What are we going to make?
@@ -50,6 +49,10 @@ Technologies used:
 ### Component Diagram
 
 ![ComponenetDiagram](https://user-images.githubusercontent.com/90007777/170896586-bcf16160-a54e-4915-88e8-8f987ab8e4d6.png)
+
+### Deployment Diagram
+
+![DeploymentDiagram](https://user-images.githubusercontent.com/40069897/171967908-dfb49c16-f5a7-4120-8880-8953803b6c0f.png)
 
 ## Getting started
 
