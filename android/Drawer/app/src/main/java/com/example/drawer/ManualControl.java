@@ -116,8 +116,6 @@ public class ManualControl extends AppCompatActivity {
         mqttController.updateCamera(camera);
         playPath = findViewById(R.id.playPath);
 
-        testPoints();
-
         viewPaths.setOnClickListener(view -> {
             //open the pop up window
             createViewContactDialogueReplays();
@@ -272,7 +270,7 @@ public class ManualControl extends AppCompatActivity {
                 myItem = arrayAdapter.getItem(i);
 
                 //System.out.println(dbManager.getPathDetails(myItem));
-                ArrayList<Integer> itemCarSpeed = dbManager.getPathDetails(myItem);
+                ArrayList<Integer> itemCarSpeed = dbManager.getSpeedDetails(myItem);
                 ArrayList<Integer> itemCarAngle = dbManager.getAngleDetails(myItem);
                 ArrayList<Long> itemCarTimer = dbManager.getTimeDetails(myItem);
 
@@ -475,22 +473,5 @@ public class ManualControl extends AppCompatActivity {
     public void openDrawScreen() {
         Intent intent = new Intent(this, DrawControl.class);
         startActivity(intent);
-    }
-
-    public void testPoints() {
-        Queue<Point> pointQueue = new LinkedList<>();
-        pointQueue.add(new Point(4,3));
-        pointQueue.add(new Point(2,8));
-        pointQueue.add(new Point(6,0));
-        pointQueue.add(new Point(7,2));
-        pointQueue.add(new Point(9,5));
-        pointQueue.add(new Point(1,2));
-
-
-        String pointQueueString = dbManager.pointToString(pointQueue);
-        System.out.println(pointQueueString);
-        Queue<Point> pointQueueNew = new LinkedList<>();
-        pointQueueNew = dbManager.stringToPoint(pointQueueString);
-        System.out.println(pointQueueNew);
     }
 }

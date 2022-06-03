@@ -13,7 +13,7 @@ public class VectorMap {
     private final List<Vector> vectorList = new ArrayList<>();
 
     /**
-     * Gets this Vector list
+     * Gets this Vector list.
      *
      * @return list of Vectors
      */
@@ -22,7 +22,7 @@ public class VectorMap {
     }
 
     /**
-     * Constructs the Vector map taking in the starting coordinates
+     * Constructs the Vector map taking in the starting coordinates.
      *
      * @param x  X coordinate for the first vector
      * @param y  Y coordinate for the first vector
@@ -32,14 +32,14 @@ public class VectorMap {
     }
 
     /**
-     * Constructs empty Vector map
+     * Constructs empty Vector map.
      */
     public VectorMap() {
 
     }
 
     /**
-     * add a Vector to Vector map
+     * add a Vector to Vector map.
      *
      * @param x vector x
      * @param y vector y
@@ -54,39 +54,14 @@ public class VectorMap {
     }
 
     /**
-     * Erases the vector map
+     * Erases the vector map.
      */
     public void clear() {
         vectorList.clear();
     }
 
     /**
-     * calculates the Instructions saved to fallow the vectors
-     *
-     * @param scale set the scale where 1 = 1 meter
-     *
-     * @return Array list of Instruction Objects
-     */
-    public ArrayList<Instruction> generateInstructions(double scale) {
-        if (vectorList.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        ArrayList<Instruction> instructions = new ArrayList<>();
-
-        for (int i = 1; i < vectorList.size() - 1; i++) {
-            double distance = vectorList.get(i).getMagnitude() * scale;
-            double angle = getVectorAngle(vectorList.get(i), vectorList.get(i + 1));
-            instructions.add(new Instruction(distance, angle));
-        }
-        instructions.add(new Instruction((vectorList.get(vectorList.size() - 1).getMagnitude() * scale), 0.0));
-
-        return instructions;
-    }
-
-
-    /**
-     * Calculates the size of the vector Path
+     * Calculates the size of the vector Path.
      *
      * @return Size of the path
      */
@@ -101,7 +76,7 @@ public class VectorMap {
     }
 
     /**
-     * All coordinates to string
+     * All coordinates to string.
      *
      * @return string of coordinates
      */
@@ -116,7 +91,7 @@ public class VectorMap {
 
 
     /**
-     * gets the angle between 2 vectors
+     * gets the angle between 2 vectors.
      *
      * @param vector1 Base vector
      * @param vector2 2nd vector
@@ -163,7 +138,7 @@ public class VectorMap {
     }
 
     /**
-     * Multiplies All the vectors with another vector
+     * Multiplies All the vectors with another vector.
      *
      * @param vector Vector to multiply with the current one
      */
@@ -174,7 +149,7 @@ public class VectorMap {
     }
 
     /**
-     * Multiplies all vectors with integer
+     * Multiplies all vectors with integer.
      *
      * @param factor multiplication factor
      */
@@ -185,7 +160,7 @@ public class VectorMap {
     }
 
     /**
-     * Multiplies all vectors with float
+     * Multiplies all vectors with float.
      *
      * @param factor multiplication factor
      */

@@ -1,9 +1,11 @@
 package com.example.drawer;
+
 /**
- * class for creating Mathematical vectors
+ * Class for creating Mathematical vectors.
  *
  * @author YukiMina14
  */
+
 public class Vector {
     public int absoluteX;
     public int absoluteY;
@@ -11,7 +13,7 @@ public class Vector {
     public int posY;
 
     /**
-     * Constructs the Vector Object, notes down the absolute coordinates of the Vector's Tip
+     * Constructs the Vector Object, notes down the absolute coordinates of the Vector's Tip.
      *
      * @param x vector x value
      * @param y vector y value
@@ -26,7 +28,7 @@ public class Vector {
     }
 
     /**
-     * Constructs the Vector Object, without noting down tip coordinates;
+     * Constructs the Vector Object, without noting down tip coordinates.
      *
      * @param x vector x value
      * @param y vector y value
@@ -37,7 +39,7 @@ public class Vector {
     }
 
     /**
-     * Constructs the Vector Object by copying another
+     * Constructs the Vector Object by copying another.
      *
      * @param vector vector to copy from
      */
@@ -49,7 +51,7 @@ public class Vector {
     }
 
     /**
-     * Adds 2 vectors together using another vector
+     * Adds 2 vectors together using another vector.
      *
      * @param vector Vector to add to this one
      *
@@ -62,7 +64,7 @@ public class Vector {
     }
 
     /**
-     * Multiplies 2 vectors together using another vector
+     * Multiplies 2 vectors together using another vector.
      *
      * @param vector Vector to multiply with the current one
      *
@@ -75,7 +77,7 @@ public class Vector {
     }
 
     /**
-     * Multiplies vector with integer
+     * Multiplies vector with integer.
      *
      * @param factor multiplication factor
      *
@@ -86,7 +88,7 @@ public class Vector {
     }
 
     /**
-     * Multiplies vector with float
+     * Multiplies vector with float.
      *
      * @param factor multiplication factor
      *
@@ -99,7 +101,7 @@ public class Vector {
     }
 
     /**
-     * Calculates the size of the vector
+     * Calculates the size of the vector.
      *
      * @return Vector Size
      */

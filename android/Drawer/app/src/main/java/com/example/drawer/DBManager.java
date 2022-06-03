@@ -38,16 +38,13 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * Constructor for DBManager.
-     * @param context
      */
     public DBManager(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
     /**
-     * This method creates new sqLiteDatabase object.
-     * Creates a new table with columns.
-     * @param sqLiteDatabase
+     * This method creates new sqLiteDatabase object; creates a new table with columns.
      */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -80,10 +77,10 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * This method is used to add new path, where a new path mean adding a new row to the table.
      * Every new path consists of all parameters.
-     * @param savedName
-     * @param speedList
-     * @param angleList
-     * @param timerList
+     * @param savedName name of recording
+     * @param speedList list of speed instructions
+     * @param angleList list of angle instructions
+     * @param timerList list of timer commands
      */
     public void addNewPath(String savedName, String speedList, String angleList, String timerList) {
 
@@ -107,32 +104,9 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addNewPointsQueue(String savedNamePoints, String pointQueue) {
-
-        // creating a variable for content values.
-        ContentValues values = new ContentValues();
-
-        // passing all the values along with its key and value pair.
-        values.put(POINTS_TITLE_COL, savedNamePoints);
-        values.put(POINTS_QUEUE_COL, pointQueue);
-
-
-        // creating a variable for sqlite database
-        // and calling writable method to write data in our database
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        // after adding all values we are passing content values to our table.
-        db.insert(TABLE_NAME_POINTS, null, values);
-
-        // closing the database after adding database.
-        db.close();
-    }
-
     /**
      * This method is called to check if the table exists already.
-     * @param sqLiteDatabase
-     * @param i
-     * @param i1
+     * @param sqLiteDatabase the database we use
      */
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
@@ -144,7 +118,7 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * This method runs a query which returns all the paths,
      * where each path stands for an entire row in the table.
-     * @return
+     * @return arraylist of recordings
      */
     @SuppressLint("Range")
     public ArrayList<String> getAllPaths() {
@@ -164,7 +138,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * This method run a query with returns all the names of paths.
-     * @return
+     * @return arraylist of names of recordings
      */
     @SuppressLint("Range")
     public ArrayList<String> getAllPathNames() {
@@ -183,34 +157,34 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
-     * This method runs a query which returns all the details of a specific path,
+     * This method runs a query which returns all the speed details of a specific path,
      * This methods takes in a path name to identify the details.
-     * @param pathName
-     * @return
+     * @param pathName name of a recording
+     * @return array list of speed values
      */
     @SuppressLint("Range")
-    public ArrayList<Integer> getPathDetails(String pathName) {
-        ArrayList<Integer> arrayList = new ArrayList<>();
+    public ArrayList<Integer> getSpeedDetails(String pathName) {
+        ArrayList<Integer> speedArrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor res = db.rawQuery("select pathList from mySavedPath where savedName = '" + pathName + "' ", null)) {
             res.moveToFirst();
             String result = res.getString(res.getColumnIndex(PATH_SPEED_COL));
             result = result.replace(" ", "").replace("[", "").replace("]", "");
             System.out.println("PathDetails: " + result);
-            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Integer.parseInt(item)));
+            Arrays.asList(result.split(",")).forEach(item -> speedArrayList.add(Integer.parseInt(item)));
         }
 
-        return arrayList;
+        return speedArrayList;
     }
 
     /**
      * This methods runs a query which returns the angles column value which matches with the given path name.
-     * @param pathName
-     * @return
+     * @param pathName name of a recording
+     * @return array list of angle values
      */
     @SuppressLint("Range")
     public ArrayList<Integer> getAngleDetails(String pathName) {
-        ArrayList<Integer> arrayList = new ArrayList<>();
+        ArrayList<Integer> angleArrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor res = db.rawQuery("select angleList from mySavedPath where savedName = '" + pathName + "' ",
                 null)) {
@@ -218,20 +192,20 @@ public class DBManager extends SQLiteOpenHelper {
             String result = res.getString(res.getColumnIndex(PATH_ANGLES_COL));
             result = result.replace(" ", "").replace("[", "").replace("]", "");
             System.out.println("AngleDetails: " + result);
-            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Integer.parseInt(item)));
+            Arrays.asList(result.split(",")).forEach(item -> angleArrayList.add(Integer.parseInt(item)));
         }
 
-        return arrayList;
+        return angleArrayList;
     }
 
     /**
      * This methods runs a query which returns the time column value which matches with the given path name.
-     * @param pathName
-     * @return
+     * @param pathName name of a recording
+     * @return array list of time values
      */
     @SuppressLint("Range")
     public ArrayList<Long> getTimeDetails(String pathName) {
-        ArrayList<Long> arrayList = new ArrayList<>();
+        ArrayList<Long> timeArrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor res = db.rawQuery("select timerList from mySavedPath where savedName = '" + pathName + "' ",
                 null)) {
@@ -239,130 +213,20 @@ public class DBManager extends SQLiteOpenHelper {
             String result = res.getString(res.getColumnIndex(TIMER_VALUES_COL));
             result = result.replace(" ", "").replace("[", "").replace("]", "");
             System.out.println("TimeDetails: " + result);
-            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Long.parseLong(item)));
+            Arrays.asList(result.split(",")).forEach(item -> timeArrayList.add(Long.parseLong(item)));
         }
 
-        return arrayList;
-    }
-
-    /**
-     * This method deletes the entire table from the database.
-     */
-    public void deleteAll() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME,null,null);
-        db.execSQL("delete from mySavedPath");
-        //db.execSQL("TRUNCATE table" + TABLE_NAME);
-        db.close();
+        return timeArrayList;
     }
 
     /**
      * This method deletes a specific row from the database, by matching it with the given path name.
-     * @param pathName
+     * @param pathName name of a recording
      */
     public void deleteSpecific(String pathName) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from mySavedPath where savedName = '" + pathName + "' ");
         db.close();
-
     }
 
-    @SuppressLint("Range")
-    public ArrayList<String> getAllPoints() {
-        ArrayList<String> arrayList = new ArrayList<String>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        try (Cursor res = db.rawQuery("select * from mySavedPoints", null)) {
-            res.moveToFirst();
-
-            while (!res.isAfterLast()) {
-                arrayList.add(res.getString(res.getColumnIndex(POINTS_TITLE_COL)));
-                res.moveToNext();
-            }
-        }
-        return arrayList;
-    }
-
-    @SuppressLint("Range")
-    public ArrayList<String> getAllPointNames() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] str2 = new String[1];
-        str2[0] = POINTS_TITLE_COL;
-        try (Cursor res = db.query("mySavedPoints", str2, null, null, null, null, null)) {
-            res.moveToFirst();
-            while (!res.isAfterLast()) {
-                arrayList.add(res.getString(res.getColumnIndex(POINTS_TITLE_COL)));
-                res.moveToNext();
-            }
-        }
-        return arrayList;
-    }
-
-    @SuppressLint("Range")
-    public ArrayList<Integer> getPointDetails(String pointName) {
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        try (Cursor res = db.rawQuery(
-                "select pointsQueue from mySavedPoints where savedNamePoints = '" + pointName + "' ",
-                null)) {
-            res.moveToFirst();
-            String result = res.getString(res.getColumnIndex(POINTS_QUEUE_COL));
-            result = result.replace(" ", "").replace("[", "").replace("]", "");
-            System.out.println("PathDetails: " + result);
-            Arrays.asList(result.split(",")).forEach(item -> arrayList.add(Integer.parseInt(item)));
-        }
-        return arrayList;
-    }
-
-    public void deleteAllPoints() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME_POINTS,null,null);
-        db.execSQL("delete from mySavedPoints");
-        //db.execSQL("TRUNCATE table" + TABLE_NAME);
-        db.close();
-    }
-
-    public String pointToString(Queue<Point> pointQueue) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        int pointQueueSize = pointQueue.size();
-
-        for (int i = 0; i < pointQueueSize; i++) {
-
-            Point tempPoint = pointQueue.poll();
-
-            int pointX = tempPoint.x;
-            int pointY = tempPoint.y;
-
-            stringBuilder.append(pointX);
-            stringBuilder.append(",");
-            stringBuilder.append(pointY);
-
-            if (!(i == (pointQueueSize - 1))) {
-                stringBuilder.append(":");
-            }
-
-        }
-
-        return stringBuilder.toString();
-    }
-
-    public Queue<Point> stringToPoint(String pointQueueString) {
-        Queue<Point> pointQueue = new LinkedList<>();
-
-        String[] splitPoints = pointQueueString.split(":");
-
-        for (int i = 0; i < splitPoints.length; i++) {
-            int pointX;
-            int pointY;
-
-            String[] splitXY = splitPoints[i].split(",");
-
-            pointX = Integer.parseInt(splitXY[0]);
-            pointY = Integer.parseInt(splitXY[1]);
-
-            pointQueue.add(new Point(pointX, pointY));
-        }
-        return pointQueue;
-    }
 }
