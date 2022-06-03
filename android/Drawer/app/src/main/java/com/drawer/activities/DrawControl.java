@@ -1,4 +1,4 @@
-package com.example.drawer;
+package com.drawer.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,6 +28,9 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import com.drawer.R;
+import com.drawer.canvas.CanvasGrid;
+import com.drawer.connectivity.MQTTController;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;

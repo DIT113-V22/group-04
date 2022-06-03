@@ -1,4 +1,4 @@
-package com.example.drawer;
+package com.drawer.canvas;
 
 /**
  * Class for creating Mathematical vectors.

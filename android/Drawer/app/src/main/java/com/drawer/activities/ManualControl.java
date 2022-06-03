@@ -1,10 +1,9 @@
-package com.example.drawer;
+package com.drawer.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -23,9 +22,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.res.ResourcesCompat;
+import com.drawer.connectivity.DBManager;
+import com.drawer.connectivity.MQTTController;
+import com.drawer.runnables.ManualRecordingRun;
+import com.drawer.R;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class ManualControl extends AppCompatActivity {
 

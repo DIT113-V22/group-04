@@ -15,13 +15,13 @@
         android:theme="@style/Theme.Drawer">
 
         <activity
-            android:name=".DrawControl"
+            android:name=".activities.DrawControl"
             android:exported="true" />
         <activity
-            android:name=".ManualControl"
+            android:name=".activities.ManualControl"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

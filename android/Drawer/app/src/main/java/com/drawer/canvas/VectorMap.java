@@ -1,4 +1,4 @@
-package com.example.drawer;
+package com.drawer.canvas;
 
 import androidx.annotation.NonNull;
 import java.util.ArrayList;

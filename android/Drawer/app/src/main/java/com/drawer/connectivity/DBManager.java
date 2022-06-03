@@ -1,4 +1,4 @@
-package com.example.drawer;
+package com.drawer.connectivity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -6,12 +6,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Point;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * This class serves purpose to mainly create and manage a SQLite database.

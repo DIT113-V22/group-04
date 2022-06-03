@@ -1,7 +1,8 @@
-package com.example.drawer;
+package com.drawer.canvas;
 
 import android.graphics.Point;
 import android.util.Log;
+import com.drawer.connectivity.MQTTController;
 import java.util.Queue;
 
 public class PathInstructionSet {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout4"
@@ -81,33 +81,42 @@
 
         <Button
             android:id="@+id/MainNavbarManual"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="#8685EF"
             android:lineSpacingExtra="0sp"
             android:text="Manual Control"
             android:textAlignment="center"
+            android:textColor="#FFFFFF"
             android:textSize="14sp" />
 
         <Button
             android:id="@+id/MainNavbarMain"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
             android:layout_weight="1"
+            android:backgroundTint="#8685EF"
             android:lineSpacingExtra="0sp"
             android:text="Intro"
             android:textAlignment="center"
+            android:textColor="#FFFFFF"
             android:textSize="14sp" />
 
         <Button
             android:id="@+id/MainNavbarDraw"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="#8685EF"
             android:lineSpacingExtra="0sp"
             android:text="Draw Control"
             android:textAlignment="center"
+            android:textColor="#FFFFFF"
             android:textSize="14sp" />
 
     </LinearLayout>

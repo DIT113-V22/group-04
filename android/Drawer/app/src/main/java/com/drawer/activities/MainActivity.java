@@ -1,10 +1,12 @@
-package com.example.drawer;
+package com.drawer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.drawer.connectivity.MQTTController;
+import com.drawer.R;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EEEEEE">
@@ -22,7 +21,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Manual Control" />
+            android:backgroundTint="#8685EF"
+            android:text="Manual Control"
+            android:textColor="#FFFFFF"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/DrawNavbarMain"
@@ -30,14 +32,20 @@
             android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
             android:layout_weight="1"
-            android:text="Intro" />
+            android:backgroundTint="#8685EF"
+            android:text="Intro"
+            android:textColor="#FFFFFF"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/DrawNavbarDraw"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Draw Control" />
+            android:backgroundTint="#8685EF"
+            android:text="Draw Control"
+            android:textColor="#FFFFFF"
+            style="?android:attr/buttonBarButtonStyle" />
     </LinearLayout>
 
     <LinearLayout
@@ -131,7 +139,8 @@
         app:layout_constraintBottom_toTopOf="@+id/numberViewCellLength"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.061"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:importantForAutofill="no" />
 
     <EditText
         android:id="@+id/numberViewCellLength"
@@ -145,7 +154,8 @@
         android:textColor="@color/black"
         android:textColorHint="#878787"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:importantForAutofill="no" />
 
     <Button
         android:id="@+id/runButton"
@@ -197,7 +207,7 @@
 
     </FrameLayout>
 
-    <com.example.drawer.CanvasGrid
+    <com.drawer.canvas.CanvasGrid
         android:id="@+id/pixelGridA"
         android:layout_width="300dp"
         android:layout_height="420dp"

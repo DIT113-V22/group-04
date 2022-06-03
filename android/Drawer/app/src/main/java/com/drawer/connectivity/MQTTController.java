@@ -1,10 +1,11 @@
-package com.example.drawer;
+package com.drawer.connectivity;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.drawer.canvas.PathInstructionSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
