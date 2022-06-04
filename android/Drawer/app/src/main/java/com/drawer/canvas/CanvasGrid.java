@@ -246,6 +246,7 @@ public class CanvasGrid extends View {
      * The current implementation assumes slow drawing (i.e. each cell will be adjacent
      * to another cell in one of the 8 possible directions. The implementation is unfortunately
      * incompatible with the Bresenham's drawing algorithm.
+     *
      * @param speed at which car will drive
      */
     public void executePath(String speed) {

@@ -24,8 +24,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.res.ResourcesCompat;
 import com.drawer.connectivity.DBManager;
 import com.drawer.connectivity.MQTTController;
-import com.drawer.runnables.ManualRecordingRun;
 import com.drawer.R;
+import com.drawer.runnables.ManualRecordingRun;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -33,6 +33,7 @@ import java.util.LinkedList;
  * The back-end for the activity_manual_control.
  * This class handles all joystick related logic as well as saves paths, with the
  * help of DBManager.
+ *
  * @author MortBA
  * @author sejalkan
  * @author YukiMina14

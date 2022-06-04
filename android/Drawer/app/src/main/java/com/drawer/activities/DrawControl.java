@@ -36,6 +36,7 @@ import java.io.OutputStream;
  * The back-end for the activity_draw_control.
  * Its main responsibility is to create all the different UI elements and handle
  * events (commands issued by the user through interaction) related to those elements.
+ *
  * @author Ayaeis
  * @author Kev049
  * @author MortBA
