@@ -215,7 +215,7 @@ public class DrawControl extends AppCompatActivity {
     }
 
     /**
-     * Calculates the current path length and updates path length text field
+     * Calculates the current path length and updates path length text field.
      */
     private void updatePathLength() {
         double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
