@@ -1,13 +1,11 @@
-package com.example.drawer;
+package com.drawer.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -17,44 +15,48 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import com.drawer.R;
+import com.drawer.canvas.CanvasGrid;
+import com.drawer.connectivity.MQTTController;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * The back-end for the activity_draw_control.
+ * Its main responsibility is to create all the different UI elements and handle
+ * events (commands issued by the user through interaction) related to those elements.
+ *
+ * @author Ayaeis
+ * @author Kev049
+ * @author MortBA
+ * @author YukiMina14
+ */
 public class DrawControl extends AppCompatActivity {
 
     private Button mainScreenButton;
     private Button manualControlScreenButton;
-    Button runBtn;
-    ImageButton uploadButton;
-    ImageButton downloadButton;
-    ImageButton clearButton;
-    EditText numberViewSpeed;
-    EditText numberViewCellLength;
-    SeekBar seekBar;
-    TextView pathLengthView;
-    TextView distanceTraveledView;
-    CanvasGrid pixelGrid;
-    MQTTController mqttController = MQTTController.getInstance();
-
-    private Button viewPoints;
-    private AlertDialog.Builder builder;
-    private AlertDialog alertDialog;
-    private ListView pathList;
+    private Button runBtn;
+    private ImageButton uploadButton;
+    private ImageButton downloadButton;
+    private ImageButton clearButton;
+    private EditText numberViewSpeed;
+    private EditText numberViewCellLength;
+    private SeekBar seekBar;
+    private TextView pathLengthView;
+    private TextView distanceTraveledView;
+    private CanvasGrid pixelGrid;
+    private MQTTController mqttController = MQTTController.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +85,8 @@ public class DrawControl extends AppCompatActivity {
         distanceTraveledView = findViewById(R.id.textViewDistanceTraveled);
         mqttController.updateTextView(distanceTraveledView, "/smartcar/report/odometer");
 
-        // Navbar
         mainScreenButton.setOnClickListener(view -> openMainScreen());
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
-        viewPoints = findViewById(R.id.viewPointsSaved);
 
         /*
          * This method converts the current view (drawing) to a bitmap
@@ -117,7 +117,7 @@ public class DrawControl extends AppCompatActivity {
         /*
          * This method converts the image to a drawable and sets it as a background image.
          */
-        ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+        ActivityResultLauncher<Intent> uploadImgLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
@@ -151,7 +151,7 @@ public class DrawControl extends AppCompatActivity {
             String imageDirectoryPath = imageDirectory.getPath();
             Uri data = Uri.parse(imageDirectoryPath);
             imagePickerIntent.setDataAndType(data, "image/*");
-            someActivityResultLauncher.launch(imagePickerIntent);
+            uploadImgLauncher.launch(imagePickerIntent);
         });
 
         clearButton.setOnClickListener(view -> pixelGrid.clear());
@@ -174,34 +174,24 @@ public class DrawControl extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 int value;
                 value = seekBar.getProgress();
-
                 if (value > 4) {
                     pixelGrid.setCellLength(value);
                 }
-
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
         numberViewCellLength.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -217,44 +207,16 @@ public class DrawControl extends AppCompatActivity {
             }
         });
 
-
         pixelGrid.setOnTouchListener((view, motionEvent) -> {
             view.performClick();
             updatePathLength();
             return false;
         });
-
-        viewPoints.setOnClickListener(view -> {
-            //open the pop up window
-            createViewContactDialogue();
-        });
     }
 
-    public void createViewContactDialogue() {
-        builder = new AlertDialog.Builder(this);
-        final View popUpView = getLayoutInflater().inflate(R.layout.activity_draw_saves, null);
-        builder.setView(popUpView);
-        alertDialog = builder.create();
-        alertDialog.show();
-
-        pathList = popUpView.findViewById(R.id.pathListDraw);
-        List<String> savedPathList = new ArrayList<>();
-
-        ArrayAdapter<String> arrayAdapter =
-                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, savedPathList);
-        pathList.setAdapter(arrayAdapter);
-        onListItemClick(pathList, popUpView);
-    }
-
-    public void onListItemClick(ListView pathList, View v) {
-        //Set background of all items to white
-        for (int i = 0; i < pathList.getChildCount(); i++) {
-            pathList.getChildAt(i).setBackgroundColor(Color.BLACK);
-        }
-
-        v.setBackgroundColor(Color.WHITE);
-    }
-
+    /**
+     * Calculates the current path length and updates path length text field.
+     */
     private void updatePathLength() {
         double pathLength = pixelGrid.getVectorMap().calculateSize() * pixelGrid.getPathScale();
         pathLength = Math.floor(pathLength * 100) / 100;

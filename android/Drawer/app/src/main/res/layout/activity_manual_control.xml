@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EEEEEE"
-    tools:context=".ManualControl">
-
+    tools:context=".activities.ManualControl">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -20,31 +19,36 @@
 
         <Button
             android:id="@+id/ManualNavbarManual"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#8685EF"
-            android:text="Manual Control" />
+            android:text="Manual Control"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/ManualNavbarMain"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
             android:layout_weight="1"
             android:backgroundTint="#8685EF"
-            android:text="Intro" />
+            android:text="Intro"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/ManualNavbarDraw"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="#8685EF"
-            android:text="Draw Control" />
+            android:text="Draw Control"
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
-
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/recordToggle"
@@ -73,6 +77,7 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="Record"
         android:textColor="@color/black"
         android:textSize="20sp"
@@ -80,17 +85,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.847"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.47" />
+        app:layout_constraintTop_toBottomOf="@+id/camera"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/outerCircle"
-
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:background="@drawable/outer_circle"
-
-
         android:longClickable="true"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -102,7 +104,6 @@
 
     <TextView
         android:id="@+id/innerCircle"
-
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/inner_circle"
@@ -120,13 +121,12 @@
         android:id="@+id/speedStat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="92dp"
         android:text="The speed is: "
         android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.352"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.022" />
@@ -135,28 +135,28 @@
         android:id="@+id/angleStat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="92dp"
         android:text="The angle is: "
         android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.344"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.08" />
+        app:layout_constraintVertical_bias="0.077" />
 
     <Button
         android:id="@+id/viewPathsScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="My Recordings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.229"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.484" />
+        app:layout_constraintTop_toBottomOf="@+id/camera"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Chronometer
         android:id="@+id/executeWatch"
@@ -183,6 +183,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.207"
         app:srcCompat="@android:drawable/screen_background_light" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

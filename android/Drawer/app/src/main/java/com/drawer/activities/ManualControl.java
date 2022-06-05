@@ -1,10 +1,9 @@
-package com.example.drawer;
+package com.drawer.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -23,23 +22,36 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.res.ResourcesCompat;
+import com.drawer.R;
+import com.drawer.connectivity.DBManager;
+import com.drawer.connectivity.MQTTController;
+import com.drawer.runnables.ManualRecordingRun;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
+/**
+ * The back-end for the activity_manual_control.
+ * This class handles all joystick related logic as well as saves paths, with the
+ * help of DBManager.
+ *
+ * @author MortBA
+ * @author sejalkan
+ * @author YukiMina14
+ */
 public class ManualControl extends AppCompatActivity {
 
     private Button mainScreenButton;
     private Button drawControlScreenButton;
   
-    //Used global variables
+    //Joystick variables
     private int outerRadius = 0;
-    private boolean saved = false;
     private int centerX = 0;
     private int centerY = 0;
+
+    //Variables required for saving
+    private boolean saved = false;
     private long previousSaveTime = 0;
     private long currentSaveTime = 0;
-
     private boolean timerStart = false;
     private boolean wasChecked = false;
 
@@ -86,7 +98,6 @@ public class ManualControl extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_control);
         dbManager = new DBManager(this);
-        //dbManager.deleteAll();
         innerCircle = findViewById(R.id.innerCircle);
         mqttController.publish("/smartcar/control/obstacle", "0");
         mqttController.publish("/smartcar/control/auto", "0");
@@ -221,10 +232,6 @@ public class ManualControl extends AppCompatActivity {
         replays = builderReplays.create();
         replays.show();
 
-        deletePath.setOnClickListener(view -> {
-
-        });
-
         //Gets the all the path information and path names stored in the database
         ArrayList<String> finalOutputList = dbManager.getAllPaths();
 
@@ -237,7 +244,6 @@ public class ManualControl extends AppCompatActivity {
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-
                 TextView tv = view.findViewById(android.R.id.text1);
 
                 tv.setTextColor(Color.WHITE);
@@ -252,7 +258,6 @@ public class ManualControl extends AppCompatActivity {
         //When any list item is click, the respective saved recording is played.
         pathView.setOnItemClickListener((adapterView, view, i, l) -> {
             //Execution of selected save with previously saved time and command. All in separate thread.
-            //playRecordings.show();
             for (int j = 0; j < pathView.getChildCount(); j++) {
                 pathView.getChildAt(j).setBackgroundColor(Color.parseColor("#222222"));
             }
@@ -261,7 +266,6 @@ public class ManualControl extends AppCompatActivity {
             if (dbManager.getAllPathNames().contains(arrayAdapter.getItem(i))) {
                 myItem = arrayAdapter.getItem(i);
 
-                //System.out.println(dbManager.getPathDetails(myItem));
                 ArrayList<Integer> itemCarSpeed = dbManager.getSpeedDetails(myItem);
                 ArrayList<Integer> itemCarAngle = dbManager.getAngleDetails(myItem);
                 ArrayList<Long> itemCarTimer = dbManager.getTimeDetails(myItem);
@@ -291,7 +295,6 @@ public class ManualControl extends AppCompatActivity {
         Resources res = getResources();
         Drawable oc = ResourcesCompat.getDrawable(res, R.drawable.outer_circle, null);
 
-
         //Retrieves the starting position of the Drawable Views.
         if (!saved) {
             centerX = (int) innerCircle.getX();
@@ -309,10 +312,9 @@ public class ManualControl extends AppCompatActivity {
 
         traversX = traversX - outerRadius;
         traversY = traversY - outerRadius;
-        double angle;
-        angle = (Math.toDegrees(Math.atan2(((event.getY() - 90) - outerRadius),
-                ((event.getX() - 90) - outerRadius)) * -1));
 
+        double angle = (Math.toDegrees(Math.atan2(((event.getY() - 90) - outerRadius),
+                        ((event.getX() - 90) - outerRadius)) * -1));
 
         //Sets up clipping and actual moving of innerCircle to touch position.
         double joystickToPressedDistance = Math.sqrt(
@@ -334,7 +336,6 @@ public class ManualControl extends AppCompatActivity {
         //Retrieves calculated speed and angle values
         int carSpeed = carSpeed(event);
         double carAngle = carAngle(event);
-
 
         //Starts timer if recording toggle is activated
         if (recordToggle.isChecked()) {
@@ -424,11 +425,9 @@ public class ManualControl extends AppCompatActivity {
      * @return calculated angle.
      */
     public int carAngle(MotionEvent event) {
-        int angle;
-
         //Math to get degrees based on a circle in a position.
-        angle = (int) (Math.toDegrees(Math.atan2((event.getX() - 90 - outerRadius),
-                (event.getY() - 90 - outerRadius) * -1)));
+        int angle = (int) (Math.toDegrees(Math.atan2((event.getX() - 90 - outerRadius),
+                    (event.getY() - 90 - outerRadius) * -1)));
 
         //Switching where degrees are located where.
         if (angle >= 90) {

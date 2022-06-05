@@ -1,4 +1,4 @@
-package com.example.drawer;
+package com.drawer.canvas;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,16 +9,14 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import com.drawer.connectivity.MQTTController;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/*
-    Class is based on the answer from "Mike M" to the question posed in this Stackoverflow
-    thread: https://stackoverflow.com/questions/24842550/2d-array-grid-on-drawing-canvas
- */
-
 /**
  * The CanvasGrid class serves as the foundation for the grid-based canvas used in DrawControl.
+ * Class is based on the answer from "Mike M" to the question posed in this Stackoverflow
+ * thread: https://stackoverflow.com/questions/24842550/2d-array-grid-on-drawing-canvas.
  *
  * @author Kev049
  * @author YukiMina14
@@ -61,30 +59,14 @@ public class CanvasGrid extends View {
     }
 
     // Getters
-    public int getNumColumns() {
-        return numColumns;
-    }
 
     public VectorMap getVectorMap() {
         return vectorMap;
     }
 
-    public int getNumRows() {
-        return numRows;
-    }
-
-    public ResizeMode getResizeMode() {
-        return resizeMode;
-    }
-
     public float getPathScale() {
         return pathScale;
     }
-
-    public double getVectorSmoothness() {
-        return vectorSmoothness;
-    }
-
 
     // Setters
     public void setCellLength(int cellLength) {
@@ -102,14 +84,8 @@ public class CanvasGrid extends View {
     }
 
     /**
-     * Sets smoothness before next vector is drawn.
+     * Clears the drawing on the canvas and deletes any associated information.
      */
-    public void setVectorSmoothness(double smoothness) {
-        vectorSmoothness = smoothness;
-    }
-
-    //public functions
-
     public void clear() {
         cellChecked = new boolean[numColumns][numRows];
         pureCellChecked = new boolean[numColumns][numRows];
@@ -119,7 +95,6 @@ public class CanvasGrid extends View {
         invalidate();
     }
 
-    //limited access functions
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -177,8 +152,6 @@ public class CanvasGrid extends View {
                             (i + 1) * cellLength, (j + 1) * cellLength,
                             blackPaint);
                 }
-                //again why disable going over the same point twice
-                //also your making a path drawing between each point in a Z pattern
                 if (pureCellChecked[i][j]) {
                     if (!pointQueue.contains(drawPoint)) {
                         pointQueue.add(drawPoint);
@@ -202,6 +175,7 @@ public class CanvasGrid extends View {
      * Handles touch input on canvas.
      *
      * @param event motion touch event
+     *
      * @return true
      */
     @Override
@@ -267,15 +241,18 @@ public class CanvasGrid extends View {
         return super.performClick();
     }
 
-    // The current implementation assumes slow drawing (i.e. each cell will be adjacent
-    // to another cell in one of the 8 possible directions.
-    // The implementation is currently incompatible with the Bresenham's drawing algorithm.
+    /**
+     * Sends the car movement instructions to execute.
+     * The current implementation assumes slow drawing (i.e. each cell will be adjacent
+     * to another cell in one of the 8 possible directions. The implementation is unfortunately
+     * incompatible with the Bresenham's drawing algorithm.
+     *
+     * @param speed at which car will drive
+     */
     public void executePath(String speed) {
         PathInstructionSet pathInstructionSet = new PathInstructionSet(pointQueue, mqttController, pathScale, speed);
         mqttController.executeInstructionSet(pathInstructionSet);
     }
-
-    //Bresenham's line algorithm for cell checked src: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 
     /**
      * draws a line between 2 points using Bresenham's line Algorithm
@@ -292,7 +269,7 @@ public class CanvasGrid extends View {
         int dx = Math.abs(x1 - x0);
         int dy = -Math.abs(y1 - y0);
 
-        //incrementations variable using ternary operator
+        //Increments variable using ternary operator
         int sx = (x0 < x1) ? 1 : -1;
         int sy = (y0 < y1) ? 1 : -1;
 

@@ -1,11 +1,18 @@
-package com.example.drawer;
+package com.drawer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.drawer.R;
+import com.drawer.connectivity.MQTTController;
 
+/**
+ * The back-end for the activity_main.
+ * Its main responsibility is to handle the button logic used to interact with the MQTT broker.
+ *
+ * @author Soarnir
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Button connectButton;
@@ -14,14 +21,11 @@ public class MainActivity extends AppCompatActivity {
     private Button disconnectButton;
     private Button manualControlScreenButton;
     private Button drawControlScreenButton;
-    private ImageView carImg;
-    private ImageView smokeImg;
 
     MQTTController mqttController = MQTTController.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //Animation fadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -54,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
         manualControlScreenButton = findViewById(R.id.MainNavbarManual);
         drawControlScreenButton = findViewById(R.id.MainNavbarDraw);
-        carImg = findViewById(R.id.imageViewCarAndPen);
-        smokeImg = findViewById(R.id.imageViewSmokeParticle);
-        //smokeImg.startAnimation(fadeOut);
 
         manualControlScreenButton.setOnClickListener(view -> openManualScreen());
         drawControlScreenButton.setOnClickListener(view -> openDrawScreen());

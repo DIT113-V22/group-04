@@ -1,4 +1,4 @@
-package com.example.drawer;
+package com.drawer.connectivity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -6,12 +6,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Point;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * This class serves purpose to mainly create and manage a SQLite database.
@@ -63,7 +60,6 @@ public class DBManager extends SQLiteOpenHelper {
         // method to execute above sql query
         sqLiteDatabase.execSQL(query);
 
-
         String queryPoints = "CREATE TABLE " + TABLE_NAME_POINTS + " ("
                 + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + POINTS_TITLE_COL + " TEXT,"
@@ -84,7 +80,6 @@ public class DBManager extends SQLiteOpenHelper {
      * @param timerList list of timer commands
      */
     public void addNewPath(String savedName, String speedList, String angleList, String timerList) {
-
         // creating a variable for content values.
         ContentValues values = new ContentValues();
 
